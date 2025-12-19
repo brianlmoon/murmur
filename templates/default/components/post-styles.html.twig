@@ -1,0 +1,319 @@
+{#
+    Shared CSS styles for post cards
+
+    Used by:
+    - pages/feed.html.twig
+    - pages/post.html.twig
+
+    Styles included:
+    - Post card container and layout
+    - Post header (author, topic, timestamp)
+    - Post body and images
+    - Post actions (like, comment, delete)
+    - Topic labels and follow buttons
+    - Responsive behavior for small screens
+#}
+<style>
+    .post {
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .post--reply {
+        margin-left: 1.5rem;
+        border-left: 3px solid var(--color-border);
+    }
+
+    .post-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.5rem;
+    }
+
+    .post-header-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .post-author {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--color-text);
+        font-weight: 500;
+    }
+
+    .post-author:hover {
+        text-decoration: none;
+    }
+
+    .post-author:hover .post-username {
+        text-decoration: underline;
+    }
+
+    .post-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .post-avatar--placeholder {
+        background-color: var(--color-primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    .post-time-link {
+        text-decoration: none;
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+        padding-top: 0.5rem;
+        display: inline-block;
+    }
+
+    .post-time-link:hover {
+        text-decoration: none;
+        color: var(--color-text);
+    }
+
+    .post-time-link:focus {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+        border-radius: 2px;
+    }
+
+    .post-body {
+        line-height: 1.6;
+        word-wrap: break-word;
+        padding: 1rem 0;
+    }
+
+    .post-link {
+        color: var(--color-primary);
+        text-decoration: underline;
+        word-break: break-all;
+    }
+
+    .post-link:hover {
+        color: var(--color-primary-hover, #1d4ed8);
+    }
+
+    .post-link:visited {
+        color: #6b21a8;
+    }
+
+    .link-preview-card {
+        display: block;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        text-decoration: none;
+        color: inherit;
+        margin-top: 0.75rem;
+        background: var(--color-surface);
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .link-preview-card:hover {
+        border-color: var(--color-primary);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .link-preview-image {
+        width: 100%;
+        max-height: 200px;
+        overflow: hidden;
+        background: #f0f0f0;
+    }
+
+    .link-preview-image img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+
+    .link-preview-content {
+        padding: 0.75rem;
+    }
+
+    .link-preview-site {
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.25rem;
+    }
+
+    .link-preview-title {
+        font-weight: 600;
+        font-size: 1rem;
+        line-height: 1.3;
+        margin-bottom: 0.25rem;
+        color: var(--color-text);
+    }
+
+    .link-preview-description {
+        font-size: 0.875rem;
+        color: var(--color-text-muted);
+        line-height: 1.4;
+    }
+
+    @media (min-width: 640px) {
+        .link-preview-card {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .link-preview-image {
+            width: 200px;
+            min-width: 200px;
+            max-height: none;
+        }
+
+        .link-preview-image img {
+            height: 100%;
+            min-height: 120px;
+        }
+
+        .link-preview-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+    }
+
+    .post-image {
+        margin-top: 0.75rem;
+    }
+
+    .post-image img {
+        max-width: 100%;
+        border-radius: var(--radius);
+    }
+
+    .post-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.75rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid var(--color-border);
+        align-items: center;
+    }
+
+    .post-action {
+        font-size: 0.875rem;
+        color: var(--color-text-muted);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .post-action:hover {
+        color: var(--color-primary);
+    }
+
+    .post-action--delete:hover {
+        color: var(--color-error);
+    }
+
+    .post-action--like {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .post-action--liked {
+        color: #e91e63;
+    }
+
+    .post-action--liked:hover {
+        color: #c2185b;
+    }
+
+    .post-action--like-disabled {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.875rem;
+        color: var(--color-text-muted);
+    }
+
+    .post-like-form,
+    .post-delete-form {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .post-topic {
+        margin-bottom: 0.5rem;
+    }
+
+    .post-topic-label {
+        display: inline-block;
+        padding: 0.125rem 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        border-radius: 999px;
+        background-color: #eff6ff;
+        color: var(--color-primary);
+    }
+
+    .post-topic-follow {
+        display: inline-flex;
+        align-items: center;
+        background: none;
+        border: none;
+        color: var(--color-text-muted);
+        font-size: 0.75rem;
+        cursor: pointer;
+        padding: 0 0.25rem 0.25rem 0;
+        vertical-align: baseline;
+        line-height: 1;
+        height: 1.375rem;
+    }
+
+    .post-topic-wrapper {
+        display: inline-flex;
+        align-items: center;
+        gap: 0;
+    }
+
+    @media (max-width: 640px) {
+        .post-topic-wrapper {
+            flex-basis: 100%;
+        }
+    }
+
+    /* Highlight comment when directly linked via anchor */
+    .post--reply:target {
+        background-color: #fffbea;
+        border-left-color: var(--color-primary);
+        border-left-width: 4px;
+        animation: highlight-fade 2s ease-out;
+    }
+
+    @keyframes highlight-fade {
+        0% {
+            background-color: #fef3c7;
+        }
+        100% {
+            background-color: #fffbea;
+        }
+    }
+</style>

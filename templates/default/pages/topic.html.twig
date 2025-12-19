@@ -1,0 +1,178 @@
+{% extends theme ~ '/layouts/base.html.twig' %}
+
+{% block title %}{{ topic.name }} - {{ site_name }}{% endblock %}
+
+{% block head %}
+{% include theme ~ '/components/post-styles.html.twig' %}
+<style>
+    .topic-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        padding-bottom: 1rem;
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .topic-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .follow-btn {
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+        background-color: var(--color-primary);
+        color: white;
+        border: none;
+        border-radius: var(--radius);
+        cursor: pointer;
+        font-weight: 500;
+    }
+
+    .follow-btn:hover {
+        background-color: var(--color-primary-hover);
+    }
+
+    .follow-btn:focus {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+    }
+
+    .follow-btn--following {
+        background-color: transparent;
+        color: var(--color-text-muted);
+        border: 1px solid var(--color-border);
+    }
+
+    .follow-btn--following:hover {
+        background-color: var(--color-error);
+        color: white;
+        border-color: var(--color-error);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--color-text-muted);
+    }
+
+    .empty-state-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--color-text);
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding: 1rem 0;
+    }
+
+    .pagination-link {
+        padding: 0.5rem 1rem;
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        color: var(--color-text);
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .pagination-link:hover {
+        background-color: var(--color-primary);
+        color: white;
+        border-color: var(--color-primary);
+        text-decoration: none;
+    }
+
+    .pagination-link:focus {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+    }
+
+    @media (max-width: 640px) {
+        .topic-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <header class="topic-header">
+        <h1 class="topic-title">{{ topic.name }}</h1>
+        {% if current_user %}
+            {% if user_following %}
+                <form action="{{ base_url }}/topic/{{ topic.topic_id }}/unfollow" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <button type="submit" 
+                            class="follow-btn follow-btn--following" 
+                            aria-label="Unfollow {{ topic.name }} topic">
+                        Following
+                    </button>
+                </form>
+            {% else %}
+                <form action="{{ base_url }}/topic/{{ topic.topic_id }}/follow" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <button type="submit" 
+                            class="follow-btn" 
+                            aria-label="Follow {{ topic.name }} topic">
+                        Follow
+                    </button>
+                </form>
+            {% endif %}
+        {% endif %}
+    </header>
+
+    {% if posts is empty %}
+        <div class="empty-state" role="status">
+            <p class="empty-state-title">No posts in this topic yet</p>
+            <p>Be the first to share something in {{ topic.name }}.</p>
+        </div>
+    {% else %}
+        {% for item in posts %}
+            {% include theme ~ '/components/post.html.twig' with {
+                'post': item.post,
+                'author': item.author,
+                'like_count': item.like_count,
+                'user_liked': item.user_liked,
+                'reply_count': item.reply_count,
+                'topic': item.topic,
+                'user_following': true,
+                'preview': item.preview
+            } %}
+        {% endfor %}
+
+        {% if page > 1 or has_more %}
+            <nav class="pagination" aria-label="Topic posts pagination">
+                {% if page > 1 %}
+                    <a href="{{ base_url }}/topic/{{ topic.topic_id }}?page={{ page - 1 }}" 
+                       class="pagination-link"
+                       aria-label="Go to newer posts in {{ topic.name }}">
+                        ← Newer
+                    </a>
+                {% endif %}
+                {% if has_more %}
+                    <a href="{{ base_url }}/topic/{{ topic.topic_id }}?page={{ page + 1 }}" 
+                       class="pagination-link"
+                       aria-label="Go to older posts in {{ topic.name }}">
+                        Older →
+                    </a>
+                {% endif %}
+            </nav>
+        {% endif %}
+    {% endif %}
+{% endblock %}

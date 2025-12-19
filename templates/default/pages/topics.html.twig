@@ -1,0 +1,155 @@
+{% extends theme ~ '/layouts/base.html.twig' %}
+
+{% block title %}Topics - {{ site_name }}{% endblock %}
+
+{% block head %}
+<style>
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .topics-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .topic-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+    }
+
+    .topic-link {
+        font-weight: 500;
+        font-size: 1rem;
+        color: var(--color-text);
+        text-decoration: none;
+    }
+
+    .topic-link:hover {
+        color: var(--color-primary);
+        text-decoration: underline;
+    }
+
+    .topic-link:focus {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+        border-radius: 2px;
+    }
+
+    .topic-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .following-badge {
+        font-size: 0.75rem;
+        color: var(--color-success);
+        background-color: #dcfce7;
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--radius);
+    }
+
+    .follow-btn {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
+        background-color: var(--color-primary);
+        color: white;
+        border: none;
+        border-radius: var(--radius);
+        cursor: pointer;
+        font-weight: 500;
+    }
+
+    .follow-btn:hover {
+        background-color: var(--color-primary-hover);
+    }
+
+    .follow-btn:focus {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+    }
+
+    .follow-btn--unfollow {
+        background-color: transparent;
+        color: var(--color-text-muted);
+        border: 1px solid var(--color-border);
+    }
+
+    .follow-btn--unfollow:hover {
+        background-color: var(--color-bg);
+        border-color: var(--color-text-muted);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--color-text-muted);
+    }
+
+    .empty-state-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--color-text);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Topics</h1>
+
+    {% if topics is empty %}
+        <div class="empty-state" role="status">
+            <p class="empty-state-title">No topics available</p>
+            <p>Topics will appear here once they are created by an administrator.</p>
+        </div>
+    {% else %}
+        <ul class="topics-list">
+            {% for topic in topics %}
+                <li class="topic-item">
+                    <a href="{{ base_url }}/topic/{{ topic.topic_id }}" 
+                       class="topic-link"
+                       aria-label="View posts in {{ topic.name }} topic">
+                        {{ topic.name }}
+                    </a>
+                    <div class="topic-actions">
+                        {% if current_user %}
+                            {% if topic.topic_id in followed_topic_ids %}
+                                <span class="following-badge">Following</span>
+                                <form action="{{ base_url }}/topic/{{ topic.topic_id }}/unfollow" method="post" style="display: inline;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                    <button type="submit" 
+                                            class="follow-btn follow-btn--unfollow" 
+                                            aria-label="Unfollow {{ topic.name }} topic">
+                                        Unfollow
+                                    </button>
+                                </form>
+                            {% else %}
+                                <form action="{{ base_url }}/topic/{{ topic.topic_id }}/follow" method="post" style="display: inline;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                    <button type="submit" 
+                                            class="follow-btn" 
+                                            aria-label="Follow {{ topic.name }} topic">
+                                        Follow
+                                    </button>
+                                </form>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

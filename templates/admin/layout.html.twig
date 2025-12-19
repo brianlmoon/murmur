@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin{% endblock %} - {{ site_name }}</title>
+    <style>
+        :root {
+            --color-bg: #f5f5f5;
+            --color-surface: #ffffff;
+            --color-text: #1a1a1a;
+            --color-text-muted: #666666;
+            --color-primary: #2563eb;
+            --color-primary-hover: #1d4ed8;
+            --color-error: #dc2626;
+            --color-success: #16a34a;
+            --color-warning: #ca8a04;
+            --color-border: #e5e5e5;
+            --radius: 8px;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --sidebar-width: 220px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .admin-sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--color-surface);
+            border-right: 1px solid var(--color-border);
+            padding: 1rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .admin-logo {
+            padding: 0 1rem 1rem;
+            border-bottom: 1px solid var(--color-border);
+            margin-bottom: 1rem;
+        }
+
+        .admin-logo a {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .admin-logo a:hover {
+            text-decoration: none;
+        }
+
+        .admin-logo small {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            font-weight: normal;
+        }
+
+        .admin-nav {
+            list-style: none;
+        }
+
+        .admin-nav li {
+            margin-bottom: 0.25rem;
+        }
+
+        .admin-nav a {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: var(--color-text);
+            border-left: 3px solid transparent;
+        }
+
+        .admin-nav a:hover {
+            background-color: var(--color-bg);
+            text-decoration: none;
+        }
+
+        .admin-nav a.active {
+            background-color: var(--color-bg);
+            border-left-color: var(--color-primary);
+            font-weight: 500;
+        }
+
+        .admin-nav-section {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 1rem;
+        }
+
+        .admin-main {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+        }
+
+        .admin-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .admin-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .flash {
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+        }
+
+        .flash-success {
+            background-color: #dcfce7;
+            color: var(--color-success);
+            border: 1px solid #bbf7d0;
+        }
+
+        .flash-error {
+            background-color: #fef2f2;
+            color: var(--color-error);
+            border: 1px solid #fecaca;
+        }
+
+        .card {
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            font-size: 1rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-checkbox input {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-primary-hover);
+            text-decoration: none;
+        }
+
+        .btn-danger {
+            background-color: var(--color-error);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #b91c1c;
+            text-decoration: none;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        th {
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--color-text-muted);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 999px;
+        }
+
+        .badge-success {
+            background-color: #dcfce7;
+            color: var(--color-success);
+        }
+
+        .badge-warning {
+            background-color: #fef3c7;
+            color: var(--color-warning);
+        }
+
+        .badge-error {
+            background-color: #fef2f2;
+            color: var(--color-error);
+        }
+
+        .badge-info {
+            background-color: #eff6ff;
+            color: var(--color-primary);
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+        }
+
+        .action-form {
+            display: inline;
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <a href="{{ base_url }}/">Murmur</a>
+                <small>Admin Panel</small>
+            </div>
+
+            <ul class="admin-nav">
+                <li><a href="{{ base_url }}/admin" class="{% if active_page is defined and active_page == 'dashboard' %}active{% endif %}">Dashboard</a></li>
+                <li><a href="{{ base_url }}/admin/users" class="{% if active_page is defined and active_page == 'users' %}active{% endif %}">Users</a></li>
+                <li><a href="{{ base_url }}/admin/pending" class="{% if active_page is defined and active_page == 'pending' %}active{% endif %}">Pending Approval</a></li>
+                <li><a href="{{ base_url }}/admin/topics" class="{% if active_page is defined and active_page == 'topics' %}active{% endif %}">Topics</a></li>
+                <li><a href="{{ base_url }}/admin/settings" class="{% if active_page is defined and active_page == 'settings' %}active{% endif %}">Settings</a></li>
+
+                <li class="admin-nav-section">Quick Links</li>
+                <li><a href="{{ base_url }}/">View Site</a></li>
+                <li><a href="{{ base_url }}/settings">My Profile</a></li>
+            </ul>
+        </aside>
+
+        <main class="admin-main">
+            {% for flash in flashes %}
+                <div class="flash flash-{{ flash.type }}">
+                    {{ flash.message }}
+                </div>
+            {% endfor %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

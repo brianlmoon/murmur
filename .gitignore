@@ -1,0 +1,33 @@
+# Dependencies
+/vendor/
+
+# PHPUnit
+.phpunit.cache/
+.phpunit.result.cache
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads (keep directory structure)
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# Config (local overrides)
+/config/*.local.php
+/etc/config.ini
+
+# SQLite database
+/data/*.db
+
+# Logs
+*.log
+
+# local docs
+/local/

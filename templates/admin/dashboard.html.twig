@@ -1,0 +1,65 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% set active_page = 'dashboard' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <div class="admin-header">
+        <h1 class="admin-title">Dashboard</h1>
+    </div>
+
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.user_count }}</div>
+            <div class="stat-label">Users</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.post_count }}</div>
+            <div class="stat-label">Posts</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="card-title">Recent Users</h2>
+
+        {% if stats.recent_users is empty %}
+            <p style="color: var(--color-text-muted);">No users yet.</p>
+        {% else %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Joined</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in stats.recent_users %}
+                        <tr>
+                            <td>
+                                <a href="{{ base_url }}/user/{{ user.username }}">{{ user.username }}</a>
+                            </td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.created_at | date('M j, Y') }}</td>
+                            <td>
+                                {% if user.is_disabled %}
+                                    <span class="badge badge-error">Disabled</span>
+                                {% elseif user.is_admin %}
+                                    <span class="badge badge-info">Admin</span>
+                                {% else %}
+                                    <span class="badge badge-success">Active</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <p style="margin-top: 1rem;">
+                <a href="{{ base_url }}/admin/users">View all users &rarr;</a>
+            </p>
+        {% endif %}
+    </div>
+{% endblock %}

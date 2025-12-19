@@ -1,0 +1,196 @@
+{% extends theme ~ '/layouts/base.html.twig' %}
+
+{% block title %}Messages - {{ site_name }}{% endblock %}
+
+{% block head %}
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .conversation-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .conversation-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        text-decoration: none;
+        color: inherit;
+        transition: border-color 0.15s;
+    }
+
+    .conversation-item:hover {
+        border-color: var(--color-primary);
+        text-decoration: none;
+    }
+
+    .conversation-item--unread {
+        border-left: 3px solid var(--color-primary);
+    }
+
+    .conversation-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .conversation-avatar--placeholder {
+        background-color: var(--color-primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .conversation-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .conversation-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.25rem;
+    }
+
+    .conversation-username {
+        font-weight: 600;
+        color: var(--color-text);
+    }
+
+    .conversation-time {
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+    }
+
+    .conversation-preview {
+        font-size: 0.875rem;
+        color: var(--color-text-muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .conversation-unread-badge {
+        background-color: var(--color-primary);
+        color: white;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.125rem 0.5rem;
+        border-radius: 9999px;
+        flex-shrink: 0;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--color-text-muted);
+    }
+
+    .empty-state p {
+        margin-bottom: 1rem;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--color-border);
+    }
+
+    .pagination a {
+        color: var(--color-primary);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1 class="page-title">Messages</h1>
+        <a href="{{ base_url }}/messages/search" class="btn btn-primary">New Message</a>
+    </div>
+
+    {% if inbox is empty %}
+        <div class="empty-state">
+            <p>No conversations yet.</p>
+            <a href="{{ base_url }}/messages/search" class="btn btn-primary">Start a conversation</a>
+        </div>
+    {% else %}
+        <div class="conversation-list">
+            {% for item in inbox %}
+                <a href="{{ base_url }}/messages/{{ item.conversation.conversation_id }}" 
+                   class="conversation-item {{ item.unread_count > 0 ? 'conversation-item--unread' : '' }}">
+                    {% if item.other_user.avatar_path %}
+                        <img src="{{ base_url }}/uploads/{{ item.other_user.avatar_path }}" 
+                             alt="" 
+                             class="conversation-avatar">
+                    {% else %}
+                        <div class="conversation-avatar conversation-avatar--placeholder">
+                            {{ item.other_user.username | first | upper }}
+                        </div>
+                    {% endif %}
+
+                    <div class="conversation-content">
+                        <div class="conversation-header">
+                            <span class="conversation-username">
+                                {{ item.other_user.name ?: item.other_user.username }}
+                            </span>
+                            {% if item.last_message %}
+                                <span class="conversation-time">
+                                    {{ item.last_message.created_at | relative_date }}
+                                </span>
+                            {% endif %}
+                        </div>
+                        {% if item.last_message %}
+                            <div class="conversation-preview">
+                                {% if item.last_message.sender_id == current_user.user_id %}You: {% endif %}
+                                {{ item.last_message.body | slice(0, 100) }}{{ item.last_message.body | length > 100 ? '...' : '' }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {% if item.unread_count > 0 %}
+                        <span class="conversation-unread-badge">{{ item.unread_count }}</span>
+                    {% endif %}
+                </a>
+            {% endfor %}
+        </div>
+
+        {% if page > 1 or has_more %}
+            <div class="pagination">
+                {% if page > 1 %}
+                    <a href="{{ base_url }}/messages?page={{ page - 1 }}">← Newer</a>
+                {% else %}
+                    <span></span>
+                {% endif %}
+
+                {% if has_more %}
+                    <a href="{{ base_url }}/messages?page={{ page + 1 }}">Older →</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}

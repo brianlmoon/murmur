@@ -1,0 +1,52 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% set active_page = 'pending' %}
+
+{% block title %}Pending Approval{% endblock %}
+
+{% block content %}
+    <div class="admin-header">
+        <h1 class="admin-title">Pending Approval</h1>
+    </div>
+
+    <div class="card">
+        {% if users is empty %}
+            <p style="color: var(--color-text-muted);">No users pending approval.</p>
+        {% else %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Registered</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.created_at | date('M j, Y') }}</td>
+                            <td>
+                                <form action="{{ base_url }}/admin/user/{{ user.user_id }}/approve" method="post" class="action-form">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                    <button type="submit" class="btn btn-primary btn-sm">Approve</button>
+                                </form>
+
+                                <form action="{{ base_url }}/admin/user/{{ user.user_id }}/reject" method="post" class="action-form"
+                                      style="margin-left: 0.25rem;"
+                                      onsubmit="return confirm('Are you sure you want to reject this user? Their account will be deleted.');">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                    <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+{% endblock %}

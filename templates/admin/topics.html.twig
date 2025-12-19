@@ -1,0 +1,72 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% set active_page = 'topics' %}
+
+{% block title %}Topics{% endblock %}
+
+{% block content %}
+    <div class="admin-header">
+        <h1 class="admin-title">Topics</h1>
+    </div>
+
+    <div class="card">
+        <h2 class="card-title">Add New Topic</h2>
+        <form action="{{ base_url }}/admin/topics" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+            <div class="form-group" style="display: flex; gap: 0.5rem; align-items: flex-end;">
+                <div style="flex: 1;">
+                    <label for="name" class="form-label">Topic Name</label>
+                    <input type="text" id="name" name="name" class="form-input"
+                           maxlength="{{ max_name_length }}"
+                           placeholder="e.g., General, Announcements, Off-topic"
+                           required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Topic</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2 class="card-title">Existing Topics</h2>
+
+        {% if topics is empty %}
+            <p style="color: var(--color-text-muted);">No topics have been created yet.</p>
+            <p style="font-size: 0.875rem; color: var(--color-text-muted); margin-top: 0.5rem;">
+                Topics allow you to categorize posts. When topics exist, users can optionally (or required, if configured) select a topic when creating a post.
+            </p>
+        {% else %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for topic in topics %}
+                        <tr>
+                            <td>{{ topic.name }}</td>
+                            <td>{{ topic.created_at | date('M j, Y') }}</td>
+                            <td>
+                                <form action="{{ base_url }}/admin/topics/{{ topic.topic_id }}/delete" method="post" class="action-form"
+                                      onsubmit="return confirm('Are you sure you want to delete this topic? Posts with this topic will have their topic removed.');">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+
+    <div class="card" style="background-color: #eff6ff; border-color: #bfdbfe;">
+        <p style="font-size: 0.875rem; color: var(--color-text);">
+            <strong>Tip:</strong> Topics only appear on top-level posts, not on comments/replies.
+            You can make topics required in <a href="{{ base_url }}/admin/settings">Settings</a>.
+        </p>
+    </div>
+{% endblock %}

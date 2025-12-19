@@ -1,0 +1,242 @@
+{% extends theme ~ '/layouts/base.html.twig' %}
+
+{% block title %}Home - {{ site_name }}{% endblock %}
+
+{% block head %}
+{% include theme ~ '/components/post-styles.html.twig' %}
+<style>
+    .compose-form {
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .compose-body {
+        position: relative;
+    }
+
+    .compose-textarea {
+        width: 100%;
+        min-height: 80px;
+        padding: 0.5rem;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        font-size: 1rem;
+        font-family: inherit;
+        resize: vertical;
+    }
+
+    .compose-textarea:focus {
+        outline: none;
+        border-color: var(--color-primary);
+    }
+
+    .compose-counter {
+        position: absolute;
+        bottom: 0.5rem;
+        right: 0.5rem;
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+    }
+
+    .compose-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.75rem;
+    }
+
+    .compose-file {
+        display: none;
+    }
+
+    .compose-upload-label {
+        font-size: 0.875rem;
+        color: var(--color-primary);
+        cursor: pointer;
+    }
+
+    .compose-upload-label:hover {
+        text-decoration: underline;
+    }
+
+    .compose-preview {
+        margin-top: 0.75rem;
+        position: relative;
+        display: inline-block;
+    }
+
+    .compose-preview-img {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: var(--radius);
+    }
+
+    .compose-preview-remove {
+        position: absolute;
+        top: 0.25rem;
+        right: 0.25rem;
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.6);
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        line-height: 1;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--color-text-muted);
+    }
+
+    .empty-state-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--color-text);
+    }
+
+    .compose-topic {
+        margin-bottom: 0.75rem;
+    }
+
+    .compose-topic-select {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        font-size: 0.875rem;
+        background-color: white;
+    }
+
+    .compose-topic-select:focus {
+        outline: none;
+        border-color: var(--color-primary);
+    }
+
+    .feed-filters {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid var(--color-border);
+        padding-bottom: 0;
+    }
+
+    .feed-filter {
+        padding: 0.5rem 1rem;
+        background: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        color: var(--color-text-muted);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        margin-bottom: -2px;
+        transition: all 0.2s;
+    }
+
+    .feed-filter:hover {
+        color: var(--color-text);
+        border-bottom-color: var(--color-border);
+    }
+
+    .feed-filter--active {
+        color: var(--color-primary);
+        border-bottom-color: var(--color-primary);
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding: 1rem 0;
+    }
+
+    .pagination-link {
+        padding: 0.5rem 1rem;
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        color: var(--color-text);
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .pagination-link:hover {
+        background-color: var(--color-primary);
+        color: white;
+        border-color: var(--color-primary);
+    }
+
+    .pagination-link--disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    {% if current_user %}
+        {% if topics is not empty %}
+            <div class="feed-filters">
+                <a href="{{ base_url }}/?filter=all" class="feed-filter {{ filter == 'all' ? 'feed-filter--active' : '' }}">All</a>
+                <a href="{{ base_url }}/?filter=following" class="feed-filter {{ filter == 'following' ? 'feed-filter--active' : '' }}">Following</a>
+            </div>
+        {% endif %}
+
+        {% include theme ~ '/components/compose.html.twig' with {
+            'action': base_url ~ '/post',
+            'max_length': max_length,
+            'topics': topics,
+            'require_topic': require_topic,
+            'is_reply': false
+        } %}
+    {% endif %}
+
+    {% if posts is empty %}
+        <div class="empty-state">
+            {% if filter == 'following' %}
+                <p class="empty-state-title">No posts from followed topics</p>
+                <p>Follow topics to see posts here, or view <a href="{{ base_url }}/?filter=all">All</a> posts.</p>
+            {% else %}
+                <p class="empty-state-title">No posts yet</p>
+                <p>Be the first to share something.</p>
+            {% endif %}
+        </div>
+    {% else %}
+        {% for item in posts %}
+            {% include theme ~ '/components/post.html.twig' with {
+                'post': item.post,
+                'author': item.author,
+                'like_count': item.like_count,
+                'user_liked': item.user_liked,
+                'reply_count': item.reply_count,
+                'topic': item.topic,
+                'user_following': item.user_following,
+                'preview': item.preview
+            } %}
+        {% endfor %}
+
+        {% if page > 1 or has_more %}
+            <div class="pagination">
+                {% if page > 1 %}
+                    <a href="{{ base_url }}/?page={{ page - 1 }}{% if filter != 'all' %}&filter={{ filter }}{% endif %}" class="pagination-link">← Newer</a>
+                {% endif %}
+                {% if has_more %}
+                    <a href="{{ base_url }}/?page={{ page + 1 }}{% if filter != 'all' %}&filter={{ filter }}{% endif %}" class="pagination-link">Older →</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}

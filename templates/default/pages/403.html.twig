@@ -1,0 +1,13 @@
+{% extends theme ~ '/layouts/base.html.twig' %}
+
+{% block title %}Access Denied - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 400px; margin: 2rem auto; text-align: center;">
+    <h1 style="font-size: 3rem; margin-bottom: 0.5rem;">403</h1>
+    <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
+        {{ message | default('You do not have permission to access this page.') }}
+    </p>
+    <a href="{{ base_url }}/" class="btn btn-primary">Go home</a>
+</div>
+{% endblock %}

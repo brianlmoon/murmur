@@ -1,0 +1,171 @@
+{#
+    Post component - displays a single post or reply
+
+    Variables:
+    - post: Post entity
+    - author: User entity
+    - current_user: Current logged in user (from base)
+    - csrf_token: CSRF token (from base)
+    - is_reply: bool (optional, default false)
+    - show_reply_link: bool (optional, default true)
+    - like_count: int (optional, default 0)
+    - user_liked: bool (optional, default false)
+    - reply_count: int (optional, default 0)
+    - topic: Topic entity (optional, for top-level posts)
+    - user_following: bool (optional, default false, whether current user follows the topic)
+#}
+{% set is_reply = is_reply | default(false) %}
+{% set show_reply_link = show_reply_link | default(true) %}
+{% set like_count = like_count | default(0) %}
+{% set user_liked = user_liked | default(false) %}
+{% set reply_count = reply_count | default(0) %}
+{% set user_following = user_following | default(false) %}
+
+<article class="post {{ is_reply ? 'post--reply' : '' }}"{% if post.parent_id %} id="comment-{{ post.post_id }}"{% endif %}>
+    <div class="post-header">
+        <div class="post-header-info">
+            <a href="{{ base_url }}/user/{{ author.username }}" class="post-author">
+                {% if author.avatar_path %}
+                    <img src="{{ base_url }}/uploads/{{ author.avatar_path }}" alt="" class="post-avatar">
+                {% else %}
+                    <div class="post-avatar post-avatar--placeholder">{{ author.username | first | upper }}</div>
+                {% endif %}
+                <span class="post-username">{{ author.name | default(author.username) }}</span>
+            </a>
+            {% if not is_reply and topic is defined and topic %}
+                <div class="post-topic-wrapper">
+                    <span class="post-topic-label">{{ topic.name }}</span>
+                    {% if current_user %}
+                        <form action="{{ base_url }}/topic/{{ topic.topic_id }}/{{ user_following ? 'unfollow' : 'follow' }}" method="post" style="display: inline;">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                            <button type="submit" title="{{ user_following ? 'Unfollow topic' : 'Follow topic' }}" class="post-topic-follow">
+                                {{ user_following ? '✓' : '+' }}
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+        {% if post.parent_id %}
+            <a href="{{ base_url }}/post/{{ post.parent_id }}#comment-{{ post.post_id }}" 
+               class="post-time-link" 
+               aria-label="View comment from {{ post.created_at | date('M j, Y \\a\\t g:i a') }}">
+                <time class="post-time" datetime="{{ post.created_at }}" title="{{ post.created_at | date('M j, Y \\a\\t g:i a') }}">
+                    {{ post.created_at | relative_date }}
+                </time>
+            </a>
+        {% else %}
+            <a href="{{ base_url }}/post/{{ post.post_id }}" 
+               class="post-time-link" 
+               aria-label="View post from {{ post.created_at | date('M j, Y \\a\\t g:i a') }}">
+                <time class="post-time" datetime="{{ post.created_at }}" title="{{ post.created_at | date('M j, Y \\a\\t g:i a') }}">
+                    {{ post.created_at | relative_date }}
+                </time>
+            </a>
+        {% endif %}
+    </div>
+
+    <div class="post-body">
+        {{ post.body | linkify }}
+    </div>
+
+    {% if preview is defined and preview %}
+        <a href="{{ preview.url }}" target="_blank" rel="noopener noreferrer" class="link-preview-card">
+            {% if preview.image_url %}
+                <div class="link-preview-image">
+                    <img src="{{ preview.image_url }}" alt="" loading="lazy">
+                </div>
+            {% endif %}
+            <div class="link-preview-content">
+                {% if preview.site_name %}
+                    <div class="link-preview-site">{{ preview.site_name }}</div>
+                {% endif %}
+                {% if preview.title %}
+                    <div class="link-preview-title">{{ preview.title }}</div>
+                {% endif %}
+                {% if preview.description %}
+                    <div class="link-preview-description">{{ preview.description | length > 150 ? preview.description[:150] ~ '...' : preview.description }}</div>
+                {% endif %}
+            </div>
+        </a>
+    {% endif %}
+
+    {% if post.image_path %}
+        <div class="post-image">
+            <img src="{{ base_url }}/uploads/{{ post.image_path }}" alt="Post attachment" loading="lazy">
+        </div>
+    {% endif %}
+
+    <div class="post-actions">
+        {% if current_user %}
+            <form action="{{ base_url }}/post/{{ post.post_id }}/like" method="post" class="post-like-form" data-like-form>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="post-action post-action--like {{ user_liked ? 'post-action--liked' : '' }}" data-liked="{{ user_liked ? '1' : '0' }}">
+                    <span class="like-icon">{{ user_liked ? '♥' : '♡' }}</span>
+                    <span class="like-count">{{ like_count > 0 ? '(' ~ like_count ~ ')' : '' }}</span>
+                </button>
+            </form>
+        {% else %}
+            <span class="post-action post-action--like-disabled">
+                <span class="like-icon">♡</span>
+                <span class="like-count">{{ like_count > 0 ? '(' ~ like_count ~ ')' : '' }}</span>
+            </span>
+        {% endif %}
+
+        {% if not is_reply and show_reply_link %}
+            <a href="{{ base_url }}/post/{{ post.post_id }}#reply" class="post-action">Comment{{ reply_count > 0 ? ' (' ~ reply_count ~ ')' : '' }}</a>
+        {% endif %}
+
+        {% if current_user and (current_user.user_id == post.user_id or current_user.is_admin) %}
+            <form action="{{ base_url }}/post/{{ post.post_id }}/delete" method="post" class="post-delete-form"
+                  onsubmit="return confirm('Are you sure you want to delete this post?');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="post-action post-action--delete">Delete</button>
+            </form>
+        {% endif %}
+    </div>
+</article>
+
+<script>
+(function() {
+    const article = document.currentScript.previousElementSibling;
+    const form = article.querySelector('[data-like-form]');
+    if (!form) return;
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const button = form.querySelector('button');
+        const icon = button.querySelector('.like-icon');
+        const countEl = button.querySelector('.like-count');
+        const csrfToken = form.querySelector('input[name="csrf_token"]').value;
+
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: 'csrf_token=' + encodeURIComponent(csrfToken)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (data.liked) {
+                    button.classList.add('post-action--liked');
+                    button.dataset.liked = '1';
+                    icon.textContent = '♥';
+                } else {
+                    button.classList.remove('post-action--liked');
+                    button.dataset.liked = '0';
+                    icon.textContent = '♡';
+                }
+                countEl.textContent = data.like_count > 0 ? '(' + data.like_count + ')' : '';
+            }
+        })
+        .catch(() => {
+            form.submit();
+        });
+    });
+})();
+</script>

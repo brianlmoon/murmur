@@ -1,0 +1,154 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% set active_page = 'users' %}
+
+{% block title %}Users{% endblock %}
+
+{% block head %}
+<style>
+    .search-form {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .search-input {
+        flex: 1;
+        max-width: 400px;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        font-size: 0.875rem;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--color-primary);
+    }
+
+    .search-btn {
+        padding: 0.5rem 1rem;
+        background: var(--color-primary);
+        color: white;
+        border: none;
+        border-radius: var(--radius);
+        cursor: pointer;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .search-btn:hover {
+        opacity: 0.9;
+    }
+
+    .search-info {
+        padding: 0.75rem;
+        background: #eff6ff;
+        border-radius: var(--radius);
+        margin-bottom: 1rem;
+        font-size: 0.875rem;
+    }
+
+    .clear-search {
+        margin-left: 0.5rem;
+        color: var(--color-primary);
+        text-decoration: none;
+    }
+
+    .clear-search:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="admin-header">
+        <h1 class="admin-title">Users</h1>
+    </div>
+
+    <form method="get" action="{{ base_url }}/admin/users" class="search-form">
+        <input type="text" name="q" value="{{ search_query }}" 
+               placeholder="Search by username or email..." 
+               class="search-input" minlength="2">
+        <button type="submit" class="search-btn">Search</button>
+    </form>
+
+    {% if search_query %}
+    <div class="search-info">
+        Showing results for: <strong>{{ search_query }}</strong>
+        <a href="{{ base_url }}/admin/users" class="clear-search">Clear search</a>
+    </div>
+    {% endif %}
+
+    <div class="card">
+        {% if users is empty %}
+            <p style="color: var(--color-text-muted);">
+                {% if search_query %}
+                    No users found matching "{{ search_query }}".
+                {% else %}
+                    No users found.
+                {% endif %}
+            </p>
+        {% else %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Joined</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>
+                                <a href="{{ base_url }}/user/{{ user.username }}">{{ user.username }}</a>
+                            </td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.created_at | date('M j, Y') }}</td>
+                            <td>
+                                {% if user.is_disabled %}
+                                    <span class="badge badge-error">Disabled</span>
+                                {% elseif user.is_pending %}
+                                    <span class="badge badge-warning">Pending</span>
+                                {% elseif user.is_admin %}
+                                    <span class="badge badge-info">Admin</span>
+                                {% else %}
+                                    <span class="badge badge-success">Active</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.user_id != current_user.user_id %}
+                                    {% if user.is_disabled %}
+                                        <form action="{{ base_url }}/admin/users/{{ user.user_id }}/enable" method="post" class="action-form">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                            <button type="submit" class="btn btn-primary btn-sm">Enable</button>
+                                        </form>
+                                    {% else %}
+                                        <form action="{{ base_url }}/admin/users/{{ user.user_id }}/disable" method="post" class="action-form"
+                                              onsubmit="return confirm('Are you sure you want to disable this user?');">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                            <button type="submit" class="btn btn-danger btn-sm">Disable</button>
+                                        </form>
+                                    {% endif %}
+
+                                    <form action="{{ base_url }}/admin/users/{{ user.user_id }}/admin" method="post" class="action-form"
+                                          style="margin-left: 0.25rem;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                        <button type="submit" class="btn btn-sm" style="background: var(--color-bg);">
+                                            {% if user.is_admin %}Remove Admin{% else %}Make Admin{% endif %}
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <span style="color: var(--color-text-muted); font-size: 0.875rem;">You</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+{% endblock %}

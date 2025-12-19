@@ -1,0 +1,13 @@
+{% extends theme ~ '/layouts/base.html.twig' %}
+
+{% block title %}Not Found - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 400px; margin: 2rem auto; text-align: center;">
+    <h1 style="font-size: 3rem; margin-bottom: 0.5rem;">404</h1>
+    <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
+        {{ message | default('The page you are looking for could not be found.') }}
+    </p>
+    <a href="{{ base_url }}/" class="btn btn-primary">Go home</a>
+</div>
+{% endblock %}

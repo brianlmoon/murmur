@@ -1,0 +1,26 @@
+; Murmur Configuration
+; Copy this file to config.ini and update with your settings
+
+; Database configuration
+; Supported types: mysql, pgsql, pdo (for SQLite)
+
+; MySQL / MariaDB example:
+db.murmur.type = mysql
+db.murmur.server = localhost
+db.murmur.port = 3306
+db.murmur.db = murmur
+db.murmur.user = murmur
+db.murmur.pass = your_password_here
+db.murmur.charset = utf8mb4
+
+; For SQLite, use:
+; db.murmur.type = pdo
+; db.murmur.dsn = "sqlite:/path/to/murmur/data/murmur.db"
+
+; For PostgreSQL, use:
+; db.murmur.type = pgsql
+; db.murmur.server = localhost
+; db.murmur.port = 5432
+; db.murmur.db = murmur
+; db.murmur.user = murmur
+; db.murmur.pass = your_password_here

@@ -1,0 +1,201 @@
+{% extends theme ~ '/layouts/base.html.twig' %}
+
+{% block title %}Post by {{ author.username }} - {{ site_name }}{% endblock %}
+
+{% block head %}
+{% include theme ~ '/components/post-styles.html.twig' %}
+<style>
+    .compose-form {
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .compose-body {
+        position: relative;
+    }
+
+    .compose-textarea {
+        width: 100%;
+        min-height: 80px;
+        padding: 0.5rem;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        font-size: 1rem;
+        font-family: inherit;
+        resize: vertical;
+    }
+
+    .compose-textarea:focus {
+        outline: none;
+        border-color: var(--color-primary);
+    }
+
+    .compose-counter {
+        position: absolute;
+        bottom: 0.5rem;
+        right: 0.5rem;
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+    }
+
+    .compose-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.75rem;
+    }
+
+    .compose-file {
+        display: none;
+    }
+
+    .compose-upload-label {
+        font-size: 0.875rem;
+        color: var(--color-primary);
+        cursor: pointer;
+    }
+
+    .compose-upload-label:hover {
+        text-decoration: underline;
+    }
+
+    .compose-preview {
+        margin-top: 0.75rem;
+        position: relative;
+        display: inline-block;
+    }
+
+    .compose-preview-img {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: var(--radius);
+    }
+
+    .compose-preview-remove {
+        position: absolute;
+        top: 0.25rem;
+        right: 0.25rem;
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.6);
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        line-height: 1;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-bottom: 1rem;
+        font-size: 0.875rem;
+    }
+
+    .replies-section {
+        margin-top: 1.5rem;
+    }
+
+    .replies-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .replies-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0;
+        color: var(--color-text-muted);
+    }
+
+    .replies-sort {
+        font-size: 0.875rem;
+        color: var(--color-text-muted);
+    }
+
+    .replies-sort a {
+        color: var(--color-primary);
+    }
+
+    .replies-sort .sort-active {
+        font-weight: 600;
+        color: var(--color-text);
+    }
+
+    .no-replies {
+        color: var(--color-text-muted);
+        font-size: 0.875rem;
+        padding: 1rem;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <a href="{{ base_url }}/" class="back-link">&larr; Back to feed</a>
+
+    {% include theme ~ '/components/post.html.twig' with {
+        'post': post,
+        'author': author,
+        'like_count': like_count,
+        'user_liked': user_liked,
+        'topic': topic,
+        'user_following': user_following,
+        'preview': preview,
+        'show_reply_link': false
+    } %}
+
+    {% if current_user %}
+        {% include theme ~ '/components/compose.html.twig' with {
+            'action': base_url ~ '/post/' ~ post.post_id ~ '/reply',
+            'max_length': max_length,
+            'placeholder': 'Write a comment...',
+            'button_text': 'Comment',
+            'form_id': 'reply',
+            'is_reply': true
+        } %}
+    {% endif %}
+
+    <div class="replies-section" id="replies">
+        <div class="replies-header">
+            <h2 class="replies-title">Comments</h2>
+            {% if replies is not empty %}
+                <div class="replies-sort">
+                    Sort:
+                    {% if sort == 'oldest' %}
+                        <span class="sort-active">Oldest</span>
+                    {% else %}
+                        <a href="?sort=oldest#replies">Oldest</a>
+                    {% endif %}
+                    |
+                    {% if sort == 'newest' %}
+                        <span class="sort-active">Newest</span>
+                    {% else %}
+                        <a href="?sort=newest#replies">Newest</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        {% if replies is empty %}
+            <p class="no-replies">No comments yet. Be the first to respond.</p>
+        {% else %}
+            {% for item in replies %}
+                {% include theme ~ '/components/post.html.twig' with {
+                    'post': item.post,
+                    'author': item.author,
+                    'like_count': item.like_count,
+                    'user_liked': item.user_liked,
+                    'is_reply': true,
+                    'show_reply_link': false,
+                    'preview': item.preview
+                } %}
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}

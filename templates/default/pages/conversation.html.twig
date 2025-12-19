@@ -1,0 +1,282 @@
+{% extends theme ~ '/layouts/base.html.twig' %}
+
+{% block title %}Conversation with {{ other_user.name ?: other_user.username }} - {{ site_name }}{% endblock %}
+
+{% block head %}
+<style>
+    .conversation-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        margin-bottom: 1rem;
+    }
+
+    .conversation-back {
+        color: var(--color-text-muted);
+        font-size: 1.25rem;
+    }
+
+    .conversation-back:hover {
+        color: var(--color-primary);
+        text-decoration: none;
+    }
+
+    .conversation-user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .conversation-user-avatar--placeholder {
+        background-color: var(--color-primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .conversation-user-info {
+        flex: 1;
+    }
+
+    .conversation-user-name {
+        font-weight: 600;
+    }
+
+    .conversation-user-username {
+        font-size: 0.875rem;
+        color: var(--color-text-muted);
+    }
+
+    .conversation-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .messages-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .message {
+        max-width: 80%;
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius);
+        position: relative;
+    }
+
+    .message--sent {
+        background-color: var(--color-primary);
+        color: white;
+        align-self: flex-end;
+        border-bottom-right-radius: 4px;
+    }
+
+    .message--received {
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        align-self: flex-start;
+        border-bottom-left-radius: 4px;
+    }
+
+    .message-body {
+        word-wrap: break-word;
+        line-height: 1.5;
+    }
+
+    .message-time {
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+        opacity: 0.7;
+    }
+
+    .message--sent .message-time {
+        text-align: right;
+    }
+
+    .message-delete {
+        position: absolute;
+        top: 0.25rem;
+        right: 0.25rem;
+        background: none;
+        border: none;
+        color: inherit;
+        opacity: 0;
+        cursor: pointer;
+        font-size: 0.75rem;
+        transition: opacity 0.15s;
+    }
+
+    .message:hover .message-delete {
+        opacity: 0.5;
+    }
+
+    .message-delete:hover {
+        opacity: 1 !important;
+    }
+
+    .compose-form {
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        padding: 1rem;
+    }
+
+    .compose-textarea {
+        width: 100%;
+        min-height: 80px;
+        padding: 0.75rem;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        font-size: 1rem;
+        font-family: inherit;
+        resize: vertical;
+        margin-bottom: 0.75rem;
+    }
+
+    .compose-textarea:focus {
+        outline: none;
+        border-color: var(--color-primary);
+    }
+
+    .compose-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .compose-limit {
+        font-size: 0.875rem;
+        color: var(--color-text-muted);
+    }
+
+    .cannot-reply {
+        padding: 1rem;
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        color: var(--color-text-muted);
+        text-align: center;
+    }
+
+    .load-more {
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .empty-messages {
+        text-align: center;
+        padding: 2rem 1rem;
+        color: var(--color-text-muted);
+    }
+
+    .btn-danger {
+        background-color: transparent;
+        color: var(--color-error);
+        border: 1px solid var(--color-error);
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .btn-danger:hover {
+        background-color: var(--color-error);
+        color: white;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="conversation-header">
+        <a href="{{ base_url }}/messages" class="conversation-back" aria-label="Back to messages">←</a>
+
+        {% if other_user.avatar_path %}
+            <img src="{{ base_url }}/uploads/{{ other_user.avatar_path }}" 
+                 alt="" 
+                 class="conversation-user-avatar">
+        {% else %}
+            <div class="conversation-user-avatar conversation-user-avatar--placeholder">
+                {{ other_user.username | first | upper }}
+            </div>
+        {% endif %}
+
+        <div class="conversation-user-info">
+            <a href="{{ base_url }}/user/{{ other_user.username }}" class="conversation-user-name">
+                {{ other_user.name ?: other_user.username }}
+            </a>
+            {% if other_user.name %}
+                <div class="conversation-user-username">@{{ other_user.username }}</div>
+            {% endif %}
+        </div>
+
+        <div class="conversation-actions">
+            <form action="{{ base_url }}/messages/{{ conversation.conversation_id }}/delete" 
+                  method="post" 
+                  onsubmit="return confirm('Delete this conversation? This cannot be undone.');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+    </div>
+
+    {% if has_more %}
+        <div class="load-more">
+            <a href="{{ base_url }}/messages/{{ conversation.conversation_id }}?page={{ page + 1 }}">Load older messages</a>
+        </div>
+    {% endif %}
+
+    {% if messages is empty %}
+        <div class="empty-messages">
+            <p>No messages yet. Start the conversation!</p>
+        </div>
+    {% else %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="message {{ message.sender_id == current_user.user_id ? 'message--sent' : 'message--received' }}">
+                    <div class="message-body">{{ message.body | nl2br }}</div>
+                    <div class="message-time">{{ message.created_at | relative_date }}</div>
+
+                    <form action="{{ base_url }}/messages/{{ conversation.conversation_id }}/delete/{{ message.message_id }}" 
+                          method="post" 
+                          class="message-delete-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <button type="submit" 
+                                class="message-delete" 
+                                title="Delete message"
+                                onclick="return confirm('Delete this message?');">×</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if can_reply %}
+        <form action="{{ base_url }}/messages/{{ conversation.conversation_id }}/send" 
+              method="post" 
+              class="compose-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <textarea name="body" 
+                      class="compose-textarea" 
+                      placeholder="Write a message..." 
+                      maxlength="{{ max_body_length }}"
+                      required></textarea>
+            <div class="compose-footer">
+                <span class="compose-limit">{{ max_body_length }} character limit</span>
+                <button type="submit" class="btn btn-primary">Send</button>
+            </div>
+        </form>
+    {% else %}
+        <div class="cannot-reply">
+            {{ cannot_reply_reason ?: 'You cannot reply to this conversation.' }}
+        </div>
+    {% endif %}
+{% endblock %}

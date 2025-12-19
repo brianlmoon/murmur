@@ -1,0 +1,142 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% set active_page = 'settings' %}
+
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+    <div class="admin-header">
+        <h1 class="admin-title">Instance Settings</h1>
+    </div>
+
+    {% if error is defined and error %}
+        <div class="flash flash-error">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <div class="card">
+        <form action="{{ base_url }}/admin/settings" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+            <div class="form-group">
+                <label for="site_name" class="form-label">Site Name</label>
+                <input type="text" id="site_name" name="site_name" class="form-input"
+                       value="{{ site_name }}"
+                       maxlength="50"
+                       required>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.25rem;">
+                    Displayed in the header and page titles.
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="logo_url" class="form-label">Logo URL (optional)</label>
+                <input type="url" id="logo_url" name="logo_url" class="form-input"
+                       value="{{ logo_url }}"
+                       placeholder="https://example.com/logo.png">
+                <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.25rem;">
+                    If set, this image will be displayed in the header instead of the site name.
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-checkbox">
+                    <input type="checkbox" name="registration_open" value="1"
+                           {% if registration_open %}checked{% endif %}>
+                    <span>Registration open</span>
+                </label>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.25rem;">
+                    When disabled, new users cannot create accounts.
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-checkbox">
+                    <input type="checkbox" name="images_allowed" value="1"
+                           {% if images_allowed %}checked{% endif %}>
+                    <span>Allow image uploads</span>
+                </label>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.25rem;">
+                    When disabled, users cannot attach images to posts.
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-checkbox">
+                    <input type="checkbox" name="require_approval" value="1"
+                           {% if require_approval %}checked{% endif %}>
+                    <span>Require admin approval for new accounts</span>
+                </label>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.25rem;">
+                    When enabled, new user registrations must be approved by an admin before they can log in.
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-checkbox">
+                    <input type="checkbox" name="public_feed" value="1"
+                           {% if public_feed %}checked{% endif %}>
+                    <span>Allow public viewing</span>
+                </label>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.25rem;">
+                    When enabled, non-logged-in users can view posts. When disabled, visitors must log in to see content.
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-checkbox">
+                    <input type="checkbox" name="require_topic" value="1"
+                           {% if require_topic %}checked{% endif %}
+                           {% if topics is empty %}disabled{% endif %}>
+                    <span>Require topic selection{% if topics is empty %} (no topics exist){% endif %}</span>
+                </label>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.25rem;">
+                    When enabled, users must select a topic when creating a post.
+                    {% if topics is empty %}
+                    <a href="{{ base_url }}/admin/topics">Create topics first</a>.
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-checkbox">
+                    <input type="checkbox" name="messaging_enabled" value="1"
+                           {% if messaging_enabled %}checked{% endif %}>
+                    <span>Enable private messaging</span>
+                </label>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.25rem;">
+                    When enabled, users can send private messages to mutual follows.
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="max_post_length" class="form-label">Maximum Post Length</label>
+                <input type="number" id="max_post_length" name="max_post_length" class="form-input"
+                       value="{{ max_post_length }}"
+                       min="100"
+                       max="50000"
+                       required>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.25rem;">
+                    Maximum number of characters allowed per post (100 - 50,000).
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="theme" class="form-label">Theme</label>
+                <select id="theme" name="theme" class="form-input">
+                    {% for available_theme in available_themes %}
+                        <option value="{{ available_theme }}" {% if theme == available_theme %}selected{% endif %}>
+                            {{ available_theme|capitalize }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.25rem;">
+                    The visual theme for the user-facing pages.
+                </p>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Settings</button>
+        </form>
+    </div>
+{% endblock %}
