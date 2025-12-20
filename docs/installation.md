@@ -9,24 +9,25 @@ This guide covers installing Murmur on your own server.
 - **Composer** for dependency management
 - **Web server**: Apache, Nginx, or PHP's built-in server for development
 
-## Step 1: Download
+## Step 1: Install Murmur
 
-Clone the repository or download a release:
+Use Composer to create a new Murmur project:
 
 ```bash
-git clone https://github.com/brianlmoon/murmur.git
+composer create-project moonspot/murmur murmur
 cd murmur
 ```
 
-## Step 2: Install Dependencies
+This downloads Murmur and installs all dependencies in one step.
 
-```bash
-composer install --no-dev --optimize-autoloader
-```
+> **Contributing?** If you plan to contribute to Murmur, clone the repository instead:
+> ```bash
+> git clone https://github.com/brianlmoon/murmur.git
+> cd murmur
+> composer install
+> ```
 
-For development, omit `--no-dev` to include PHPUnit.
-
-## Step 3: Configure Database
+## Step 2: Configure Database
 
 Copy the example configuration:
 
@@ -102,7 +103,7 @@ Import the schema:
 psql -U murmur -d murmur -f schema/postgresql/schema.sql
 ```
 
-## Step 4: Set Permissions
+## Step 3: Set Permissions
 
 The web server needs write access to:
 
@@ -113,7 +114,7 @@ chmod 755 public/uploads/
 
 For production, ensure these directories are owned by your web server user (e.g., `www-data`).
 
-## Step 5: Web Server Configuration
+## Step 4: Web Server Configuration
 
 ### Development Server
 
@@ -178,7 +179,7 @@ server {
 
 Murmur supports running in a subdirectory (e.g., `https://example.com/murmur/`). The base URL is auto-detected during setup and stored in settings. No additional configuration required.
 
-## Step 6: Complete Setup
+## Step 5: Complete Setup
 
 Visit your Murmur URL in a browser. The setup wizard will:
 
@@ -190,14 +191,13 @@ After setup, you'll be logged in as the administrator.
 
 ## Upgrading
 
-To upgrade Murmur:
+To upgrade Murmur, use Composer to update the dependencies:
 
 ```bash
-git pull origin main
-composer install --no-dev --optimize-autoloader
+composer update moonspot/murmur
 ```
 
-Check the release notes for any schema changes. If schema updates are required, the schema files will be updated and you'll need to apply the changes manually or recreate the database.
+Check the [release notes](https://github.com/brianlmoon/murmur/releases) for any schema changes. If schema updates are required, the schema files will be updated and you'll need to apply the changes manually or recreate the database.
 
 ## Troubleshooting
 

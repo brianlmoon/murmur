@@ -26,12 +26,9 @@ Modern social platforms optimize for engagement, not connection. Murmur takes a 
 ## Quick Start
 
 ```bash
-# Clone the repository
-git clone https://github.com/brianlmoon/murmur.git
+# Install Murmur
+composer create-project moonspot/murmur murmur
 cd murmur
-
-# Install dependencies
-composer install
 
 # Configure database
 cp etc/config.ini.example etc/config.ini
