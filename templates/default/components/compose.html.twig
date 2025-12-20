@@ -18,6 +18,7 @@
 {% set form_id = form_id | default('') %}
 {% set is_reply = is_reply | default(false) %}
 {% set require_topic = require_topic | default(false) %}
+{% set selected_topic_id = selected_topic_id | default(null) %}
 
 <form action="{{ action }}" method="post" enctype="multipart/form-data" class="compose-form"{% if form_id %} id="{{ form_id }}"{% endif %}>
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
@@ -31,7 +32,7 @@
             <option value="">Select a topic</option>
             {% endif %}
             {% for topic in topics %}
-            <option value="{{ topic.topic_id }}">{{ topic.name }}</option>
+            <option value="{{ topic.topic_id }}"{% if selected_topic_id == topic.topic_id %} selected{% endif %}>{{ topic.name }}</option>
             {% endfor %}
         </select>
     </div>

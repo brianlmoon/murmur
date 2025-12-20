@@ -574,12 +574,20 @@ class PostController extends BaseController {
                 $user_following = $this->topic_service->isFollowing($current_user_id, $topic_id);
             }
 
+            // Fetch data for compose form
+            $all_topics = $this->topic_service->getAllTopics();
+            $max_length = $this->setting_mapper->getMaxPostLength();
+            $require_topic = $this->setting_mapper->isTopicRequired();
+
             $result = $this->renderThemed('pages/topic.html.twig', [
                 'topic'          => $topic,
                 'posts'          => $posts,
                 'user_following' => $user_following,
                 'page'           => $page,
                 'has_more'       => $has_more,
+                'topics'         => $all_topics,
+                'max_length'     => $max_length,
+                'require_topic'  => $require_topic,
             ]);
         }
 

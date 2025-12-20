@@ -83,8 +83,15 @@ abstract class BaseController {
      * @return void
      */
     protected function redirect(string $url): void {
-        $base_url = $this->setting_mapper->getBaseUrl();
-        header('Location: ' . $base_url . $url);
+        $location = $url;
+
+        // Only prepend base URL for relative paths (not absolute URLs)
+        if (!str_starts_with($url, 'http://') && !str_starts_with($url, 'https://')) {
+            $base_url = $this->setting_mapper->getBaseUrl();
+            $location = $base_url . $url;
+        }
+
+        header('Location: ' . $location);
         exit;
     }
 

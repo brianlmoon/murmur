@@ -60,7 +60,7 @@ class TopicFollowMapper extends AbstractMapper {
         $follows = $this->find(['user_id' => $user_id, 'topic_id' => $topic_id], 1);
 
         if (!empty($follows)) {
-            $result = $follows[0];
+            $result = reset($follows);
         }
 
         return $result;

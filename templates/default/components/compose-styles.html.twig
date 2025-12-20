@@ -1,0 +1,109 @@
+{#
+    Compose form styles - shared CSS for the post compose form
+
+    Include this component in the head block of any page that uses the compose form.
+    Example: {% include theme ~ '/components/compose-styles.html.twig' %}
+#}
+<style>
+    .compose-form {
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .compose-body {
+        position: relative;
+    }
+
+    .compose-textarea {
+        width: 100%;
+        min-height: 80px;
+        padding: 0.5rem;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        font-size: 1rem;
+        font-family: inherit;
+        resize: vertical;
+    }
+
+    .compose-textarea:focus {
+        outline: none;
+        border-color: var(--color-primary);
+    }
+
+    .compose-counter {
+        position: absolute;
+        bottom: 0.5rem;
+        right: 0.5rem;
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+    }
+
+    .compose-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.75rem;
+    }
+
+    .compose-file {
+        display: none;
+    }
+
+    .compose-upload-label {
+        font-size: 0.875rem;
+        color: var(--color-primary);
+        cursor: pointer;
+    }
+
+    .compose-upload-label:hover {
+        text-decoration: underline;
+    }
+
+    .compose-preview {
+        margin-top: 0.75rem;
+        position: relative;
+        display: inline-block;
+    }
+
+    .compose-preview-img {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: var(--radius);
+    }
+
+    .compose-preview-remove {
+        position: absolute;
+        top: 0.25rem;
+        right: 0.25rem;
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.6);
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        line-height: 1;
+    }
+
+    .compose-topic {
+        margin-bottom: 0.75rem;
+    }
+
+    .compose-topic-select {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        font-size: 0.875rem;
+        background-color: white;
+    }
+
+    .compose-topic-select:focus {
+        outline: none;
+        border-color: var(--color-primary);
+    }
+</style>

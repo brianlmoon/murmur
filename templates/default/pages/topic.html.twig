@@ -4,6 +4,7 @@
 
 {% block head %}
 {% include theme ~ '/components/post-styles.html.twig' %}
+{% include theme ~ '/components/compose-styles.html.twig' %}
 <style>
     .topic-header {
         display: flex;
@@ -136,6 +137,17 @@
             {% endif %}
         {% endif %}
     </header>
+
+    {% if current_user %}
+        {% include theme ~ '/components/compose.html.twig' with {
+            'action': base_url ~ '/post',
+            'max_length': max_length,
+            'topics': topics,
+            'require_topic': require_topic,
+            'selected_topic_id': topic.topic_id,
+            'is_reply': false
+        } %}
+    {% endif %}
 
     {% if posts is empty %}
         <div class="empty-state" role="status">
