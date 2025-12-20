@@ -399,4 +399,38 @@ class MessageService {
 
         return $error;
     }
+
+    /**
+     * Gets messages in a conversation created after a given timestamp.
+     *
+     * Also marks fetched messages as read for the user.
+     *
+     * @param int    $conversation_id The conversation ID.
+     * @param int    $user_id         The viewing user's ID.
+     * @param string $since           Timestamp to fetch messages after (Y-m-d H:i:s format).
+     *
+     * @return array<Message>|null Array of messages, or null if user not authorized.
+     */
+    public function getMessagesSince(
+        int $conversation_id,
+        int $user_id,
+        string $since
+    ): ?array {
+        $result = null;
+
+        $conversation = $this->getConversation($conversation_id, $user_id);
+
+        if ($conversation !== null) {
+            // Mark messages as read
+            $this->message_mapper->markConversationRead($conversation_id, $user_id);
+
+            $result = $this->message_mapper->findSince(
+                $conversation_id,
+                $user_id,
+                $since
+            );
+        }
+
+        return $result;
+    }
 }

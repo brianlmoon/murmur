@@ -174,6 +174,102 @@ class MessageController extends BaseController {
     }
 
     /**
+     * Polls for new messages in a conversation.
+     *
+     * Returns JSON with new messages since the given timestamp.
+     *
+     * GET /messages/{conversation_id}/poll?since={timestamp}
+     *
+     * @param int $conversation_id The conversation ID.
+     *
+     * @return string JSON response.
+     */
+    public function pollConversation(int $conversation_id): string {
+        header('Content-Type: application/json');
+
+        $this->session->start();
+        $current_user = $this->session->getCurrentUser();
+
+        if ($current_user === null) {
+            http_response_code(401);
+            return json_encode([
+                'success' => false,
+                'error'   => 'Not authenticated',
+            ]);
+        }
+
+        if (!$this->setting_mapper->isMessagingEnabled()) {
+            http_response_code(403);
+            return json_encode([
+                'success' => false,
+                'error'   => 'Messaging is currently disabled',
+            ]);
+        }
+
+        $since = $this->getQuery('since', '');
+
+        if ($since === '') {
+            http_response_code(400);
+            return json_encode([
+                'success' => false,
+                'error'   => 'Missing since parameter',
+            ]);
+        }
+
+        $conversation = $this->message_service->getConversation(
+            $conversation_id,
+            $current_user->user_id
+        );
+
+        if ($conversation === null) {
+            http_response_code(404);
+            return json_encode([
+                'success' => false,
+                'error'   => 'Conversation not found',
+            ]);
+        }
+
+        $other_user = $this->message_service->getOtherParticipant(
+            $conversation,
+            $current_user->user_id
+        );
+
+        $messages = $this->message_service->getMessagesSince(
+            $conversation_id,
+            $current_user->user_id,
+            $since
+        );
+
+        $can_reply = $this->message_service->canMessage(
+            $current_user->user_id,
+            $other_user->user_id
+        );
+
+        // Format messages for JSON response
+        $formatted_messages = [];
+        $last_timestamp = $since;
+
+        foreach ($messages as $message) {
+            $formatted_messages[] = [
+                'message_id' => $message->message_id,
+                'sender_id'  => $message->sender_id,
+                'body'       => $message->body,
+                'created_at' => $message->created_at,
+                'is_mine'    => $message->sender_id === $current_user->user_id,
+            ];
+            $last_timestamp = $message->created_at;
+        }
+
+        return json_encode([
+            'success'              => true,
+            'messages'             => $formatted_messages,
+            'can_reply'            => $can_reply['can_message'],
+            'cannot_reply_reason'  => $can_reply['reason'] ?? null,
+            'last_timestamp'       => $last_timestamp,
+        ]);
+    }
+
+    /**
      * Starts a new conversation or opens existing one with a user.
      *
      * GET /messages/new/{username}

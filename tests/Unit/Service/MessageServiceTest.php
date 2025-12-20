@@ -376,4 +376,80 @@ class MessageServiceTest extends TestCase {
         $this->assertTrue($result['can_message']);
         $this->assertArrayNotHasKey('reason', $result);
     }
+
+    public function testGetMessagesSinceReturnsNewMessages(): void {
+        $conversation = $this->createConversation(1, 1, 2);
+
+        $message1 = new Message();
+        $message1->message_id = 1;
+        $message1->conversation_id = 1;
+        $message1->sender_id = 2;
+        $message1->body = 'New message';
+        $message1->created_at = '2025-12-20 05:40:00';
+
+        $this->conversation_mapper
+            ->method('load')
+            ->with(1)
+            ->willReturn($conversation);
+
+        $this->message_mapper
+            ->expects($this->once())
+            ->method('markConversationRead')
+            ->with(1, 1);
+
+        $this->message_mapper
+            ->method('findSince')
+            ->with(1, 1, '2025-12-20 05:30:00')
+            ->willReturn([$message1]);
+
+        $result = $this->message_service->getMessagesSince(1, 1, '2025-12-20 05:30:00');
+
+        $this->assertNotNull($result);
+        $this->assertCount(1, $result);
+        $this->assertEquals('New message', $result[0]->body);
+    }
+
+    public function testGetMessagesSinceReturnsNullForUnauthorizedUser(): void {
+        $conversation = $this->createConversation(1, 1, 2);
+
+        $this->conversation_mapper
+            ->method('load')
+            ->with(1)
+            ->willReturn($conversation);
+
+        // User 999 is not a participant
+        $result = $this->message_service->getMessagesSince(1, 999, '2025-12-20 05:30:00');
+
+        $this->assertNull($result);
+    }
+
+    public function testGetMessagesSinceReturnsEmptyArrayWhenNoNewMessages(): void {
+        $conversation = $this->createConversation(1, 1, 2);
+
+        $this->conversation_mapper
+            ->method('load')
+            ->with(1)
+            ->willReturn($conversation);
+
+        $this->message_mapper
+            ->method('findSince')
+            ->with(1, 1, '2025-12-20 05:30:00')
+            ->willReturn([]);
+
+        $result = $this->message_service->getMessagesSince(1, 1, '2025-12-20 05:30:00');
+
+        $this->assertNotNull($result);
+        $this->assertCount(0, $result);
+    }
+
+    public function testGetMessagesSinceReturnsNullForNonExistentConversation(): void {
+        $this->conversation_mapper
+            ->method('load')
+            ->with(999)
+            ->willReturn(null);
+
+        $result = $this->message_service->getMessagesSince(999, 1, '2025-12-20 05:30:00');
+
+        $this->assertNull($result);
+    }
 }

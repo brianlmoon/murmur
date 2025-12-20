@@ -144,6 +144,9 @@ if ($needs_setup) {
         }
     }
 
+    // Update Twig global so setup template can use the detected base URL
+    $twig->addGlobal('base_url', $detected_base);
+
     if ($request_uri !== '/setup') {
         header('Location: ' . $detected_base . '/setup');
         exit;
@@ -199,6 +202,7 @@ $router->add('regex', '/^\/user\/([a-zA-Z0-9_]+)\/unfollow$/', ['controller' => 
 $router->add('exact', '/messages', ['controller' => $message_controller, 'action' => 'inbox'], ['method' => 'GET']);
 $router->add('exact', '/messages/search', ['controller' => $message_controller, 'action' => 'searchUsers'], ['method' => 'GET']);
 $router->add('regex', '/^\/messages\/new\/([a-zA-Z0-9_]+)$/', ['controller' => $message_controller, 'action' => 'newConversation'], ['method' => 'GET', 'tokens' => ['username']]);
+$router->add('regex', '/^\/messages\/(\d+)\/poll$/', ['controller' => $message_controller, 'action' => 'pollConversation'], ['method' => 'GET', 'tokens' => ['conversation_id']]);
 $router->add('regex', '/^\/messages\/(\d+)$/', ['controller' => $message_controller, 'action' => 'showConversation'], ['method' => 'GET', 'tokens' => ['conversation_id']]);
 $router->add('regex', '/^\/messages\/(\d+)\/send$/', ['controller' => $message_controller, 'action' => 'sendMessage'], ['method' => 'POST', 'tokens' => ['conversation_id']]);
 $router->add('regex', '/^\/messages\/(\d+)\/delete$/', ['controller' => $message_controller, 'action' => 'deleteConversation'], ['method' => 'POST', 'tokens' => ['conversation_id']]);

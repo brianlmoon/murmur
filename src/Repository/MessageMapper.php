@@ -91,7 +91,7 @@ class MessageMapper extends AbstractMapper {
         ]);
 
         foreach ($rows as $row) {
-            $result[] = $this->buildObject($row);
+            $result[] = $this->setData($row);
         }
 
         return $result;
@@ -238,6 +238,48 @@ class MessageMapper extends AbstractMapper {
     }
 
     /**
+     * Retrieves messages in a conversation created after a given timestamp.
+     *
+     * Excludes messages that the user has deleted.
+     *
+     * @param int    $conversation_id The conversation ID.
+     * @param int    $user_id         The viewing user's ID.
+     * @param string $since           Timestamp to fetch messages after (Y-m-d H:i:s format).
+     *
+     * @return array<Message> Array of Message entities, oldest first.
+     */
+    public function findSince(
+        int $conversation_id,
+        int $user_id,
+        string $since
+    ): array {
+        $result = [];
+
+        $sql = "SELECT *
+                FROM {$this->table}
+                WHERE conversation_id = :conversation_id
+                  AND created_at > :since
+                  AND NOT (
+                      (sender_id = :user_id AND deleted_by_sender = 1)
+                      OR
+                      (sender_id != :user_id AND deleted_by_recipient = 1)
+                  )
+                ORDER BY created_at ASC";
+
+        $rows = $this->crud->runFetch($sql, [
+            ':conversation_id' => $conversation_id,
+            ':user_id'         => $user_id,
+            ':since'           => $since,
+        ]);
+
+        foreach ($rows as $row) {
+            $result[] = $this->setData($row);
+        }
+
+        return $result;
+    }
+
+    /**
      * Gets the most recent message in a conversation for a user.
      *
      * @param int $conversation_id The conversation ID.
@@ -265,7 +307,7 @@ class MessageMapper extends AbstractMapper {
         ]);
 
         if (!empty($rows)) {
-            $result = $this->buildObject($rows[0]);
+            $result = $this->setData($rows[0]);
         }
 
         return $result;

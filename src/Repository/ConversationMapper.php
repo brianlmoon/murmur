@@ -102,7 +102,7 @@ class ConversationMapper extends AbstractMapper {
         ]);
 
         foreach ($rows as $row) {
-            $result[] = $this->buildObject($row);
+            $result[] = $this->setData($row);
         }
 
         return $result;
@@ -168,6 +168,7 @@ class ConversationMapper extends AbstractMapper {
         $conversation = new Conversation();
         $conversation->user_a_id = $user_a_id;
         $conversation->user_b_id = $user_b_id;
+        $conversation->last_message_at = date('Y-m-d H:i:s');
 
         $this->save($conversation);
 

@@ -262,7 +262,8 @@
     {% if can_reply %}
         <form action="{{ base_url }}/messages/{{ conversation.conversation_id }}/send" 
               method="post" 
-              class="compose-form">
+              class="compose-form"
+              id="compose-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <textarea name="body" 
                       class="compose-textarea" 
@@ -275,8 +276,154 @@
             </div>
         </form>
     {% else %}
-        <div class="cannot-reply">
+        <div class="cannot-reply" id="cannot-reply">
             {{ cannot_reply_reason ?: 'You cannot reply to this conversation.' }}
         </div>
     {% endif %}
+
+    <script>
+    (function() {
+        var conversationId = {{ conversation.conversation_id }};
+        var baseUrl = '{{ base_url }}';
+        var pollInterval = 10000;
+        var lastTimestamp = '{{ messages|last.created_at|default(conversation.created_at) }}';
+        var pollTimer = null;
+        var currentUserId = {{ current_user.user_id }};
+
+        var messagesContainer = document.querySelector('.messages-container');
+        var composeForm = document.getElementById('compose-form');
+        var cannotReply = document.getElementById('cannot-reply');
+        var emptyMessages = document.querySelector('.empty-messages');
+
+        function escapeHtml(text) {
+            var div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function nl2br(text) {
+            return escapeHtml(text).replace(/\n/g, '<br>');
+        }
+
+        function formatRelativeDate(dateString) {
+            var date = new Date(dateString.replace(' ', 'T'));
+            var now = new Date();
+            var diffMs = now - date;
+            var diffSecs = Math.floor(diffMs / 1000);
+            var diffMins = Math.floor(diffSecs / 60);
+            var diffHours = Math.floor(diffMins / 60);
+            var diffDays = Math.floor(diffHours / 24);
+
+            if (diffSecs < 60) {
+                return 'just now';
+            } else if (diffMins < 60) {
+                return diffMins + ' minute' + (diffMins !== 1 ? 's' : '') + ' ago';
+            } else if (diffHours < 24) {
+                return diffHours + ' hour' + (diffHours !== 1 ? 's' : '') + ' ago';
+            } else if (diffDays < 7) {
+                return diffDays + ' day' + (diffDays !== 1 ? 's' : '') + ' ago';
+            } else {
+                return date.toLocaleDateString();
+            }
+        }
+
+        function createMessageHtml(message) {
+            var isMine = message.is_mine;
+            var messageClass = isMine ? 'message--sent' : 'message--received';
+
+            return '<div class="message ' + messageClass + '" data-message-id="' + message.message_id + '">' +
+                '<div class="message-body">' + nl2br(message.body) + '</div>' +
+                '<div class="message-time">' + formatRelativeDate(message.created_at) + '</div>' +
+                '</div>';
+        }
+
+        function appendMessages(messages) {
+            if (!messagesContainer) {
+                if (emptyMessages) {
+                    emptyMessages.remove();
+                }
+                var container = document.createElement('div');
+                container.className = 'messages-container';
+                var composeOrCannot = composeForm || cannotReply;
+                if (composeOrCannot) {
+                    composeOrCannot.parentNode.insertBefore(container, composeOrCannot);
+                }
+                messagesContainer = container;
+            }
+
+            messages.forEach(function(message) {
+                var existingMessage = messagesContainer.querySelector('[data-message-id="' + message.message_id + '"]');
+                if (!existingMessage) {
+                    messagesContainer.insertAdjacentHTML('beforeend', createMessageHtml(message));
+                }
+            });
+
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        function updateReplyForm(canReply, reason) {
+            if (canReply && !composeForm && cannotReply) {
+                location.reload();
+            } else if (!canReply && composeForm) {
+                composeForm.style.display = 'none';
+                if (!cannotReply) {
+                    var div = document.createElement('div');
+                    div.className = 'cannot-reply';
+                    div.id = 'cannot-reply';
+                    div.textContent = reason || 'You cannot reply to this conversation.';
+                    composeForm.parentNode.insertBefore(div, composeForm.nextSibling);
+                    cannotReply = div;
+                }
+                cannotReply.style.display = 'block';
+            }
+        }
+
+        function poll() {
+            var url = baseUrl + '/messages/' + conversationId + '/poll?since=' + encodeURIComponent(lastTimestamp);
+
+            fetch(url, {
+                credentials: 'same-origin'
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success) {
+                    if (data.messages && data.messages.length > 0) {
+                        appendMessages(data.messages);
+                        lastTimestamp = data.last_timestamp;
+                    }
+                    updateReplyForm(data.can_reply, data.cannot_reply_reason);
+                }
+            })
+            .catch(function(err) {
+                console.error('Poll error:', err);
+            });
+        }
+
+        function startPolling() {
+            if (!pollTimer) {
+                pollTimer = setInterval(poll, pollInterval);
+            }
+        }
+
+        function stopPolling() {
+            if (pollTimer) {
+                clearInterval(pollTimer);
+                pollTimer = null;
+            }
+        }
+
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                stopPolling();
+            } else {
+                poll();
+                startPolling();
+            }
+        });
+
+        startPolling();
+    })();
+    </script>
 {% endblock %}
