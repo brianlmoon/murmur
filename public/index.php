@@ -39,6 +39,7 @@ use Murmur\Service\SessionService;
 use Murmur\Service\TopicService;
 use Murmur\Service\UserBlockService;
 use Murmur\Service\UserFollowService;
+use Murmur\Storage\StorageFactory;
 use Murmur\Twig\LinkifyExtension;
 use Murmur\Twig\RelativeDateExtension;
 use PageMill\Router\Router;
@@ -81,13 +82,30 @@ $twig->addGlobal('theme', $setting_mapper->getTheme());
 $twig->addGlobal('logo_url', $setting_mapper->getLogoUrl());
 $twig->addGlobal('has_topics', count($topic_mapper->findAll()) > 0);
 
+// Initialize Storage
+// Load storage configuration from config.ini (falls back to local if not configured)
+$config = \DealNews\GetConfig\GetConfig::init();
+$storage_adapter = $config->get('storage.uploads.adapter') ?? 'local';
+
+$storage_config = [
+    'adapter'     => $storage_adapter,
+    'local_path'  => $config->get('storage.uploads.local_path') ?? __DIR__ . '/uploads',
+    'base_url'    => $config->get('storage.uploads.base_url') ?? ($base_url . '/uploads'),
+    's3_key'      => $config->get('storage.uploads.s3_key') ?? '',
+    's3_secret'   => $config->get('storage.uploads.s3_secret') ?? '',
+    's3_region'   => $config->get('storage.uploads.s3_region') ?? '',
+    's3_bucket'   => $config->get('storage.uploads.s3_bucket') ?? '',
+    's3_endpoint' => $config->get('storage.uploads.s3_endpoint') ?? '',
+];
+$storage = StorageFactory::create($storage_config);
+
 // Initialize Services
 $session_service = new SessionService($user_mapper);
 $auth_service = new AuthService($user_mapper, $setting_mapper);
 $post_service = new PostService($post_mapper, $user_mapper, $like_mapper, $topic_mapper, $setting_mapper);
 $profile_service = new ProfileService($user_mapper);
 $admin_service = new AdminService($user_mapper, $post_mapper, $setting_mapper);
-$image_service = new ImageService(__DIR__ . '/uploads');
+$image_service = new ImageService($storage);
 $like_service = new LikeService($like_mapper);
 $topic_service = new TopicService($topic_mapper, $topic_follow_mapper);
 $link_preview_service = new LinkPreviewService($link_preview_mapper);
@@ -108,7 +126,7 @@ $post_controller = new PostController($twig, $session_service, $setting_mapper, 
 $profile_controller = new ProfileController($twig, $session_service, $setting_mapper, $profile_service, $post_service, $image_service, $user_follow_service, $message_service);
 $admin_controller = new AdminController($twig, $session_service, $setting_mapper, $admin_service, $topic_service);
 $setup_controller = new SetupController($twig, $session_service, $setting_mapper, $auth_service);
-$message_controller = new MessageController($twig, $session_service, $setting_mapper, $message_service, $user_block_service, $user_mapper);
+$message_controller = new MessageController($twig, $session_service, $setting_mapper, $message_service, $user_block_service, $user_mapper, $image_service);
 
 // ---------------------------------------------------------------------------
 // First-Run Setup Check

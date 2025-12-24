@@ -143,8 +143,8 @@
             {% for item in inbox %}
                 <a href="{{ base_url }}/messages/{{ item.conversation.conversation_id }}" 
                    class="conversation-item {{ item.unread_count > 0 ? 'conversation-item--unread' : '' }}">
-                    {% if item.other_user.avatar_path %}
-                        <img src="{{ base_url }}/uploads/{{ item.other_user.avatar_path }}" 
+                    {% if item.avatar_url %}
+                        <img src="{{ item.avatar_url }}" 
                              alt="" 
                              class="conversation-avatar">
                     {% else %}
