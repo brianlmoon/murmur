@@ -139,8 +139,8 @@
         <div class="user-list">
             {% for user in users %}
                 <a href="{{ base_url }}/messages/new/{{ user.username }}" class="user-item">
-                    {% if user.avatar_path %}
-                        <img src="{{ base_url }}/uploads/{{ user.avatar_path }}" 
+                    {% if avatar_urls[user.user_id] %}
+                        <img src="{{ avatar_urls[user.user_id] }}" 
                              alt="" 
                              class="user-avatar">
                     {% else %}

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Murmur\Tests\Unit\Service;
 
 use Murmur\Service\ImageService;
+use Murmur\Storage\StorageInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -14,38 +15,11 @@ class ImageServiceTest extends TestCase {
 
     protected ImageService $image_service;
 
-    protected string $test_upload_dir;
+    protected StorageInterface $storage;
 
     protected function setUp(): void {
-        $this->test_upload_dir = sys_get_temp_dir() . '/murmur_test_uploads';
-        $this->image_service = new ImageService($this->test_upload_dir);
-
-        // Create test directory
-        if (!is_dir($this->test_upload_dir)) {
-            mkdir($this->test_upload_dir, 0755, true);
-        }
-    }
-
-    protected function tearDown(): void {
-        // Clean up test files
-        $this->recursiveDelete($this->test_upload_dir);
-    }
-
-    protected function recursiveDelete(string $dir): void {
-        if (is_dir($dir)) {
-            $files = scandir($dir);
-            foreach ($files as $file) {
-                if ($file !== '.' && $file !== '..') {
-                    $path = $dir . '/' . $file;
-                    if (is_dir($path)) {
-                        $this->recursiveDelete($path);
-                    } else {
-                        unlink($path);
-                    }
-                }
-            }
-            rmdir($dir);
-        }
+        $this->storage = $this->createMock(StorageInterface::class);
+        $this->image_service = new ImageService($this->storage);
     }
 
     public function testHasUploadTrue(): void {
@@ -76,11 +50,11 @@ class ImageServiceTest extends TestCase {
 
     public function testUploadErrorIniSize(): void {
         $file = [
-            'name' => 'test.jpg',
-            'type' => 'image/jpeg',
+            'name'     => 'test.jpg',
+            'type'     => 'image/jpeg',
             'tmp_name' => '/tmp/test.jpg',
-            'error' => UPLOAD_ERR_INI_SIZE,
-            'size' => 10000000,
+            'error'    => UPLOAD_ERR_INI_SIZE,
+            'size'     => 10000000,
         ];
 
         $result = $this->image_service->upload($file);
@@ -91,11 +65,11 @@ class ImageServiceTest extends TestCase {
 
     public function testUploadErrorFormSize(): void {
         $file = [
-            'name' => 'test.jpg',
-            'type' => 'image/jpeg',
+            'name'     => 'test.jpg',
+            'type'     => 'image/jpeg',
             'tmp_name' => '/tmp/test.jpg',
-            'error' => UPLOAD_ERR_FORM_SIZE,
-            'size' => 10000000,
+            'error'    => UPLOAD_ERR_FORM_SIZE,
+            'size'     => 10000000,
         ];
 
         $result = $this->image_service->upload($file);
@@ -106,11 +80,11 @@ class ImageServiceTest extends TestCase {
 
     public function testUploadErrorPartial(): void {
         $file = [
-            'name' => 'test.jpg',
-            'type' => 'image/jpeg',
+            'name'     => 'test.jpg',
+            'type'     => 'image/jpeg',
             'tmp_name' => '/tmp/test.jpg',
-            'error' => UPLOAD_ERR_PARTIAL,
-            'size' => 1000,
+            'error'    => UPLOAD_ERR_PARTIAL,
+            'size'     => 1000,
         ];
 
         $result = $this->image_service->upload($file);
@@ -121,11 +95,11 @@ class ImageServiceTest extends TestCase {
 
     public function testUploadFileTooLarge(): void {
         $file = [
-            'name' => 'test.jpg',
-            'type' => 'image/jpeg',
+            'name'     => 'test.jpg',
+            'type'     => 'image/jpeg',
             'tmp_name' => '/tmp/test.jpg',
-            'error' => UPLOAD_ERR_OK,
-            'size' => 6 * 1024 * 1024, // 6MB
+            'error'    => UPLOAD_ERR_OK,
+            'size'     => 6 * 1024 * 1024, // 6MB
         ];
 
         $result = $this->image_service->upload($file);
@@ -136,11 +110,11 @@ class ImageServiceTest extends TestCase {
 
     public function testUploadInvalidMimeType(): void {
         $file = [
-            'name' => 'test.txt',
-            'type' => 'text/plain',
+            'name'     => 'test.txt',
+            'type'     => 'text/plain',
             'tmp_name' => '/tmp/test.txt',
-            'error' => UPLOAD_ERR_OK,
-            'size' => 1000,
+            'error'    => UPLOAD_ERR_OK,
+            'size'     => 1000,
         ];
 
         $result = $this->image_service->upload($file);
@@ -149,30 +123,110 @@ class ImageServiceTest extends TestCase {
         $this->assertEquals('Invalid file type. Allowed: JPEG, PNG, GIF, WebP.', $result['error']);
     }
 
-    public function testDeleteExistingFile(): void {
-        // Create a test file
-        $subdir = $this->test_upload_dir . '/test';
-        mkdir($subdir, 0755, true);
-        $test_file = 'test/testfile.jpg';
-        file_put_contents($this->test_upload_dir . '/' . $test_file, 'test content');
+    public function testDeleteCallsStorage(): void {
+        $this->storage
+            ->expects($this->once())
+            ->method('delete')
+            ->with('posts/image.jpg')
+            ->willReturn(true);
 
-        $this->assertTrue(file_exists($this->test_upload_dir . '/' . $test_file));
-
-        $result = $this->image_service->delete($test_file);
+        $result = $this->image_service->delete('posts/image.jpg');
 
         $this->assertTrue($result);
-        $this->assertFalse(file_exists($this->test_upload_dir . '/' . $test_file));
     }
 
-    public function testDeleteNonexistentFile(): void {
+    public function testDeleteReturnsStorageResult(): void {
+        $this->storage
+            ->expects($this->once())
+            ->method('delete')
+            ->willReturn(true);
+
         $result = $this->image_service->delete('nonexistent/file.jpg');
 
-        $this->assertFalse($result);
+        $this->assertTrue($result);
     }
 
-    public function testGetFullPath(): void {
-        $result = $this->image_service->getFullPath('posts/test.jpg');
+    public function testGetUrl(): void {
+        $this->storage
+            ->expects($this->once())
+            ->method('getUrl')
+            ->with('posts/test.jpg')
+            ->willReturn('/uploads/posts/test.jpg');
 
-        $this->assertEquals($this->test_upload_dir . '/posts/test.jpg', $result);
+        $result = $this->image_service->getUrl('posts/test.jpg');
+
+        $this->assertEquals('/uploads/posts/test.jpg', $result);
+    }
+
+    public function testGetUrlWithS3(): void {
+        $this->storage
+            ->expects($this->once())
+            ->method('getUrl')
+            ->with('posts/test.jpg')
+            ->willReturn('https://bucket.s3.us-east-1.amazonaws.com/posts/test.jpg');
+
+        $result = $this->image_service->getUrl('posts/test.jpg');
+
+        $this->assertEquals('https://bucket.s3.us-east-1.amazonaws.com/posts/test.jpg', $result);
+    }
+
+    public function testUploadErrorNoFile(): void {
+        $file = [
+            'name'     => '',
+            'type'     => '',
+            'tmp_name' => '',
+            'error'    => UPLOAD_ERR_NO_FILE,
+            'size'     => 0,
+        ];
+
+        $result = $this->image_service->upload($file);
+
+        $this->assertFalse($result['success']);
+        $this->assertEquals('No file was uploaded.', $result['error']);
+    }
+
+    public function testUploadErrorNoTmpDir(): void {
+        $file = [
+            'name'     => 'test.jpg',
+            'type'     => 'image/jpeg',
+            'tmp_name' => '/tmp/test.jpg',
+            'error'    => UPLOAD_ERR_NO_TMP_DIR,
+            'size'     => 1000,
+        ];
+
+        $result = $this->image_service->upload($file);
+
+        $this->assertFalse($result['success']);
+        $this->assertEquals('Server configuration error: missing temp directory.', $result['error']);
+    }
+
+    public function testUploadErrorCantWrite(): void {
+        $file = [
+            'name'     => 'test.jpg',
+            'type'     => 'image/jpeg',
+            'tmp_name' => '/tmp/test.jpg',
+            'error'    => UPLOAD_ERR_CANT_WRITE,
+            'size'     => 1000,
+        ];
+
+        $result = $this->image_service->upload($file);
+
+        $this->assertFalse($result['success']);
+        $this->assertEquals('Server configuration error: cannot write to disk.', $result['error']);
+    }
+
+    public function testUploadErrorExtension(): void {
+        $file = [
+            'name'     => 'test.jpg',
+            'type'     => 'image/jpeg',
+            'tmp_name' => '/tmp/test.jpg',
+            'error'    => UPLOAD_ERR_EXTENSION,
+            'size'     => 1000,
+        ];
+
+        $result = $this->image_service->upload($file);
+
+        $this->assertFalse($result['success']);
+        $this->assertEquals('Upload blocked by server extension.', $result['error']);
     }
 }

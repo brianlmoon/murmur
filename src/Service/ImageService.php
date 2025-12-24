@@ -4,10 +4,25 @@ declare(strict_types=1);
 
 namespace Murmur\Service;
 
+use Murmur\Storage\StorageInterface;
+
 /**
  * Service for handling image uploads.
  *
- * Validates and stores uploaded images.
+ * Validates uploaded images and delegates storage operations to a
+ * StorageInterface implementation. Supports local filesystem, S3,
+ * and other storage backends via the storage abstraction layer.
+ *
+ * Usage:
+ * ```php
+ * $storage = StorageFactory::create($config);
+ * $image_service = new ImageService($storage);
+ *
+ * $result = $image_service->upload($_FILES['image'], 'avatars');
+ * if ($result['success']) {
+ *     $url = $image_service->getUrl($result['path']);
+ * }
+ * ```
  */
 class ImageService {
 
@@ -27,27 +42,32 @@ class ImageService {
     protected const MAX_SIZE = 5 * 1024 * 1024;
 
     /**
-     * Base directory for uploads.
+     * Storage backend for file operations.
      */
-    protected string $upload_dir;
+    protected StorageInterface $storage;
 
     /**
      * Creates a new ImageService instance.
      *
-     * @param string $upload_dir Base directory for uploads.
+     * @param StorageInterface $storage Storage backend for file operations.
      */
-    public function __construct(string $upload_dir) {
-        $this->upload_dir = rtrim($upload_dir, '/');
+    public function __construct(StorageInterface $storage) {
+        $this->storage = $storage;
     }
 
     /**
      * Processes an uploaded image file.
+     *
+     * Validates the uploaded file and stores it using the configured
+     * storage backend. Returns a result array indicating success or failure.
      *
      * @param array{name: string, type: string, tmp_name: string, error: int, size: int} $file
      *        The $_FILES array entry for the upload.
      * @param string $subdirectory Subdirectory within uploads (e.g., 'posts', 'avatars').
      *
      * @return array{success: bool, path?: string, error?: string}
+     *         On success: ['success' => true, 'path' => 'posts/abc123.jpg']
+     *         On failure: ['success' => false, 'error' => 'Error message']
      */
     public function upload(array $file, string $subdirectory = 'posts'): array {
         $result = ['success' => false];
@@ -57,22 +77,13 @@ class ImageService {
         if ($validation_error !== null) {
             $result['error'] = $validation_error;
         } else {
-            $target_dir = $this->upload_dir . '/' . $subdirectory;
-
-            // Create directory if it doesn't exist
-            if (!is_dir($target_dir)) {
-                mkdir($target_dir, 0755, true);
-            }
-
-            // Generate unique filename
             $extension = $this->getExtension($file['type']);
             $filename = $this->generateFilename($extension);
-            $target_path = $target_dir . '/' . $filename;
+            $path = $subdirectory . '/' . $filename;
 
-            if (move_uploaded_file($file['tmp_name'], $target_path)) {
-                // Return the relative path for storage in database
+            if ($this->storage->writeFromPath($path, $file['tmp_name'])) {
                 $result['success'] = true;
-                $result['path'] = $subdirectory . '/' . $filename;
+                $result['path'] = $path;
             } else {
                 $result['error'] = 'Failed to save uploaded file.';
             }
@@ -177,31 +188,30 @@ class ImageService {
     /**
      * Deletes an uploaded image.
      *
-     * @param string $path The relative path to the image.
+     * This operation is idempotent - deleting a non-existent file
+     * returns true rather than failing.
      *
-     * @return bool True if deleted successfully.
+     * @param string $path The relative path to the image (e.g., 'posts/abc123.jpg').
+     *
+     * @return bool True if deleted successfully or file didn't exist.
      */
     public function delete(string $path): bool {
-        $result = false;
-
-        $full_path = $this->upload_dir . '/' . $path;
-
-        if (file_exists($full_path)) {
-            $result = unlink($full_path);
-        }
-
-        return $result;
+        return $this->storage->delete($path);
     }
 
     /**
-     * Gets the full filesystem path for an image.
+     * Gets the public URL for an image.
      *
-     * @param string $path The relative path.
+     * The URL format varies by storage backend:
+     * - Local: `/uploads/posts/image.jpg`
+     * - S3: `https://bucket.s3.region.amazonaws.com/posts/image.jpg`
      *
-     * @return string The full path.
+     * @param string $path The relative path to the image.
+     *
+     * @return string Public URL to access the image.
      */
-    public function getFullPath(string $path): string {
-        return $this->upload_dir . '/' . $path;
+    public function getUrl(string $path): string {
+        return $this->storage->getUrl($path);
     }
 
     /**

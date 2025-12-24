@@ -272,8 +272,8 @@
 
 {% block content %}
     <div class="profile-header">
-        {% if profile_user.avatar_path %}
-            <img src="{{ base_url }}/uploads/{{ profile_user.avatar_path }}" alt="" class="profile-avatar">
+        {% if profile_avatar_url %}
+            <img src="{{ profile_avatar_url }}" alt="" class="profile-avatar">
         {% else %}
             <div class="profile-avatar profile-avatar--placeholder">
                 {{ profile_user.username | first | upper }}
@@ -336,6 +336,8 @@
             {% include theme ~ '/components/post.html.twig' with {
                 'post': item.post,
                 'author': item.author,
+                'image_url': item.image_url,
+                'avatar_url': item.avatar_url,
                 'like_count': item.like_count,
                 'user_liked': item.user_liked,
                 'reply_count': item.reply_count,

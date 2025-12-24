@@ -199,8 +199,8 @@
     <div class="conversation-header">
         <a href="{{ base_url }}/messages" class="conversation-back" aria-label="Back to messages">←</a>
 
-        {% if other_user.avatar_path %}
-            <img src="{{ base_url }}/uploads/{{ other_user.avatar_path }}" 
+        {% if other_user_avatar_url %}
+            <img src="{{ other_user_avatar_url }}" 
                  alt="" 
                  class="conversation-user-avatar">
         {% else %}

@@ -20,13 +20,15 @@
 {% set user_liked = user_liked | default(false) %}
 {% set reply_count = reply_count | default(0) %}
 {% set user_following = user_following | default(false) %}
+{% set avatar_url = avatar_url | default(null) %}
+{% set image_url = image_url | default(null) %}
 
 <article class="post {{ is_reply ? 'post--reply' : '' }}"{% if post.parent_id %} id="comment-{{ post.post_id }}"{% endif %}>
     <div class="post-header">
         <div class="post-header-info">
             <a href="{{ base_url }}/user/{{ author.username }}" class="post-author">
-                {% if author.avatar_path %}
-                    <img src="{{ base_url }}/uploads/{{ author.avatar_path }}" alt="" class="post-avatar">
+                {% if avatar_url %}
+                    <img src="{{ avatar_url }}" alt="" class="post-avatar">
                 {% else %}
                     <div class="post-avatar post-avatar--placeholder">{{ author.username | first | upper }}</div>
                 {% endif %}
@@ -90,9 +92,9 @@
         </a>
     {% endif %}
 
-    {% if post.image_path %}
+    {% if image_url %}
         <div class="post-image">
-            <img src="{{ base_url }}/uploads/{{ post.image_path }}" alt="Post attachment" loading="lazy">
+            <img src="{{ image_url }}" alt="Post attachment" loading="lazy">
         </div>
     {% endif %}
 

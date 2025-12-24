@@ -76,6 +76,33 @@ class ProfileController extends BaseController {
     }
 
     /**
+     * Enriches post items with image URLs for templates.
+     *
+     * Adds `image_url` and `avatar_url` keys to each post item based on
+     * the post's image_path and author's avatar_path. Returns null for
+     * either if the corresponding path is not set.
+     *
+     * @param array<int, array{post: \Murmur\Entity\Post, author: \Murmur\Entity\User}> $posts
+     *        Array of post items from PostService.
+     *
+     * @return array<int, array{post: \Murmur\Entity\Post, author: \Murmur\Entity\User, image_url: ?string, avatar_url: ?string}>
+     *         Enriched post items with URL keys added.
+     */
+    protected function enrichPostsWithUrls(array $posts): array {
+        foreach ($posts as $key => $post_item) {
+            $posts[$key]['image_url'] = $post_item['post']->image_path !== null
+                ? $this->image_service->getUrl($post_item['post']->image_path)
+                : null;
+
+            $posts[$key]['avatar_url'] = $post_item['author']->avatar_path !== null
+                ? $this->image_service->getUrl($post_item['author']->avatar_path)
+                : null;
+        }
+
+        return $posts;
+    }
+
+    /**
      * Displays a user's public profile.
      *
      * GET /user/{username}
@@ -105,6 +132,9 @@ class ProfileController extends BaseController {
             $current_user_id = $current_user?->user_id;
             $posts = $this->post_service->getPostsByUser($user->user_id, 50, 0, $current_user_id);
 
+            // Enrich posts with image URLs
+            $posts = $this->enrichPostsWithUrls($posts);
+
             // Get follow information
             $is_following = false;
             $can_message = false;
@@ -124,13 +154,19 @@ class ProfileController extends BaseController {
                 $can_message = $can_message_result['can_message'];
             }
 
+            // Generate profile avatar URL
+            $profile_avatar_url = $user->avatar_path !== null
+                ? $this->image_service->getUrl($user->avatar_path)
+                : null;
+
             $result = $this->renderThemed('pages/profile.html.twig', [
-                'profile_user'    => $user,
-                'posts'           => $posts,
-                'is_following'    => $is_following,
-                'follower_count'  => $follower_count,
-                'following_count' => $following_count,
-                'can_message'     => $can_message,
+                'profile_user'       => $user,
+                'profile_avatar_url' => $profile_avatar_url,
+                'posts'              => $posts,
+                'is_following'       => $is_following,
+                'follower_count'     => $follower_count,
+                'following_count'    => $following_count,
+                'can_message'        => $can_message,
             ]);
         }
 
@@ -149,8 +185,13 @@ class ProfileController extends BaseController {
 
         $user = $this->session->getCurrentUser();
 
+        $avatar_url = $user->avatar_path !== null
+            ? $this->image_service->getUrl($user->avatar_path)
+            : null;
+
         return $this->renderThemed('pages/settings.html.twig', [
-            'profile_user' => $user,
+            'profile_user'   => $user,
+            'avatar_url'     => $avatar_url,
             'max_bio_length' => $this->profile_service->getMaxBioLength(),
         ]);
     }
@@ -181,6 +222,11 @@ class ProfileController extends BaseController {
 
         $avatar_path = null;
 
+        // Generate current avatar URL for error cases
+        $avatar_url = $user->avatar_path !== null
+            ? $this->image_service->getUrl($user->avatar_path)
+            : null;
+
         // Handle avatar upload
         $file = $_FILES['avatar'] ?? null;
 
@@ -189,13 +235,14 @@ class ProfileController extends BaseController {
 
             if (!$upload_result['success']) {
                 $result = $this->renderThemed('pages/settings.html.twig', [
-                    'profile_user' => $user,
+                    'profile_user'   => $user,
+                    'avatar_url'     => $avatar_url,
                     'max_bio_length' => $this->profile_service->getMaxBioLength(),
-                    'error' => $upload_result['error'],
-                    'username' => $username,
-                    'email' => $email,
-                    'bio' => $bio,
-                    'name' => $name,
+                    'error'          => $upload_result['error'],
+                    'username'       => $username,
+                    'email'          => $email,
+                    'bio'            => $bio,
+                    'name'           => $name,
                 ]);
 
                 return $result;
@@ -223,13 +270,14 @@ class ProfileController extends BaseController {
             $this->redirect('/settings');
         } else {
             $result = $this->renderThemed('pages/settings.html.twig', [
-                'profile_user' => $user,
+                'profile_user'   => $user,
+                'avatar_url'     => $avatar_url,
                 'max_bio_length' => $this->profile_service->getMaxBioLength(),
-                'error' => $update_result['error'],
-                'username' => $username,
-                'email' => $email,
-                'bio' => $bio,
-                'name' => $name,
+                'error'          => $update_result['error'],
+                'username'       => $username,
+                'email'          => $email,
+                'bio'            => $bio,
+                'name'           => $name,
             ]);
         }
 

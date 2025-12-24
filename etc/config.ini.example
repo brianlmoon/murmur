@@ -24,3 +24,25 @@ db.murmur.charset = utf8mb4
 ; db.murmur.db = murmur
 ; db.murmur.user = murmur
 ; db.murmur.pass = your_password_here
+
+; ---------------------------------------------------------------------------
+; Storage configuration
+; ---------------------------------------------------------------------------
+; Supported adapters: local, s3
+;
+; Local filesystem storage is the default if not configured.
+; For cloud storage (S3), uncomment and configure the options below.
+
+; Local filesystem (default)
+; storage.uploads.adapter = local
+; storage.uploads.local_path = "/path/to/murmur/public/uploads"
+; storage.uploads.base_url = "/uploads"
+
+; Amazon S3 (or S3-compatible services like MinIO, DigitalOcean Spaces)
+; storage.uploads.adapter = s3
+; storage.uploads.s3_key = your_access_key
+; storage.uploads.s3_secret = your_secret_key
+; storage.uploads.s3_region = us-east-1
+; storage.uploads.s3_bucket = your-bucket-name
+; storage.uploads.s3_endpoint =
+; storage.uploads.base_url = "https://your-bucket-name.s3.us-east-1.amazonaws.com"

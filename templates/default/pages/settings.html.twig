@@ -111,31 +111,34 @@
     <div class="settings-section">
         <h2 class="settings-title">Profile</h2>
 
+        <div class="avatar-section">
+            {% if avatar_url %}
+                <img src="{{ avatar_url }}" alt="" class="current-avatar">
+            {% else %}
+                <div class="current-avatar current-avatar--placeholder">
+                    {{ profile_user.username | first | upper }}
+                </div>
+            {% endif %}
+
+            <div class="avatar-actions">
+                {% if profile_user.avatar_path %}
+                    <form action="{{ base_url }}/settings/avatar/remove" method="post" class="avatar-remove">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <button type="submit">Remove avatar</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+
         <form action="{{ base_url }}/settings" method="post" enctype="multipart/form-data">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
-            <div class="avatar-section">
-                {% if profile_user.avatar_path %}
-                    <img src="{{ base_url }}/uploads/{{ profile_user.avatar_path }}" alt="" class="current-avatar">
-                {% else %}
-                    <div class="current-avatar current-avatar--placeholder">
-                        {{ profile_user.username | first | upper }}
-                    </div>
-                {% endif %}
-
-                <div class="avatar-actions">
-                    <label class="avatar-upload">
-                        <input type="file" name="avatar" accept="image/jpeg,image/png,image/gif,image/webp">
-                        <span class="avatar-upload-label">Change avatar</span>
-                    </label>
-
-                    {% if profile_user.avatar_path %}
-                        <form action="{{ base_url }}/settings/avatar/remove" method="post" class="avatar-remove">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                            <button type="submit">Remove avatar</button>
-                        </form>
-                    {% endif %}
-                </div>
+            <div class="form-group">
+                <label class="form-label">Avatar</label>
+                <label class="avatar-upload">
+                    <input type="file" name="avatar" accept="image/jpeg,image/png,image/gif,image/webp">
+                    <span class="avatar-upload-label">{{ profile_user.avatar_path ? 'Change avatar' : 'Upload avatar' }}</span>
+                </label>
             </div>
 
             <div class="form-group">

@@ -159,6 +159,8 @@
             {% include theme ~ '/components/post.html.twig' with {
                 'post': item.post,
                 'author': item.author,
+                'image_url': item.image_url,
+                'avatar_url': item.avatar_url,
                 'like_count': item.like_count,
                 'user_liked': item.user_liked,
                 'reply_count': item.reply_count,

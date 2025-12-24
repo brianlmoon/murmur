@@ -76,6 +76,33 @@ class PostController extends BaseController {
     }
 
     /**
+     * Enriches post items with image URLs for templates.
+     *
+     * Adds `image_url` and `avatar_url` keys to each post item based on
+     * the post's image_path and author's avatar_path. Returns null for
+     * either if the corresponding path is not set.
+     *
+     * @param array<int, array{post: \Murmur\Entity\Post, author: \Murmur\Entity\User}> $posts
+     *        Array of post items from PostService.
+     *
+     * @return array<int, array{post: \Murmur\Entity\Post, author: \Murmur\Entity\User, image_url: ?string, avatar_url: ?string}>
+     *         Enriched post items with URL keys added.
+     */
+    protected function enrichPostsWithUrls(array $posts): array {
+        foreach ($posts as $key => $post_item) {
+            $posts[$key]['image_url'] = $post_item['post']->image_path !== null
+                ? $this->image_service->getUrl($post_item['post']->image_path)
+                : null;
+
+            $posts[$key]['avatar_url'] = $post_item['author']->avatar_path !== null
+                ? $this->image_service->getUrl($post_item['author']->avatar_path)
+                : null;
+        }
+
+        return $posts;
+    }
+
+    /**
      * Displays the home feed.
      *
      * GET /
@@ -139,6 +166,9 @@ class PostController extends BaseController {
             $post_id = $post_item['post']->post_id;
             $post_item['preview'] = $previews[$post_id] ?? null;
         }
+
+        // Enrich posts with image URLs for templates
+        $posts = $this->enrichPostsWithUrls($posts);
 
         $topics = $this->topic_service->getAllTopics();
 
@@ -216,6 +246,9 @@ class PostController extends BaseController {
                     $reply_item['preview'] = $reply_previews[$reply_id] ?? null;
                 }
 
+                // Enrich replies with image URLs
+                $replies = $this->enrichPostsWithUrls($replies);
+
                 $user_following = false;
                 if ($current_user_id !== null && $post_data['topic'] !== null) {
                     $user_following = $this->topic_service->isFollowing($current_user_id, $post_data['topic']->topic_id);
@@ -224,17 +257,27 @@ class PostController extends BaseController {
                 // Fetch link preview for the post (first URL only)
                 $preview = $this->link_preview_service->getPreviewForPost($post_data['post']->body);
 
+                // Generate image URLs for the main post
+                $image_url = $post_data['post']->image_path !== null
+                    ? $this->image_service->getUrl($post_data['post']->image_path)
+                    : null;
+                $avatar_url = $post_data['author']->avatar_path !== null
+                    ? $this->image_service->getUrl($post_data['author']->avatar_path)
+                    : null;
+
                 $result = $this->renderThemed('pages/post.html.twig', [
-                    'post' => $post_data['post'],
-                    'author' => $post_data['author'],
-                    'like_count' => $post_data['like_count'],
-                    'user_liked' => $post_data['user_liked'],
-                    'topic' => $post_data['topic'],
+                    'post'           => $post_data['post'],
+                    'author'         => $post_data['author'],
+                    'image_url'      => $image_url,
+                    'avatar_url'     => $avatar_url,
+                    'like_count'     => $post_data['like_count'],
+                    'user_liked'     => $post_data['user_liked'],
+                    'topic'          => $post_data['topic'],
                     'user_following' => $user_following,
-                    'preview' => $preview,
-                    'replies' => $replies,
-                    'max_length' => $this->post_service->getMaxBodyLength(),
-                    'sort' => $sort,
+                    'preview'        => $preview,
+                    'replies'        => $replies,
+                    'max_length'     => $this->post_service->getMaxBodyLength(),
+                    'sort'           => $sort,
                 ]);
             }
         }
@@ -568,6 +611,9 @@ class PostController extends BaseController {
                 $posts[$key]['preview'] = $previews[$post_id] ?? null;
                 $posts[$key]['user_following'] = true;
             }
+
+            // Enrich posts with image URLs
+            $posts = $this->enrichPostsWithUrls($posts);
 
             $user_following = false;
             if ($current_user_id !== null) {
