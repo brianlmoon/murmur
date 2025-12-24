@@ -229,4 +229,77 @@ class ImageServiceTest extends TestCase {
         $this->assertFalse($result['success']);
         $this->assertEquals('Upload blocked by server extension.', $result['error']);
     }
+
+    public function testEnrichPostsWithUrls(): void {
+        $post = new \stdClass();
+        $post->image_path = 'posts/image.jpg';
+
+        $author = new \stdClass();
+        $author->avatar_path = 'avatars/avatar.jpg';
+
+        $posts = [
+            ['post' => $post, 'author' => $author],
+        ];
+
+        $this->storage
+            ->expects($this->exactly(2))
+            ->method('getUrl')
+            ->willReturnCallback(function ($path) {
+                return '/uploads/' . $path;
+            });
+
+        $result = $this->image_service->enrichPostsWithUrls($posts);
+
+        $this->assertCount(1, $result);
+        $this->assertEquals('/uploads/posts/image.jpg', $result[0]['image_url']);
+        $this->assertEquals('/uploads/avatars/avatar.jpg', $result[0]['avatar_url']);
+    }
+
+    public function testEnrichPostsWithUrlsNullPaths(): void {
+        $post = new \stdClass();
+        $post->image_path = null;
+
+        $author = new \stdClass();
+        $author->avatar_path = null;
+
+        $posts = [
+            ['post' => $post, 'author' => $author],
+        ];
+
+        $result = $this->image_service->enrichPostsWithUrls($posts);
+
+        $this->assertCount(1, $result);
+        $this->assertNull($result[0]['image_url']);
+        $this->assertNull($result[0]['avatar_url']);
+    }
+
+    public function testEnrichPostsWithUrlsMixedPaths(): void {
+        $post = new \stdClass();
+        $post->image_path = 'posts/image.jpg';
+
+        $author = new \stdClass();
+        $author->avatar_path = null;
+
+        $posts = [
+            ['post' => $post, 'author' => $author],
+        ];
+
+        $this->storage
+            ->expects($this->once())
+            ->method('getUrl')
+            ->with('posts/image.jpg')
+            ->willReturn('/uploads/posts/image.jpg');
+
+        $result = $this->image_service->enrichPostsWithUrls($posts);
+
+        $this->assertCount(1, $result);
+        $this->assertEquals('/uploads/posts/image.jpg', $result[0]['image_url']);
+        $this->assertNull($result[0]['avatar_url']);
+    }
+
+    public function testEnrichPostsWithUrlsEmptyArray(): void {
+        $result = $this->image_service->enrichPostsWithUrls([]);
+
+        $this->assertCount(0, $result);
+    }
 }

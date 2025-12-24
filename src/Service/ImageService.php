@@ -230,4 +230,39 @@ class ImageService {
 
         return $result;
     }
+
+    /**
+     * Enriches post items with image URLs for templates.
+     *
+     * Takes an array of post items (as returned by PostService methods) and
+     * adds `image_url` and `avatar_url` keys based on each post's image_path
+     * and author's avatar_path. This centralizes URL generation for posts
+     * displayed in feeds, profiles, and other listing pages.
+     *
+     * Usage:
+     * ```php
+     * $posts = $post_service->getFeed(20, 0, $user_id);
+     * $posts = $image_service->enrichPostsWithUrls($posts);
+     * // Now each $posts[n] has 'image_url' and 'avatar_url' keys
+     * ```
+     *
+     * @param array<int, array{post: \Murmur\Entity\Post, author: \Murmur\Entity\User}> $posts
+     *        Array of post items from PostService methods.
+     *
+     * @return array<int, array{post: \Murmur\Entity\Post, author: \Murmur\Entity\User, image_url: ?string, avatar_url: ?string}>
+     *         Enriched post items with URL keys added.
+     */
+    public function enrichPostsWithUrls(array $posts): array {
+        foreach ($posts as $key => $post_item) {
+            $posts[$key]['image_url'] = $post_item['post']->image_path !== null
+                ? $this->getUrl($post_item['post']->image_path)
+                : null;
+
+            $posts[$key]['avatar_url'] = $post_item['author']->avatar_path !== null
+                ? $this->getUrl($post_item['author']->avatar_path)
+                : null;
+        }
+
+        return $posts;
+    }
 }

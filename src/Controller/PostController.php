@@ -76,33 +76,6 @@ class PostController extends BaseController {
     }
 
     /**
-     * Enriches post items with image URLs for templates.
-     *
-     * Adds `image_url` and `avatar_url` keys to each post item based on
-     * the post's image_path and author's avatar_path. Returns null for
-     * either if the corresponding path is not set.
-     *
-     * @param array<int, array{post: \Murmur\Entity\Post, author: \Murmur\Entity\User}> $posts
-     *        Array of post items from PostService.
-     *
-     * @return array<int, array{post: \Murmur\Entity\Post, author: \Murmur\Entity\User, image_url: ?string, avatar_url: ?string}>
-     *         Enriched post items with URL keys added.
-     */
-    protected function enrichPostsWithUrls(array $posts): array {
-        foreach ($posts as $key => $post_item) {
-            $posts[$key]['image_url'] = $post_item['post']->image_path !== null
-                ? $this->image_service->getUrl($post_item['post']->image_path)
-                : null;
-
-            $posts[$key]['avatar_url'] = $post_item['author']->avatar_path !== null
-                ? $this->image_service->getUrl($post_item['author']->avatar_path)
-                : null;
-        }
-
-        return $posts;
-    }
-
-    /**
      * Displays the home feed.
      *
      * GET /
@@ -168,7 +141,7 @@ class PostController extends BaseController {
         }
 
         // Enrich posts with image URLs for templates
-        $posts = $this->enrichPostsWithUrls($posts);
+        $posts = $this->image_service->enrichPostsWithUrls($posts);
 
         $topics = $this->topic_service->getAllTopics();
 
@@ -247,7 +220,7 @@ class PostController extends BaseController {
                 }
 
                 // Enrich replies with image URLs
-                $replies = $this->enrichPostsWithUrls($replies);
+                $replies = $this->image_service->enrichPostsWithUrls($replies);
 
                 $user_following = false;
                 if ($current_user_id !== null && $post_data['topic'] !== null) {
@@ -613,7 +586,7 @@ class PostController extends BaseController {
             }
 
             // Enrich posts with image URLs
-            $posts = $this->enrichPostsWithUrls($posts);
+            $posts = $this->image_service->enrichPostsWithUrls($posts);
 
             $user_following = false;
             if ($current_user_id !== null) {
