@@ -196,10 +196,13 @@
 
     .post-image {
         margin-top: 0.75rem;
+        text-align: center;
     }
 
     .post-image img {
         max-width: 100%;
+        max-height: min(80vh, 480px);
+        object-fit: contain;
         border-radius: var(--radius);
     }
 

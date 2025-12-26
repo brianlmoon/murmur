@@ -94,7 +94,9 @@
 
     {% if image_url %}
         <div class="post-image">
-            <img src="{{ image_url }}" alt="Post attachment" loading="lazy">
+            <a href="{{ image_url }}" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image in new tab">
+                <img src="{{ image_url }}" alt="Post attachment" loading="lazy">
+            </a>
         </div>
     {% endif %}
 
