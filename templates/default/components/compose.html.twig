@@ -119,6 +119,15 @@
         });
     }
 
+    // Prevent form submission if too many files selected
+    form.addEventListener('submit', function(e) {
+        if (fileInput && fileInput.files && fileInput.files.length > maxAttachments) {
+            e.preventDefault();
+            alert('Please select no more than ' + maxAttachments + ' images. You have selected ' + fileInput.files.length + '.');
+            return false;
+        }
+    });
+
     // Scroll to form if #reply hash is present
     if (form.id && window.location.hash === '#' + form.id) {
         window.addEventListener('load', function() {
