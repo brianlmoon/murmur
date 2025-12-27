@@ -15,7 +15,7 @@ Modern social platforms optimize for engagement, not connection. Murmur takes a 
 
 ## Features
 
-- **Posts & Replies** — Share thoughts with optional image attachments
+- **Posts & Replies** — Share thoughts with optional image and video attachments
 - **Topics** — Organize conversations by category; follow topics that interest you
 - **User Follows** — Build your own feed by following people you care about
 - **Private Messaging** — One-to-one conversations between mutual follows
