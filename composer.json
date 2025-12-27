@@ -15,7 +15,10 @@
         "league/flysystem-aws-s3-v3": "^3.0",
         "moonspot/value-objects": "^2.3",
         "pagemill/router": "^3.0",
-        "twig/twig": "^3.0"
+        "twig/twig": "^3.0",
+        "symfony/translation": "^8.0",
+        "symfony/yaml": "^8.0",
+        "symfony/twig-bridge": "^8.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.0"

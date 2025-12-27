@@ -1,13 +1,13 @@
 {% extends theme ~ '/layouts/base.html.twig' %}
 
-{% block title %}Not Found - {{ site_name }}{% endblock %}
+{% block title %}{{ 'errors.not_found_title'|trans }} - {{ site_name }}{% endblock %}
 
 {% block content %}
 <div class="card" style="max-width: 400px; margin: 2rem auto; text-align: center;">
-    <h1 style="font-size: 3rem; margin-bottom: 0.5rem;">404</h1>
+    <h1 style="font-size: 3rem; margin-bottom: 0.5rem;">{{ 'errors.not_found_title'|trans }}</h1>
     <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
-        {{ message | default('The page you are looking for could not be found.') }}
+        {{ message | default('errors.not_found'|trans) }}
     </p>
-    <a href="{{ base_url }}/" class="btn btn-primary">Go home</a>
+    <a href="{{ base_url }}/" class="btn btn-primary">{{ 'errors.go_home'|trans }}</a>
 </div>
 {% endblock %}

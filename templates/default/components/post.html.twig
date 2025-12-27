@@ -41,7 +41,7 @@
                     {% if current_user %}
                         <form action="{{ base_url }}/topic/{{ topic.topic_id }}/{{ user_following ? 'unfollow' : 'follow' }}" method="post" style="display: inline;">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                            <button type="submit" title="{{ user_following ? 'Unfollow topic' : 'Follow topic' }}" class="post-topic-follow">
+                            <button type="submit" title="{{ user_following ? 'post.unfollow_topic'|trans : 'post.follow_topic'|trans }}" class="post-topic-follow">
                                 {{ user_following ? '✓' : '+' }}
                             </button>
                         </form>
@@ -52,16 +52,16 @@
         {% if post.parent_id %}
             <a href="{{ base_url }}/post/{{ post.parent_id }}#comment-{{ post.post_id }}"
                class="post-time-link"
-               aria-label="View comment from {{ post.created_at | date('M j, Y \\a\\t g:i a') }}">
-                <time class="post-time" datetime="{{ post.created_at }}" title="{{ post.created_at | date('M j, Y \\a\\t g:i a') }}">
+               aria-label="{{ 'post.view_comment'|trans({'%date%': post.created_at|localized_date('datetime')}) }}">
+                <time class="post-time" datetime="{{ post.created_at }}" title="{{ post.created_at|localized_date('datetime') }}">
                     {{ post.created_at | relative_date }}
                 </time>
             </a>
         {% else %}
             <a href="{{ base_url }}/post/{{ post.post_id }}"
                class="post-time-link"
-               aria-label="View post from {{ post.created_at | date('M j, Y \\a\\t g:i a') }}">
-                <time class="post-time" datetime="{{ post.created_at }}" title="{{ post.created_at | date('M j, Y \\a\\t g:i a') }}">
+               aria-label="{{ 'post.view_post'|trans({'%date%': post.created_at|localized_date('datetime')}) }}">
+                <time class="post-time" datetime="{{ post.created_at }}" title="{{ post.created_at|localized_date('datetime') }}">
                     {{ post.created_at | relative_date }}
                 </time>
             </a>
@@ -98,7 +98,7 @@
             {# Primary image (first) #}
             <div class="post-image post-image--primary">
                 <a href="{{ image_urls[0] }}" target="_blank" rel="noopener noreferrer">
-                    <img src="{{ image_urls[0] }}" alt="Post attachment" loading="lazy">
+                    <img src="{{ image_urls[0] }}" alt="{{ 'post.post_attachment'|trans }}" loading="lazy">
                 </a>
             </div>
             {# Thumbnails (rest) #}
@@ -106,7 +106,7 @@
                 <div class="post-image-thumbnails">
                     {% for url in image_urls | slice(1) %}
                         <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="post-image-thumbnail">
-                            <img src="{{ url }}" alt="Post attachment" loading="lazy">
+                            <img src="{{ url }}" alt="{{ 'post.post_attachment'|trans }}" loading="lazy">
                         </a>
                     {% endfor %}
                 </div>
@@ -131,14 +131,14 @@
         {% endif %}
 
         {% if not is_reply and show_reply_link %}
-            <a href="{{ base_url }}/post/{{ post.post_id }}#reply" class="post-action">Comment{{ reply_count > 0 ? ' (' ~ reply_count ~ ')' : '' }}</a>
+            <a href="{{ base_url }}/post/{{ post.post_id }}#reply" class="post-action">{{ 'post.comment'|trans }}{{ reply_count > 0 ? ' (' ~ reply_count ~ ')' : '' }}</a>
         {% endif %}
 
         {% if current_user and (current_user.user_id == post.user_id or current_user.is_admin) %}
             <form action="{{ base_url }}/post/{{ post.post_id }}/delete" method="post" class="post-delete-form"
-                  onsubmit="return confirm('Are you sure you want to delete this post?');">
+                  onsubmit="return confirm('{{ 'post.delete_confirm'|trans }}');">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                <button type="submit" class="post-action post-action--delete">Delete</button>
+                <button type="submit" class="post-action post-action--delete">{{ 'post.delete'|trans }}</button>
             </form>
         {% endif %}
     </div>

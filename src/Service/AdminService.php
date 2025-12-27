@@ -273,15 +273,17 @@ class AdminService {
      * @param bool   $messaging_enabled Whether private messaging is enabled.
      * @param int    $max_post_length   Maximum characters allowed per post.
      * @param int    $max_attachments   Maximum image attachments allowed per post.
+     * @param string $locale            The locale code (e.g., 'en-US').
      *
      * @return array{success: bool, error?: string}
      */
-    public function updateSettings(string $site_name, bool $registration_open, bool $images_allowed, string $theme, string $logo_url = '', bool $require_approval = false, bool $public_feed = true, bool $require_topic = false, bool $messaging_enabled = true, int $max_post_length = 500, int $max_attachments = 10): array {
+    public function updateSettings(string $site_name, bool $registration_open, bool $images_allowed, string $theme, string $logo_url = '', bool $require_approval = false, bool $public_feed = true, bool $require_topic = false, bool $messaging_enabled = true, int $max_post_length = 500, int $max_attachments = 10, string $locale = 'en-US'): array {
         $result = ['success' => false];
 
         $site_name = trim($site_name);
         $theme = trim($theme);
         $logo_url = trim($logo_url);
+        $locale = trim($locale);
 
         if ($site_name === '') {
             $result['error'] = 'Site name cannot be empty.';
@@ -295,6 +297,8 @@ class AdminService {
             $result['error'] = 'Maximum post length cannot exceed 50,000 characters.';
         } elseif ($max_attachments < 1) {
             $result['error'] = 'Maximum attachments must be at least 1.';
+        } elseif ($locale === '') {
+            $result['error'] = 'Locale cannot be empty.';
         } else {
             $this->setting_mapper->saveSetting('site_name', $site_name);
             $this->setting_mapper->saveSetting('registration_open', $registration_open ? '1' : '0');
@@ -307,6 +311,7 @@ class AdminService {
             $this->setting_mapper->saveSetting('messaging_enabled', $messaging_enabled ? '1' : '0');
             $this->setting_mapper->saveSetting('max_post_length', (string) $max_post_length);
             $this->setting_mapper->saveSetting('max_attachments', (string) $max_attachments);
+            $this->setting_mapper->saveSetting('locale', $locale);
             $result['success'] = true;
         }
 
@@ -365,6 +370,15 @@ class AdminService {
      */
     public function getMaxAttachments(): int {
         return $this->setting_mapper->getMaxAttachments();
+    }
+
+    /**
+     * Gets the current locale setting.
+     *
+     * @return string The locale code (e.g., 'en-US').
+     */
+    public function getLocale(): string {
+        return $this->setting_mapper->getLocale();
     }
 
     /**

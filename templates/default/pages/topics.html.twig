@@ -108,12 +108,12 @@
 {% endblock %}
 
 {% block content %}
-    <h1 class="page-title">Topics</h1>
+    <h1 class="page-title">{{ 'topics.title'|trans }}</h1>
 
     {% if topics is empty %}
         <div class="empty-state" role="status">
-            <p class="empty-state-title">No topics available</p>
-            <p>Topics will appear here once they are created by an administrator.</p>
+            <p class="empty-state-title">{{ 'topics.no_topics'|trans }}</p>
+            <p>{{ 'topics.no_topics_hint'|trans }}</p>
         </div>
     {% else %}
         <ul class="topics-list">
@@ -121,19 +121,19 @@
                 <li class="topic-item">
                     <a href="{{ base_url }}/topic/{{ topic.topic_id }}" 
                        class="topic-link"
-                       aria-label="View posts in {{ topic.name }} topic">
+                       aria-label="{{ 'topics.view_topic'|trans({'%name%': topic.name}) }}">
                         {{ topic.name }}
                     </a>
                     <div class="topic-actions">
                         {% if current_user %}
                             {% if topic.topic_id in followed_topic_ids %}
-                                <span class="following-badge">Following</span>
+                                <span class="following-badge">{{ 'topics.following_badge'|trans }}</span>
                                 <form action="{{ base_url }}/topic/{{ topic.topic_id }}/unfollow" method="post" style="display: inline;">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                                     <button type="submit" 
                                             class="follow-btn follow-btn--unfollow" 
-                                            aria-label="Unfollow {{ topic.name }} topic">
-                                        Unfollow
+                                            aria-label="{{ 'topics.unfollow_topic'|trans({'%name%': topic.name}) }}">
+                                        {{ 'topics.unfollow'|trans }}
                                     </button>
                                 </form>
                             {% else %}
@@ -141,8 +141,8 @@
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                                     <button type="submit" 
                                             class="follow-btn" 
-                                            aria-label="Follow {{ topic.name }} topic">
-                                        Follow
+                                            aria-label="{{ 'topics.follow_topic'|trans({'%name%': topic.name}) }}">
+                                        {{ 'topics.follow'|trans }}
                                     </button>
                                 </form>
                             {% endif %}

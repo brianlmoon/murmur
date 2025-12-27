@@ -292,45 +292,45 @@
         {% endif %}
 
         <div class="profile-stats">
-            <span class="profile-stat"><strong>{{ follower_count }}</strong> followers</span>
-            <span class="profile-stat"><strong>{{ following_count }}</strong> following</span>
+            <span class="profile-stat">{{ 'profile.followers'|trans({'count': follower_count}) }}</span>
+            <span class="profile-stat">{{ 'profile.following'|trans({'count': following_count}) }}</span>
         </div>
 
-        <p class="profile-joined">Joined {{ profile_user.created_at | date('F Y') }}</p>
+        <p class="profile-joined">{{ 'profile.joined'|trans({'%date%': profile_user.created_at|localized_date('month_year')}) }}</p>
 
         <div class="profile-actions">
             {% if current_user and current_user.user_id == profile_user.user_id %}
-                <a href="{{ base_url }}/settings" class="btn btn-primary">Edit profile</a>
+                <a href="{{ base_url }}/settings" class="btn btn-primary">{{ 'profile.edit_profile'|trans }}</a>
             {% elseif current_user %}
                 {% if is_following %}
                     <form action="{{ base_url }}/user/{{ profile_user.username }}/unfollow" method="post" style="display: inline;">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                        <button type="submit" class="btn-unfollow">Unfollow</button>
+                        <button type="submit" class="btn-unfollow">{{ 'profile.unfollow'|trans }}</button>
                     </form>
                 {% else %}
                     <form action="{{ base_url }}/user/{{ profile_user.username }}/follow" method="post" style="display: inline;">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                        <button type="submit" class="btn-follow">Follow</button>
+                        <button type="submit" class="btn-follow">{{ 'profile.follow'|trans }}</button>
                     </form>
                 {% endif %}
                 {% if can_message is defined and can_message %}
-                    <a href="{{ base_url }}/messages/new/{{ profile_user.username }}" class="btn-message">Message</a>
+                    <a href="{{ base_url }}/messages/new/{{ profile_user.username }}" class="btn-message">{{ 'profile.message'|trans }}</a>
                 {% endif %}
             {% endif %}
         </div>
     </div>
 
-    <h2 class="profile-posts-title">Posts</h2>
+    <h2 class="profile-posts-title">{{ 'profile.posts_title'|trans }}</h2>
 
     {% if posts is empty %}
         <div class="empty-state">
-            <p>{{ profile_user.username }} hasn't posted anything yet.</p>
+            <p>{{ 'profile.no_posts'|trans({'%username%': profile_user.username}) }}</p>
         </div>
     {% else %}
         {% for item in posts %}
             {% if item.post.parent_id %}
                 <div class="reply-indicator">
-                    Commenting on a post
+                    {{ 'post.commenting_on'|trans }}
                 </div>
             {% endif %}
             {% include theme ~ '/components/post.html.twig' with {

@@ -1,10 +1,10 @@
 {% extends theme ~ '/layouts/base.html.twig' %}
 
-{% block title %}Log in - {{ site_name }}{% endblock %}
+{% block title %}{{ 'auth.login_title'|trans }} - {{ site_name }}{% endblock %}
 
 {% block content %}
 <div class="card" style="max-width: 400px; margin: 0 auto;">
-    <h1 class="card-title text-center">Log in</h1>
+    <h1 class="card-title text-center">{{ 'auth.login_title'|trans }}</h1>
 
     {% if error is defined and error %}
         <div class="flash flash-error">
@@ -16,23 +16,23 @@
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
         <div class="form-group">
-            <label for="email" class="form-label">Email</label>
+            <label for="email" class="form-label">{{ 'auth.email_label'|trans }}</label>
             <input type="email" id="email" name="email" class="form-input"
                    value="{{ email | default('') }}" required autofocus>
         </div>
 
         <div class="form-group">
-            <label for="password" class="form-label">Password</label>
+            <label for="password" class="form-label">{{ 'auth.password_label'|trans }}</label>
             <input type="password" id="password" name="password" class="form-input" required>
         </div>
 
         <div class="form-group">
-            <button type="submit" class="btn btn-primary btn-block">Log in</button>
+            <button type="submit" class="btn btn-primary btn-block">{{ 'auth.login_button'|trans }}</button>
         </div>
     </form>
 
     <p class="text-center text-muted mt-2">
-        Don't have an account? <a href="{{ base_url }}/register">Sign up</a>
+        {{ 'auth.no_account'|trans }} <a href="{{ base_url }}/register">{{ 'nav.sign_up'|trans }}</a>
     </p>
 </div>
 {% endblock %}

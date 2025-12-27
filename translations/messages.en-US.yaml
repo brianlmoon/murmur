@@ -1,0 +1,277 @@
+# Murmur Translation File - English (US)
+# Locale: en-US
+# 
+# This file contains all user-facing strings for the default theme.
+# Copy this file to create translations for other locales.
+#
+# Pluralization uses ICU message format:
+#   {count, plural, =0 {no items} =1 {1 item} other {# items}}
+#
+# Variable substitution uses %variable% syntax:
+#   "Welcome, %name%"
+
+# =============================================================================
+# Common UI Elements
+# =============================================================================
+common:
+    save: "Save"
+    cancel: "Cancel"
+    delete: "Delete"
+    edit: "Edit"
+    submit: "Submit"
+    loading: "Loading..."
+    back: "Back"
+    close: "Close"
+    confirm: "Confirm"
+    yes: "Yes"
+    no: "No"
+    or: "or"
+    and: "and"
+
+# =============================================================================
+# Navigation
+# =============================================================================
+nav:
+    feed: "Feed"
+    topics: "Topics"
+    messages: "Messages"
+    admin: "Admin"
+    log_in: "Log in"
+    log_out: "Log out"
+    sign_up: "Sign up"
+    user_menu: "User menu"
+    view_feed: "View feed"
+    browse_topics: "Browse all topics"
+
+# =============================================================================
+# Authentication
+# =============================================================================
+auth:
+    # Login page
+    login_title: "Log in"
+    login_button: "Log in"
+    email_label: "Email"
+    password_label: "Password"
+    no_account: "Don't have an account?"
+    
+    # Registration page
+    register_title: "Create an account"
+    register_button: "Create account"
+    name_label: "Name"
+    name_help: "Your full name as you'd like it displayed."
+    username_label: "Username"
+    username_help: "3-30 characters. Letters, numbers, and underscores only."
+    password_help: "At least 8 characters."
+    confirm_password_label: "Confirm password"
+    has_account: "Already have an account?"
+    registration_closed: "Registration is currently closed."
+
+# =============================================================================
+# Feed
+# =============================================================================
+feed:
+    title: "Home"
+    filter_all: "All"
+    filter_following: "Following"
+    
+    # Empty states
+    no_posts: "No posts yet"
+    no_posts_hint: "Be the first to share something."
+    no_following_posts: "No posts from followed topics"
+    no_following_hint: "Follow topics to see posts here, or view"
+    
+    # Pagination
+    newer: "← Newer"
+    older: "Older →"
+
+# =============================================================================
+# Posts
+# =============================================================================
+post:
+    # Actions
+    like: "Like"
+    unlike: "Unlike"
+    comment: "Comment"
+    delete: "Delete"
+    delete_confirm: "Are you sure you want to delete this post?"
+    
+    # Counts - uses ICU plural format
+    like_count: "{count, plural, =0 {} =1 {(1)} other {(#)}}"
+    comment_count: "{count, plural, =0 {} =1 {(1)} other {(#)}}"
+    
+    # Accessibility
+    view_post: "View post from %date%"
+    view_comment: "View comment from %date%"
+    post_attachment: "Post attachment"
+    
+    # Topic follow
+    follow_topic: "Follow topic"
+    unfollow_topic: "Unfollow topic"
+    
+    # Post detail page
+    back_to_feed: "← Back to feed"
+    comments_title: "Comments"
+    sort_label: "Sort:"
+    sort_oldest: "Oldest"
+    sort_newest: "Newest"
+    no_comments: "No comments yet. Be the first to respond."
+    
+    # Reply indicator on profile
+    commenting_on: "Commenting on a post"
+
+# =============================================================================
+# Compose Form
+# =============================================================================
+compose:
+    placeholder: "What's on your mind?"
+    reply_placeholder: "Write a comment..."
+    post_button: "Post"
+    comment_button: "Comment"
+    topic_select_optional: "Select a topic (optional)"
+    topic_select_required: "Select a topic"
+    add_images: "Add images"
+    too_many_images: "too many!"
+    image_limit_error: "Please select no more than %max% images. You have selected %count%."
+
+# =============================================================================
+# Profile
+# =============================================================================
+profile:
+    # Header
+    joined: "Joined %date%"
+    edit_profile: "Edit profile"
+    
+    # Stats - uses ICU plural format
+    followers: "{count, plural, =1 {1 follower} other {# followers}}"
+    following: "{count, plural, =1 {1 following} other {# following}}"
+    
+    # Actions
+    follow: "Follow"
+    unfollow: "Unfollow"
+    message: "Message"
+    
+    # Posts section
+    posts_title: "Posts"
+    no_posts: "%username% hasn't posted anything yet."
+
+# =============================================================================
+# User Settings
+# =============================================================================
+settings:
+    title: "Settings"
+    
+    # Profile section
+    profile_title: "Profile"
+    avatar_label: "Avatar"
+    upload_avatar: "Upload avatar"
+    change_avatar: "Change avatar"
+    remove_avatar: "Remove avatar"
+    bio_label: "Bio"
+    bio_placeholder: "Tell us about yourself..."
+    save_changes: "Save changes"
+    view_profile: "View profile"
+    
+    # Password section
+    password_title: "Change Password"
+    current_password: "Current password"
+    new_password: "New password"
+    confirm_new_password: "Confirm new password"
+    update_password: "Update password"
+
+# =============================================================================
+# Topics
+# =============================================================================
+topics:
+    title: "Topics"
+    follow: "Follow"
+    unfollow: "Unfollow"
+    following_badge: "Following"
+    
+    # Empty state
+    no_topics: "No topics available"
+    no_topics_hint: "Topics will appear here once they are created by an administrator."
+    
+    # Accessibility
+    view_topic: "View posts in %name% topic"
+    follow_topic: "Follow %name% topic"
+    unfollow_topic: "Unfollow %name% topic"
+
+# =============================================================================
+# Messages
+# =============================================================================
+messages:
+    title: "Messages"
+    new_message: "New Message"
+    
+    # Inbox
+    no_conversations: "No conversations yet."
+    start_conversation: "Start a conversation"
+    you_prefix: "You:"
+    
+    # Conversation view
+    back_to_messages: "Back to messages"
+    delete_conversation: "Delete"
+    delete_conversation_confirm: "Delete this conversation? This cannot be undone."
+    load_older: "Load older messages"
+    no_messages: "No messages yet. Start the conversation!"
+    write_placeholder: "Write a message..."
+    character_limit: "%count% character limit"
+    send: "Send"
+    delete_message: "Delete message"
+    delete_message_confirm: "Delete this message?"
+    cannot_reply: "You cannot reply to this conversation."
+    
+    # Search
+    search_title: "New Message"
+    search_placeholder: "Search by username or name..."
+    search_button: "Search"
+    no_results: "No users found."
+    search_hint: "Search for a user to start a conversation."
+    
+    # Pagination
+    newer: "← Newer"
+    older: "Older →"
+
+# =============================================================================
+# Errors
+# =============================================================================
+errors:
+    not_found_title: "404"
+    not_found: "The page you are looking for could not be found."
+    go_home: "Go home"
+    
+    forbidden_title: "403"
+    forbidden: "You do not have permission to access this page."
+    
+    generic: "Something went wrong. Please try again."
+
+# =============================================================================
+# Date Formats
+# PHP date() format strings - customize per locale
+# See: https://www.php.net/manual/en/datetime.format.php
+# =============================================================================
+dates:
+    # Short date: "Dec 27"
+    format_short: "M j"
+    
+    # Long date: "December 27, 2025"
+    format_long: "F j, Y"
+    
+    # Time only: "1:39 AM"
+    format_time: "g:i A"
+    
+    # Date and time: "December 27, 2025 1:39 AM"
+    format_datetime: "F j, Y g:i A"
+    
+    # Month and year: "December 2025" (for "Joined" dates)
+    format_month_year: "F Y"
+
+# =============================================================================
+# Relative Dates
+# Used by the relative_date filter
+# =============================================================================
+relative:
+    just_now: "just now"
+    minutes_ago: "{count, plural, =1 {1 minute ago} other {# minutes ago}}"
+    hours_ago: "{count, plural, =1 {1 hour ago} other {# hours ago}}"
+    days_ago: "{count, plural, =1 {1 day ago} other {# days ago}}"
