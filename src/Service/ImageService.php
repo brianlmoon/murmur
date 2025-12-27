@@ -232,31 +232,166 @@ class ImageService {
     }
 
     /**
+     * Checks if any uploaded files were provided in a multi-file upload.
+     *
+     * Handles the $_FILES array structure for inputs with name="images[]".
+     * The structure is: ['name' => [...], 'type' => [...], 'tmp_name' => [...], ...]
+     *
+     * @param array|null $files The $_FILES array entry for multi-file input.
+     *
+     * @return bool True if at least one file was uploaded.
+     */
+    public function hasUploads(?array $files): bool {
+        $result = false;
+
+        if ($files !== null && isset($files['error']) && is_array($files['error'])) {
+            foreach ($files['error'] as $error) {
+                if ($error !== UPLOAD_ERR_NO_FILE) {
+                    $result = true;
+                    break;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Processes multiple uploaded image files.
+     *
+     * Validates all files first (atomic - all or nothing). If any file fails
+     * validation, the entire upload is rejected and no files are stored.
+     *
+     * @param array $files        The $_FILES array entry for multi-file input.
+     * @param string $subdirectory Subdirectory within uploads (e.g., 'posts', 'avatars').
+     * @param int    $max_files    Maximum number of files allowed.
+     *
+     * @return array{success: bool, paths?: array<string>, error?: string}
+     *         On success: ['success' => true, 'paths' => ['posts/abc123.jpg', ...]]
+     *         On failure: ['success' => false, 'error' => 'Error message']
+     */
+    public function uploadMultiple(array $files, string $subdirectory = 'posts', int $max_files = 10): array {
+        $result = ['success' => false];
+
+        // Normalize the multi-file array structure
+        $normalized_files = $this->normalizeFilesArray($files);
+
+        // Filter out empty uploads
+        $normalized_files = array_filter($normalized_files, function ($file) {
+            return $file['error'] !== UPLOAD_ERR_NO_FILE;
+        });
+
+        if (empty($normalized_files)) {
+            $result['success'] = true;
+            $result['paths'] = [];
+        } elseif (count($normalized_files) > $max_files) {
+            $result['error'] = 'Too many files. Maximum allowed is ' . $max_files . '.';
+        } else {
+            // Validate all files first (atomic validation)
+            $validation_errors = [];
+            foreach ($normalized_files as $index => $file) {
+                $error = $this->validateUpload($file);
+                if ($error !== null) {
+                    $validation_errors[] = 'File ' . ($index + 1) . ': ' . $error;
+                }
+            }
+
+            if (!empty($validation_errors)) {
+                $result['error'] = implode(' ', $validation_errors);
+            } else {
+                // All files valid, proceed with upload
+                $paths = [];
+                $upload_error = null;
+
+                foreach ($normalized_files as $file) {
+                    $upload_result = $this->upload($file, $subdirectory);
+                    if (!$upload_result['success']) {
+                        $upload_error = $upload_result['error'];
+                        break;
+                    }
+                    $paths[] = $upload_result['path'];
+                }
+
+                if ($upload_error !== null) {
+                    // Rollback: delete any files that were uploaded
+                    foreach ($paths as $path) {
+                        $this->delete($path);
+                    }
+                    $result['error'] = $upload_error;
+                } else {
+                    $result['success'] = true;
+                    $result['paths'] = $paths;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Normalizes the multi-file $_FILES array structure.
+     *
+     * Converts from: ['name' => ['a.jpg', 'b.jpg'], 'type' => [...], ...]
+     * To: [['name' => 'a.jpg', 'type' => ...], ['name' => 'b.jpg', ...]]
+     *
+     * @param array $files The $_FILES array entry for multi-file input.
+     *
+     * @return array<array{name: string, type: string, tmp_name: string, error: int, size: int}>
+     */
+    protected function normalizeFilesArray(array $files): array {
+        $result = [];
+
+        if (!isset($files['name']) || !is_array($files['name'])) {
+            // Already normalized or single file
+            if (isset($files['name'])) {
+                $result[] = $files;
+            }
+        } else {
+            foreach ($files['name'] as $index => $name) {
+                $result[] = [
+                    'name'     => $name,
+                    'type'     => $files['type'][$index] ?? '',
+                    'tmp_name' => $files['tmp_name'][$index] ?? '',
+                    'error'    => $files['error'][$index] ?? UPLOAD_ERR_NO_FILE,
+                    'size'     => $files['size'][$index] ?? 0,
+                ];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Enriches post items with image URLs for templates.
      *
      * Takes an array of post items (as returned by PostService methods) and
-     * adds `image_url` and `avatar_url` keys based on each post's image_path
-     * and author's avatar_path. This centralizes URL generation for posts
-     * displayed in feeds, profiles, and other listing pages.
+     * adds `image_urls` (array) and `avatar_url` keys based on each post's
+     * attachments and author's avatar_path. This centralizes URL generation
+     * for posts displayed in feeds, profiles, and other listing pages.
      *
      * Usage:
      * ```php
      * $posts = $post_service->getFeed(20, 0, $user_id);
      * $posts = $image_service->enrichPostsWithUrls($posts);
-     * // Now each $posts[n] has 'image_url' and 'avatar_url' keys
+     * // Now each $posts[n] has 'image_urls' (array) and 'avatar_url' keys
      * ```
      *
-     * @param array<int, array{post: \Murmur\Entity\Post, author: \Murmur\Entity\User}> $posts
+     * @param array<int, array{post: \Murmur\Entity\Post, author: \Murmur\Entity\User, attachments?: array}> $posts
      *        Array of post items from PostService methods.
      *
-     * @return array<int, array{post: \Murmur\Entity\Post, author: \Murmur\Entity\User, image_url: ?string, avatar_url: ?string}>
+     * @return array<int, array{post: \Murmur\Entity\Post, author: \Murmur\Entity\User, image_urls: array<string>, avatar_url: ?string}>
      *         Enriched post items with URL keys added.
      */
     public function enrichPostsWithUrls(array $posts): array {
         foreach ($posts as $key => $post_item) {
-            $posts[$key]['image_url'] = $post_item['post']->image_path !== null
-                ? $this->getUrl($post_item['post']->image_path)
-                : null;
+            // Convert attachments to URLs
+            $image_urls = [];
+            if (isset($post_item['attachments']) && is_array($post_item['attachments'])) {
+                foreach ($post_item['attachments'] as $attachment) {
+                    $image_urls[] = $this->getUrl($attachment->file_path);
+                }
+            }
+            $posts[$key]['image_urls'] = $image_urls;
 
             $posts[$key]['avatar_url'] = $post_item['author']->avatar_path !== null
                 ? $this->getUrl($post_item['author']->avatar_path)

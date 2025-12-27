@@ -7,6 +7,7 @@ namespace Murmur\Tests\Unit\Service;
 use Murmur\Entity\Post;
 use Murmur\Entity\User;
 use Murmur\Repository\LikeMapper;
+use Murmur\Repository\PostAttachmentMapper;
 use Murmur\Repository\PostMapper;
 use Murmur\Repository\SettingMapper;
 use Murmur\Repository\TopicMapper;
@@ -32,12 +33,15 @@ class PostServiceTest extends TestCase {
 
     protected MockObject $setting_mapper;
 
+    protected MockObject $attachment_mapper;
+
     protected function setUp(): void {
         $this->post_mapper = $this->createMock(PostMapper::class);
         $this->user_mapper = $this->createMock(UserMapper::class);
         $this->like_mapper = $this->createMock(LikeMapper::class);
         $this->topic_mapper = $this->createMock(TopicMapper::class);
         $this->setting_mapper = $this->createMock(SettingMapper::class);
+        $this->attachment_mapper = $this->createMock(PostAttachmentMapper::class);
 
         $this->setting_mapper
             ->method('getMaxPostLength')
@@ -48,14 +52,19 @@ class PostServiceTest extends TestCase {
             $this->user_mapper,
             $this->like_mapper,
             $this->topic_mapper,
-            $this->setting_mapper
+            $this->setting_mapper,
+            $this->attachment_mapper
         );
     }
 
     public function testCreatePostSuccess(): void {
         $this->post_mapper
             ->expects($this->once())
-            ->method('save');
+            ->method('save')
+            ->willReturnCallback(function ($post) {
+                $post->post_id = 1;
+                return $post;
+            });
 
         $result = $this->post_service->createPost(1, 'Hello, world!');
 
@@ -65,23 +74,34 @@ class PostServiceTest extends TestCase {
         $this->assertEquals('Hello, world!', $result['post']->body);
     }
 
-    public function testCreatePostWithImage(): void {
+    public function testCreatePostWithImages(): void {
         $this->post_mapper
             ->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(function ($post) {
+                $post->post_id = 1;
+                return $post;
+            });
+
+        $this->attachment_mapper
+            ->expects($this->exactly(2))
             ->method('save');
 
-        $result = $this->post_service->createPost(1, 'Check out this image!', 'posts/abc123.jpg');
+        $result = $this->post_service->createPost(1, 'Check out these images!', ['posts/abc123.jpg', 'posts/def456.jpg']);
 
         $this->assertTrue($result['success']);
-        $this->assertEquals('posts/abc123.jpg', $result['post']->image_path);
     }
 
     public function testCreatePostWithTopic(): void {
         $this->post_mapper
             ->expects($this->once())
-            ->method('save');
+            ->method('save')
+            ->willReturnCallback(function ($post) {
+                $post->post_id = 1;
+                return $post;
+            });
 
-        $result = $this->post_service->createPost(1, 'Hello, world!', null, 5);
+        $result = $this->post_service->createPost(1, 'Hello, world!', [], 5);
 
         $this->assertTrue($result['success']);
         $this->assertEquals(5, $result['post']->topic_id);
@@ -121,7 +141,11 @@ class PostServiceTest extends TestCase {
 
         $this->post_mapper
             ->expects($this->once())
-            ->method('save');
+            ->method('save')
+            ->willReturnCallback(function ($post) {
+                $post->post_id = 2;
+                return $post;
+            });
 
         $result = $this->post_service->createReply(2, 1, 'This is a reply!');
 

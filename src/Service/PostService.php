@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Murmur\Service;
 
 use Murmur\Entity\Post;
+use Murmur\Entity\PostAttachment;
 use Murmur\Entity\User;
 use Murmur\Repository\LikeMapper;
+use Murmur\Repository\PostAttachmentMapper;
 use Murmur\Repository\PostMapper;
 use Murmur\Repository\SettingMapper;
 use Murmur\Repository\TopicMapper;
@@ -15,7 +17,8 @@ use Murmur\Repository\UserMapper;
 /**
  * Service for post operations.
  *
- * Handles post creation, retrieval, and deletion.
+ * Handles post creation, retrieval, and deletion. Supports multiple
+ * image attachments per post via the PostAttachmentMapper.
  */
 class PostService {
 
@@ -45,39 +48,47 @@ class PostService {
     protected SettingMapper $setting_mapper;
 
     /**
+     * The post attachment mapper for database operations.
+     */
+    protected PostAttachmentMapper $attachment_mapper;
+
+    /**
      * Creates a new PostService instance.
      *
-     * @param PostMapper    $post_mapper    The post mapper.
-     * @param UserMapper    $user_mapper    The user mapper.
-     * @param LikeMapper    $like_mapper    The like mapper.
-     * @param TopicMapper   $topic_mapper   The topic mapper.
-     * @param SettingMapper $setting_mapper The setting mapper.
+     * @param PostMapper           $post_mapper       The post mapper.
+     * @param UserMapper           $user_mapper       The user mapper.
+     * @param LikeMapper           $like_mapper       The like mapper.
+     * @param TopicMapper          $topic_mapper      The topic mapper.
+     * @param SettingMapper        $setting_mapper    The setting mapper.
+     * @param PostAttachmentMapper $attachment_mapper The post attachment mapper.
      */
     public function __construct(
         PostMapper $post_mapper,
         UserMapper $user_mapper,
         LikeMapper $like_mapper,
         TopicMapper $topic_mapper,
-        SettingMapper $setting_mapper
+        SettingMapper $setting_mapper,
+        PostAttachmentMapper $attachment_mapper
     ) {
         $this->post_mapper = $post_mapper;
         $this->user_mapper = $user_mapper;
         $this->like_mapper = $like_mapper;
         $this->topic_mapper = $topic_mapper;
         $this->setting_mapper = $setting_mapper;
+        $this->attachment_mapper = $attachment_mapper;
     }
 
     /**
      * Creates a new post.
      *
-     * @param int         $user_id    The author's user ID.
-     * @param string      $body       The post content.
-     * @param string|null $image_path Optional path to attached image.
-     * @param int|null    $topic_id   Optional topic ID for categorization.
+     * @param int          $user_id     The author's user ID.
+     * @param string       $body        The post content.
+     * @param array<string> $image_paths Array of paths to attached images.
+     * @param int|null     $topic_id    Optional topic ID for categorization.
      *
      * @return array{success: bool, post?: Post, error?: string}
      */
-    public function createPost(int $user_id, string $body, ?string $image_path = null, ?int $topic_id = null): array {
+    public function createPost(int $user_id, string $body, array $image_paths = [], ?int $topic_id = null): array {
         $result = ['success' => false];
 
         $body = trim($body);
@@ -89,10 +100,12 @@ class PostService {
             $post = new Post();
             $post->user_id = $user_id;
             $post->body = $body;
-            $post->image_path = $image_path;
             $post->topic_id = $topic_id;
 
             $this->post_mapper->save($post);
+
+            // Create attachments for each image path
+            $this->createAttachments($post->post_id, $image_paths);
 
             $result['success'] = true;
             $result['post'] = $post;
@@ -104,14 +117,14 @@ class PostService {
     /**
      * Creates a reply to an existing post.
      *
-     * @param int         $user_id    The author's user ID.
-     * @param int         $parent_id  The parent post ID.
-     * @param string      $body       The reply content.
-     * @param string|null $image_path Optional path to attached image.
+     * @param int           $user_id     The author's user ID.
+     * @param int           $parent_id   The parent post ID.
+     * @param string        $body        The reply content.
+     * @param array<string> $image_paths Array of paths to attached images.
      *
      * @return array{success: bool, post?: Post, error?: string}
      */
-    public function createReply(int $user_id, int $parent_id, string $body, ?string $image_path = null): array {
+    public function createReply(int $user_id, int $parent_id, string $body, array $image_paths = []): array {
         $result = ['success' => false];
 
         $parent = $this->post_mapper->load($parent_id);
@@ -132,9 +145,11 @@ class PostService {
                 $post->user_id = $user_id;
                 $post->parent_id = $parent_id;
                 $post->body = $body;
-                $post->image_path = $image_path;
 
                 $this->post_mapper->save($post);
+
+                // Create attachments for each image path
+                $this->createAttachments($post->post_id, $image_paths);
 
                 $result['success'] = true;
                 $result['post'] = $post;
@@ -142,6 +157,25 @@ class PostService {
         }
 
         return $result;
+    }
+
+    /**
+     * Creates attachment records for a post.
+     *
+     * @param int           $post_id     The post ID.
+     * @param array<string> $image_paths Array of image file paths.
+     *
+     * @return void
+     */
+    protected function createAttachments(int $post_id, array $image_paths): void {
+        foreach ($image_paths as $sort_order => $file_path) {
+            $attachment = new PostAttachment();
+            $attachment->post_id = $post_id;
+            $attachment->file_path = $file_path;
+            $attachment->sort_order = $sort_order;
+
+            $this->attachment_mapper->save($attachment);
+        }
     }
 
     /**
@@ -172,7 +206,7 @@ class PostService {
      * @param int|null        $current_user_id Current user ID for checking likes.
      * @param array<int>|null $topic_ids       Optional topic IDs to filter by.
      *
-     * @return array<array{post: Post, author: User, like_count: int, user_liked: bool, reply_count: int, topic: ?\Murmur\Entity\Topic}>
+     * @return array<array{post: Post, author: User, like_count: int, user_liked: bool, reply_count: int, topic: ?\Murmur\Entity\Topic, attachments: array<PostAttachment>}>
      */
     public function getFeed(int $limit = 50, int $offset = 0, ?int $current_user_id = null, ?array $topic_ids = null): array {
         $result = [];
@@ -193,6 +227,7 @@ class PostService {
         $user_liked_ids = $current_user_id !== null
             ? $this->like_mapper->getUserLikedPostIds($current_user_id, $post_ids)
             : [];
+        $attachments_by_post = $this->attachment_mapper->findByPostIds($post_ids);
 
         foreach ($posts as $post) {
             $author = $this->user_mapper->load($post->user_id);
@@ -201,12 +236,13 @@ class PostService {
                 $topic = $post->topic_id !== null ? $this->topic_mapper->load($post->topic_id) : null;
 
                 $result[] = [
-                    'post' => $post,
-                    'author' => $author,
-                    'like_count' => $like_counts[$post->post_id] ?? 0,
-                    'user_liked' => in_array($post->post_id, $user_liked_ids),
+                    'post'        => $post,
+                    'author'      => $author,
+                    'like_count'  => $like_counts[$post->post_id] ?? 0,
+                    'user_liked'  => in_array($post->post_id, $user_liked_ids),
                     'reply_count' => $reply_counts[$post->post_id] ?? 0,
-                    'topic' => $topic,
+                    'topic'       => $topic,
+                    'attachments' => $attachments_by_post[$post->post_id] ?? [],
                 ];
             }
         }
@@ -220,7 +256,7 @@ class PostService {
      * @param int      $post_id         The post ID.
      * @param int|null $current_user_id Current user ID for checking likes.
      *
-     * @return array{post: Post, author: User, like_count: int, user_liked: bool, reply_count: int, topic: ?\Murmur\Entity\Topic}|null
+     * @return array{post: Post, author: User, like_count: int, user_liked: bool, reply_count: int, topic: ?\Murmur\Entity\Topic, attachments: array<PostAttachment>}|null
      */
     public function getPost(int $post_id, ?int $current_user_id = null): ?array {
         $result = null;
@@ -237,14 +273,16 @@ class PostService {
                     : false;
                 $reply_counts = $this->post_mapper->countRepliesByPostIds([$post_id]);
                 $topic = $post->topic_id !== null ? $this->topic_mapper->load($post->topic_id) : null;
+                $attachments = $this->attachment_mapper->findByPostId($post_id);
 
                 $result = [
-                    'post' => $post,
-                    'author' => $author,
-                    'like_count' => $like_count,
-                    'user_liked' => $user_liked,
+                    'post'        => $post,
+                    'author'      => $author,
+                    'like_count'  => $like_count,
+                    'user_liked'  => $user_liked,
                     'reply_count' => $reply_counts[$post_id] ?? 0,
-                    'topic' => $topic,
+                    'topic'       => $topic,
+                    'attachments' => $attachments,
                 ];
             }
         }
@@ -261,7 +299,7 @@ class PostService {
      * @param int|null $current_user_id Current user ID for checking likes.
      * @param string   $order           Sort order: 'ASC' (oldest first) or 'DESC' (newest first).
      *
-     * @return array<array{post: Post, author: User, like_count: int, user_liked: bool}>
+     * @return array<array{post: Post, author: User, like_count: int, user_liked: bool, attachments: array<PostAttachment>}>
      */
     public function getReplies(int $parent_id, int $limit = 50, int $offset = 0, ?int $current_user_id = null, string $order = 'ASC'): array {
         $result = [];
@@ -277,16 +315,18 @@ class PostService {
         $user_liked_ids = $current_user_id !== null
             ? $this->like_mapper->getUserLikedPostIds($current_user_id, $post_ids)
             : [];
+        $attachments_by_post = $this->attachment_mapper->findByPostIds($post_ids);
 
         foreach ($replies as $reply) {
             $author = $this->user_mapper->load($reply->user_id);
 
             if ($author !== null) {
                 $result[] = [
-                    'post' => $reply,
-                    'author' => $author,
-                    'like_count' => $like_counts[$reply->post_id] ?? 0,
-                    'user_liked' => in_array($reply->post_id, $user_liked_ids),
+                    'post'        => $reply,
+                    'author'      => $author,
+                    'like_count'  => $like_counts[$reply->post_id] ?? 0,
+                    'user_liked'  => in_array($reply->post_id, $user_liked_ids),
+                    'attachments' => $attachments_by_post[$reply->post_id] ?? [],
                 ];
             }
         }
@@ -302,7 +342,7 @@ class PostService {
      * @param int      $offset          Number of posts to skip.
      * @param int|null $current_user_id Current user ID for checking likes.
      *
-     * @return array<array{post: Post, author: User, like_count: int, user_liked: bool, reply_count: int, topic: ?\Murmur\Entity\Topic}>
+     * @return array<array{post: Post, author: User, like_count: int, user_liked: bool, reply_count: int, topic: ?\Murmur\Entity\Topic, attachments: array<PostAttachment>}>
      */
     public function getPostsByUser(int $user_id, int $limit = 50, int $offset = 0, ?int $current_user_id = null): array {
         $result = [];
@@ -317,17 +357,19 @@ class PostService {
             $user_liked_ids = $current_user_id !== null
                 ? $this->like_mapper->getUserLikedPostIds($current_user_id, $post_ids)
                 : [];
+            $attachments_by_post = $this->attachment_mapper->findByPostIds($post_ids);
 
             foreach ($posts as $post) {
                 $topic = $post->topic_id !== null ? $this->topic_mapper->load($post->topic_id) : null;
 
                 $result[] = [
-                    'post' => $post,
-                    'author' => $author,
-                    'like_count' => $like_counts[$post->post_id] ?? 0,
-                    'user_liked' => in_array($post->post_id, $user_liked_ids),
+                    'post'        => $post,
+                    'author'      => $author,
+                    'like_count'  => $like_counts[$post->post_id] ?? 0,
+                    'user_liked'  => in_array($post->post_id, $user_liked_ids),
                     'reply_count' => $reply_counts[$post->post_id] ?? 0,
-                    'topic' => $topic,
+                    'topic'       => $topic,
+                    'attachments' => $attachments_by_post[$post->post_id] ?? [],
                 ];
             }
         }
@@ -338,10 +380,13 @@ class PostService {
     /**
      * Deletes a post if the user is authorized.
      *
+     * Also deletes all attachment files from storage. Database rows are
+     * cleaned up by CASCADE delete constraints.
+     *
      * @param int  $post_id  The post ID to delete.
      * @param User $user     The user attempting to delete.
      *
-     * @return array{success: bool, error?: string}
+     * @return array{success: bool, error?: string, deleted_files?: array<string>}
      */
     public function deletePost(int $post_id, User $user): array {
         $result = ['success' => false];
@@ -353,16 +398,30 @@ class PostService {
         } elseif ($post->user_id !== $user->user_id && !$user->is_admin) {
             $result['error'] = 'You do not have permission to delete this post.';
         } else {
-            // Delete all replies first
+            // Collect file paths for cleanup (main post and all replies)
+            $deleted_files = [];
+
+            // Get attachment file paths for main post
+            $deleted_files = array_merge(
+                $deleted_files,
+                $this->attachment_mapper->getFilePathsByPostId($post_id)
+            );
+
+            // Delete all replies first and collect their attachment paths
             $replies = $this->post_mapper->findReplies($post_id);
             foreach ($replies as $reply) {
+                $deleted_files = array_merge(
+                    $deleted_files,
+                    $this->attachment_mapper->getFilePathsByPostId($reply->post_id)
+                );
                 $this->post_mapper->delete($reply->post_id);
             }
 
-            // Delete the post
+            // Delete the post (CASCADE will delete attachments table rows)
             $this->post_mapper->delete($post_id);
 
             $result['success'] = true;
+            $result['deleted_files'] = $deleted_files;
         }
 
         return $result;
@@ -375,5 +434,14 @@ class PostService {
      */
     public function getMaxBodyLength(): int {
         return $this->setting_mapper->getMaxPostLength();
+    }
+
+    /**
+     * Gets the maximum allowed attachments per post from settings.
+     *
+     * @return int The maximum attachment count.
+     */
+    public function getMaxAttachments(): int {
+        return $this->setting_mapper->getMaxAttachments();
     }
 }

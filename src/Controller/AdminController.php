@@ -223,6 +223,7 @@ class AdminController extends BaseController {
             'require_topic'     => $this->admin_service->isTopicRequired(),
             'messaging_enabled' => $this->admin_service->isMessagingEnabled(),
             'max_post_length'   => $this->admin_service->getMaxPostLength(),
+            'max_attachments'   => $this->admin_service->getMaxAttachments(),
             'available_themes'  => $this->admin_service->getAvailableThemes($templates_path),
             'topics'            => $topics,
         ]);
@@ -256,11 +257,12 @@ class AdminController extends BaseController {
         $require_topic = $this->getPost('require_topic') === '1';
         $messaging_enabled = $this->getPost('messaging_enabled') === '1';
         $max_post_length = (int) ($this->getPost('max_post_length') ?? 500);
+        $max_attachments = (int) ($this->getPost('max_attachments') ?? 10);
 
         $templates_path = dirname(__DIR__, 2) . '/templates';
         $topics = $this->topic_service->getAllTopics();
 
-        $update_result = $this->admin_service->updateSettings($site_name, $registration_open, $images_allowed, $theme, $logo_url, $require_approval, $public_feed, $require_topic, $messaging_enabled, $max_post_length);
+        $update_result = $this->admin_service->updateSettings($site_name, $registration_open, $images_allowed, $theme, $logo_url, $require_approval, $public_feed, $require_topic, $messaging_enabled, $max_post_length, $max_attachments);
 
         if ($update_result['success']) {
             $this->session->addFlash('success', 'Settings saved.');
@@ -277,6 +279,7 @@ class AdminController extends BaseController {
                 'require_topic'     => $require_topic,
                 'messaging_enabled' => $messaging_enabled,
                 'max_post_length'   => $max_post_length,
+                'max_attachments'   => $max_attachments,
                 'available_themes'  => $this->admin_service->getAvailableThemes($templates_path),
                 'topics'            => $topics,
                 'error'             => $update_result['error'],

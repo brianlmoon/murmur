@@ -231,14 +231,16 @@ class ImageServiceTest extends TestCase {
     }
 
     public function testEnrichPostsWithUrls(): void {
-        $post = new \stdClass();
-        $post->image_path = 'posts/image.jpg';
+        $attachment1 = new \stdClass();
+        $attachment1->file_path = 'posts/image.jpg';
 
         $author = new \stdClass();
         $author->avatar_path = 'avatars/avatar.jpg';
 
+        $post = new \stdClass();
+
         $posts = [
-            ['post' => $post, 'author' => $author],
+            ['post' => $post, 'author' => $author, 'attachments' => [$attachment1]],
         ];
 
         $this->storage
@@ -251,49 +253,59 @@ class ImageServiceTest extends TestCase {
         $result = $this->image_service->enrichPostsWithUrls($posts);
 
         $this->assertCount(1, $result);
-        $this->assertEquals('/uploads/posts/image.jpg', $result[0]['image_url']);
+        $this->assertIsArray($result[0]['image_urls']);
+        $this->assertCount(1, $result[0]['image_urls']);
+        $this->assertEquals('/uploads/posts/image.jpg', $result[0]['image_urls'][0]);
         $this->assertEquals('/uploads/avatars/avatar.jpg', $result[0]['avatar_url']);
     }
 
-    public function testEnrichPostsWithUrlsNullPaths(): void {
-        $post = new \stdClass();
-        $post->image_path = null;
-
+    public function testEnrichPostsWithUrlsNoAttachments(): void {
         $author = new \stdClass();
         $author->avatar_path = null;
 
+        $post = new \stdClass();
+
         $posts = [
-            ['post' => $post, 'author' => $author],
+            ['post' => $post, 'author' => $author, 'attachments' => []],
         ];
 
         $result = $this->image_service->enrichPostsWithUrls($posts);
 
         $this->assertCount(1, $result);
-        $this->assertNull($result[0]['image_url']);
+        $this->assertIsArray($result[0]['image_urls']);
+        $this->assertEmpty($result[0]['image_urls']);
         $this->assertNull($result[0]['avatar_url']);
     }
 
-    public function testEnrichPostsWithUrlsMixedPaths(): void {
-        $post = new \stdClass();
-        $post->image_path = 'posts/image.jpg';
+    public function testEnrichPostsWithUrlsMultipleAttachments(): void {
+        $attachment1 = new \stdClass();
+        $attachment1->file_path = 'posts/image1.jpg';
+
+        $attachment2 = new \stdClass();
+        $attachment2->file_path = 'posts/image2.jpg';
 
         $author = new \stdClass();
         $author->avatar_path = null;
 
+        $post = new \stdClass();
+
         $posts = [
-            ['post' => $post, 'author' => $author],
+            ['post' => $post, 'author' => $author, 'attachments' => [$attachment1, $attachment2]],
         ];
 
         $this->storage
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getUrl')
-            ->with('posts/image.jpg')
-            ->willReturn('/uploads/posts/image.jpg');
+            ->willReturnCallback(function ($path) {
+                return '/uploads/' . $path;
+            });
 
         $result = $this->image_service->enrichPostsWithUrls($posts);
 
         $this->assertCount(1, $result);
-        $this->assertEquals('/uploads/posts/image.jpg', $result[0]['image_url']);
+        $this->assertCount(2, $result[0]['image_urls']);
+        $this->assertEquals('/uploads/posts/image1.jpg', $result[0]['image_urls'][0]);
+        $this->assertEquals('/uploads/posts/image2.jpg', $result[0]['image_urls'][1]);
         $this->assertNull($result[0]['avatar_url']);
     }
 
@@ -301,5 +313,304 @@ class ImageServiceTest extends TestCase {
         $result = $this->image_service->enrichPostsWithUrls([]);
 
         $this->assertCount(0, $result);
+    }
+
+    /**
+     * Tests for hasUploads() with various multi-file array structures
+     */
+    public function testHasUploadsTrue(): void {
+        $files = [
+            'name'     => ['file1.jpg', 'file2.jpg'],
+            'type'     => ['image/jpeg', 'image/jpeg'],
+            'tmp_name' => ['/tmp/file1.jpg', '/tmp/file2.jpg'],
+            'error'    => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
+            'size'     => [1000, 2000],
+        ];
+
+        $result = $this->image_service->hasUploads($files);
+
+        $this->assertTrue($result);
+    }
+
+    public function testHasUploadsTrueOneFile(): void {
+        $files = [
+            'name'     => ['file1.jpg'],
+            'type'     => ['image/jpeg'],
+            'tmp_name' => ['/tmp/file1.jpg'],
+            'error'    => [UPLOAD_ERR_OK],
+            'size'     => [1000],
+        ];
+
+        $result = $this->image_service->hasUploads($files);
+
+        $this->assertTrue($result);
+    }
+
+    public function testHasUploadsTrueMixedWithNoFile(): void {
+        $files = [
+            'name'     => ['file1.jpg', ''],
+            'type'     => ['image/jpeg', ''],
+            'tmp_name' => ['/tmp/file1.jpg', ''],
+            'error'    => [UPLOAD_ERR_OK, UPLOAD_ERR_NO_FILE],
+            'size'     => [1000, 0],
+        ];
+
+        $result = $this->image_service->hasUploads($files);
+
+        $this->assertTrue($result);
+    }
+
+    public function testHasUploadsFalseAllNoFile(): void {
+        $files = [
+            'name'     => ['', ''],
+            'type'     => ['', ''],
+            'tmp_name' => ['', ''],
+            'error'    => [UPLOAD_ERR_NO_FILE, UPLOAD_ERR_NO_FILE],
+            'size'     => [0, 0],
+        ];
+
+        $result = $this->image_service->hasUploads($files);
+
+        $this->assertFalse($result);
+    }
+
+    public function testHasUploadsFalseNull(): void {
+        $result = $this->image_service->hasUploads(null);
+
+        $this->assertFalse($result);
+    }
+
+    public function testHasUploadsFalseMissingErrorKey(): void {
+        $files = [
+            'name'     => ['file1.jpg'],
+            'type'     => ['image/jpeg'],
+            'tmp_name' => ['/tmp/file1.jpg'],
+            'size'     => [1000],
+        ];
+
+        $result = $this->image_service->hasUploads($files);
+
+        $this->assertFalse($result);
+    }
+
+    public function testHasUploadsFalseNonArrayError(): void {
+        $files = [
+            'name'     => 'file1.jpg',
+            'type'     => 'image/jpeg',
+            'tmp_name' => '/tmp/file1.jpg',
+            'error'    => UPLOAD_ERR_OK,
+            'size'     => 1000,
+        ];
+
+        $result = $this->image_service->hasUploads($files);
+
+        $this->assertFalse($result);
+    }
+
+    /**
+     * Tests for uploadMultiple() method
+     */
+    public function testUploadMultipleSuccess(): void {
+        $files = [
+            'name'     => ['file1.jpg', 'file2.jpg'],
+            'type'     => ['image/jpeg', 'image/png'],
+            'tmp_name' => [__DIR__ . '/../../fixtures/test-image.jpg', __DIR__ . '/../../fixtures/test-image.jpg'],
+            'error'    => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
+            'size'     => [1000, 2000],
+        ];
+
+        // Mock storage to return success for both uploads
+        $this->storage
+            ->expects($this->exactly(2))
+            ->method('writeFromPath')
+            ->willReturn(true);
+
+        $result = $this->image_service->uploadMultiple($files, 'posts', 10);
+
+        $this->assertTrue($result['success']);
+        $this->assertIsArray($result['paths']);
+        $this->assertCount(2, $result['paths']);
+        $this->assertStringStartsWith('posts/', $result['paths'][0]);
+        $this->assertStringStartsWith('posts/', $result['paths'][1]);
+    }
+
+    public function testUploadMultipleEmptyUploads(): void {
+        $files = [
+            'name'     => ['', ''],
+            'type'     => ['', ''],
+            'tmp_name' => ['', ''],
+            'error'    => [UPLOAD_ERR_NO_FILE, UPLOAD_ERR_NO_FILE],
+            'size'     => [0, 0],
+        ];
+
+        $result = $this->image_service->uploadMultiple($files, 'posts', 10);
+
+        $this->assertTrue($result['success']);
+        $this->assertIsArray($result['paths']);
+        $this->assertEmpty($result['paths']);
+    }
+
+    public function testUploadMultipleExceedsMaxFiles(): void {
+        $files = [
+            'name'     => ['file1.jpg', 'file2.jpg', 'file3.jpg'],
+            'type'     => ['image/jpeg', 'image/jpeg', 'image/jpeg'],
+            'tmp_name' => ['/tmp/file1.jpg', '/tmp/file2.jpg', '/tmp/file3.jpg'],
+            'error'    => [UPLOAD_ERR_OK, UPLOAD_ERR_OK, UPLOAD_ERR_OK],
+            'size'     => [1000, 2000, 3000],
+        ];
+
+        $result = $this->image_service->uploadMultiple($files, 'posts', 2);
+
+        $this->assertFalse($result['success']);
+        $this->assertEquals('Too many files. Maximum allowed is 2.', $result['error']);
+    }
+
+    public function testUploadMultipleValidationFailureAllOrNothing(): void {
+        $files = [
+            'name'     => ['file1.jpg', 'file2.txt'],
+            'type'     => ['image/jpeg', 'text/plain'],
+            'tmp_name' => [__DIR__ . '/../../fixtures/test-image.jpg', '/tmp/file2.txt'],
+            'error'    => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
+            'size'     => [1000, 2000],
+        ];
+
+        // Storage should never be called since validation fails
+        $this->storage
+            ->expects($this->never())
+            ->method('writeFromPath');
+
+        $result = $this->image_service->uploadMultiple($files, 'posts', 10);
+
+        $this->assertFalse($result['success']);
+        $this->assertStringContainsString('File 2:', $result['error']);
+        $this->assertStringContainsString('Invalid file type', $result['error']);
+    }
+
+    public function testUploadMultipleValidationFailureMultipleErrors(): void {
+        $files = [
+            'name'     => ['file1.txt', 'file2.pdf'],
+            'type'     => ['text/plain', 'application/pdf'],
+            'tmp_name' => ['/tmp/file1.txt', '/tmp/file2.pdf'],
+            'error'    => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
+            'size'     => [1000, 2000],
+        ];
+
+        $result = $this->image_service->uploadMultiple($files, 'posts', 10);
+
+        $this->assertFalse($result['success']);
+        $this->assertStringContainsString('File 1:', $result['error']);
+        $this->assertStringContainsString('File 2:', $result['error']);
+        $this->assertStringContainsString('Invalid file type', $result['error']);
+    }
+
+    public function testUploadMultiplePartialUploadFailureWithRollback(): void {
+        $files = [
+            'name'     => ['file1.jpg', 'file2.jpg'],
+            'type'     => ['image/jpeg', 'image/jpeg'],
+            'tmp_name' => [__DIR__ . '/../../fixtures/test-image.jpg', __DIR__ . '/../../fixtures/test-image.jpg'],
+            'error'    => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
+            'size'     => [1000, 2000],
+        ];
+
+        // First upload succeeds, second fails
+        $uploaded_path = null;
+        $this->storage
+            ->expects($this->exactly(2))
+            ->method('writeFromPath')
+            ->willReturnCallback(function ($path) use (&$uploaded_path) {
+                static $call_count = 0;
+                $call_count++;
+                if ($call_count === 1) {
+                    $uploaded_path = $path;
+                    return true;
+                }
+                return false;
+            });
+
+        // Should call delete once to rollback the first uploaded file
+        $this->storage
+            ->expects($this->once())
+            ->method('delete')
+            ->with($this->callback(function ($path) use (&$uploaded_path) {
+                return $path === $uploaded_path;
+            }))
+            ->willReturn(true);
+
+        $result = $this->image_service->uploadMultiple($files, 'posts', 10);
+
+        $this->assertFalse($result['success']);
+        $this->assertEquals('Failed to save uploaded file.', $result['error']);
+    }
+
+    public function testUploadMultipleNormalizesFilesArray(): void {
+        // Test that normalizeFilesArray handles the multi-file structure correctly
+        $files = [
+            'name'     => ['file1.jpg'],
+            'type'     => ['image/jpeg'],
+            'tmp_name' => [__DIR__ . '/../../fixtures/test-image.jpg'],
+            'error'    => [UPLOAD_ERR_OK],
+            'size'     => [1000],
+        ];
+
+        $this->storage
+            ->expects($this->once())
+            ->method('writeFromPath')
+            ->willReturn(true);
+
+        $result = $this->image_service->uploadMultiple($files, 'posts', 10);
+
+        $this->assertTrue($result['success']);
+        $this->assertCount(1, $result['paths']);
+    }
+
+    public function testUploadMultipleSingleFileAlreadyNormalized(): void {
+        // Test normalizeFilesArray with a single file (already normalized structure)
+        $files = [
+            'name'     => 'file1.jpg',
+            'type'     => 'image/jpeg',
+            'tmp_name' => __DIR__ . '/../../fixtures/test-image.jpg',
+            'error'    => UPLOAD_ERR_OK,
+            'size'     => 1000,
+        ];
+
+        $this->storage
+            ->expects($this->once())
+            ->method('writeFromPath')
+            ->willReturn(true);
+
+        $result = $this->image_service->uploadMultiple($files, 'posts', 10);
+
+        $this->assertTrue($result['success']);
+        $this->assertCount(1, $result['paths']);
+    }
+
+    public function testUploadMultipleFileTooLarge(): void {
+        $files = [
+            'name'     => ['file1.jpg'],
+            'type'     => ['image/jpeg'],
+            'tmp_name' => [__DIR__ . '/../../fixtures/test-image.jpg'],
+            'error'    => [UPLOAD_ERR_OK],
+            'size'     => [6 * 1024 * 1024], // 6MB - exceeds 5MB limit
+        ];
+
+        $result = $this->image_service->uploadMultiple($files, 'posts', 10);
+
+        $this->assertFalse($result['success']);
+        $this->assertStringContainsString('File is too large', $result['error']);
+    }
+
+    public function testUploadMultipleUploadError(): void {
+        $files = [
+            'name'     => ['file1.jpg'],
+            'type'     => ['image/jpeg'],
+            'tmp_name' => ['/tmp/file1.jpg'],
+            'error'    => [UPLOAD_ERR_PARTIAL],
+            'size'     => [1000],
+        ];
+
+        $result = $this->image_service->uploadMultiple($files, 'posts', 10);
+
+        $this->assertFalse($result['success']);
+        $this->assertStringContainsString('File was only partially uploaded', $result['error']);
     }
 }

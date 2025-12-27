@@ -230,10 +230,13 @@ class PostController extends BaseController {
                 // Fetch link preview for the post (first URL only)
                 $preview = $this->link_preview_service->getPreviewForPost($post_data['post']->body);
 
-                // Generate image URLs for the main post
-                $image_url = $post_data['post']->image_path !== null
-                    ? $this->image_service->getUrl($post_data['post']->image_path)
-                    : null;
+                // Generate image URLs for the main post attachments
+                $image_urls = [];
+                if (isset($post_data['attachments']) && is_array($post_data['attachments'])) {
+                    foreach ($post_data['attachments'] as $attachment) {
+                        $image_urls[] = $this->image_service->getUrl($attachment->file_path);
+                    }
+                }
                 $avatar_url = $post_data['author']->avatar_path !== null
                     ? $this->image_service->getUrl($post_data['author']->avatar_path)
                     : null;
@@ -241,7 +244,7 @@ class PostController extends BaseController {
                 $result = $this->renderThemed('pages/post.html.twig', [
                     'post'           => $post_data['post'],
                     'author'         => $post_data['author'],
-                    'image_url'      => $image_url,
+                    'image_urls'     => $image_urls,
                     'avatar_url'     => $avatar_url,
                     'like_count'     => $post_data['like_count'],
                     'user_liked'     => $post_data['user_liked'],
@@ -276,18 +279,19 @@ class PostController extends BaseController {
 
         $user = $this->session->getCurrentUser();
         $body = (string) $this->getPost('body', '');
-        $image_path = null;
+        $image_paths = [];
 
         // Handle topic_id
         $topic_id_input = $this->getPost('topic_id');
         $topic_id = ($topic_id_input !== null && $topic_id_input !== '') ? (int) $topic_id_input : null;
 
-        // Handle image upload (only if images are allowed)
+        // Handle image uploads (only if images are allowed)
         if ($this->setting_mapper->areImagesAllowed()) {
-            $file = $_FILES['image'] ?? null;
+            $files = $_FILES['images'] ?? null;
 
-            if ($this->image_service->hasUpload($file)) {
-                $upload_result = $this->image_service->upload($file, 'posts');
+            if ($this->image_service->hasUploads($files)) {
+                $max_attachments = $this->post_service->getMaxAttachments();
+                $upload_result = $this->image_service->uploadMultiple($files, 'posts', $max_attachments);
 
                 if (!$upload_result['success']) {
                     $this->session->addFlash('error', $upload_result['error']);
@@ -295,11 +299,11 @@ class PostController extends BaseController {
                     return;
                 }
 
-                $image_path = $upload_result['path'];
+                $image_paths = $upload_result['paths'];
             }
         }
 
-        $result = $this->post_service->createPost($user->user_id, $body, $image_path, $topic_id);
+        $result = $this->post_service->createPost($user->user_id, $body, $image_paths, $topic_id);
 
         if ($result['success']) {
             $this->session->addFlash('success', 'Post created.');
@@ -330,14 +334,15 @@ class PostController extends BaseController {
 
         $user = $this->session->getCurrentUser();
         $body = (string) $this->getPost('body', '');
-        $image_path = null;
+        $image_paths = [];
 
-        // Handle image upload (only if images are allowed)
+        // Handle image uploads (only if images are allowed)
         if ($this->setting_mapper->areImagesAllowed()) {
-            $file = $_FILES['image'] ?? null;
+            $files = $_FILES['images'] ?? null;
 
-            if ($this->image_service->hasUpload($file)) {
-                $upload_result = $this->image_service->upload($file, 'posts');
+            if ($this->image_service->hasUploads($files)) {
+                $max_attachments = $this->post_service->getMaxAttachments();
+                $upload_result = $this->image_service->uploadMultiple($files, 'posts', $max_attachments);
 
                 if (!$upload_result['success']) {
                     $this->session->addFlash('error', $upload_result['error']);
@@ -345,11 +350,11 @@ class PostController extends BaseController {
                     return;
                 }
 
-                $image_path = $upload_result['path'];
+                $image_paths = $upload_result['paths'];
             }
         }
 
-        $result = $this->post_service->createReply($user->user_id, $post_id, $body, $image_path);
+        $result = $this->post_service->createReply($user->user_id, $post_id, $body, $image_paths);
 
         if ($result['success']) {
             $this->session->addFlash('success', 'Reply posted.');
@@ -390,6 +395,12 @@ class PostController extends BaseController {
         $result = $this->post_service->deletePost($post_id, $user);
 
         if ($result['success']) {
+            // Clean up attachment files from storage
+            if (isset($result['deleted_files']) && is_array($result['deleted_files'])) {
+                foreach ($result['deleted_files'] as $file_path) {
+                    $this->image_service->delete($file_path);
+                }
+            }
             $this->session->addFlash('success', 'Post deleted.');
         } else {
             $this->session->addFlash('error', $result['error']);
