@@ -306,6 +306,7 @@ class ImageServiceTest extends TestCase {
         $this->assertCount(2, $result[0]['image_urls']);
         $this->assertEquals('/uploads/posts/image1.jpg', $result[0]['image_urls'][0]);
         $this->assertEquals('/uploads/posts/image2.jpg', $result[0]['image_urls'][1]);
+        $this->assertNull($result[0]['avatar_url']);
     }
 
     public function testEnrichPostsWithUrlsEmptyArray(): void {
