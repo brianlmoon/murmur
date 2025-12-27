@@ -109,27 +109,40 @@ class ImageService {
             $error = 'File is too large. Maximum size is 5MB.';
         } elseif (!in_array($file['type'], self::ALLOWED_TYPES, true)) {
             $error = 'Invalid file type. Allowed: JPEG, PNG, GIF, WebP.';
-        } elseif (!$this->isValidImage($file['tmp_name'])) {
-            $error = 'File does not appear to be a valid image.';
+        } elseif (!$this->isValidImage($file['tmp_name'], $file['type'])) {
+            $error = 'File does not appear to be a valid image or MIME type mismatch.';
         }
 
         return $error;
     }
 
     /**
-     * Verifies that a file is actually an image.
+     * Verifies that a file is actually an image with matching MIME type.
      *
-     * @param string $path Path to the temporary file.
+     * Uses `getimagesize()` to detect the actual MIME type from file content,
+     * then validates it against the allowed types and the claimed MIME type.
+     * This prevents polyglot attacks where a file passes basic image validation
+     * but has a mismatched or spoofed MIME type.
      *
-     * @return bool True if the file is a valid image.
+     * @param string $path         Path to the temporary file.
+     * @param string $claimed_mime The MIME type claimed by the upload (from $_FILES['type']).
+     *
+     * @return bool True if the file is a valid image and MIME types match.
      */
-    protected function isValidImage(string $path): bool {
+    protected function isValidImage(string $path, string $claimed_mime): bool {
         $result = false;
 
         $info = @getimagesize($path);
 
-        if ($info !== false) {
-            $result = true;
+        if ($info !== false && isset($info['mime'])) {
+            $detected_mime = $info['mime'];
+
+            // Verify detected MIME is in our allowed list and matches claimed type
+            if (in_array($detected_mime, self::ALLOWED_TYPES, true) &&
+                $detected_mime === $claimed_mime)
+            {
+                $result = true;
+            }
         }
 
         return $result;

@@ -412,9 +412,9 @@ class ImageServiceTest extends TestCase {
      */
     public function testUploadMultipleSuccess(): void {
         $files = [
-            'name'     => ['file1.jpg', 'file2.jpg'],
+            'name'     => ['file1.jpg', 'file2.png'],
             'type'     => ['image/jpeg', 'image/png'],
-            'tmp_name' => [__DIR__ . '/../../fixtures/test-image.jpg', __DIR__ . '/../../fixtures/test-image.jpg'],
+            'tmp_name' => [__DIR__ . '/../../fixtures/test-image.jpg', __DIR__ . '/../../fixtures/test-image.png'],
             'error'    => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
             'size'     => [1000, 2000],
         ];
@@ -612,5 +612,96 @@ class ImageServiceTest extends TestCase {
 
         $this->assertFalse($result['success']);
         $this->assertStringContainsString('File was only partially uploaded', $result['error']);
+    }
+
+    /**
+     * Tests MIME type mismatch detection.
+     *
+     * Verifies that a PNG file claiming to be a JPEG is rejected.
+     */
+    public function testUploadMimeTypeMismatch(): void {
+        $file = [
+            'name'     => 'fake.jpg',
+            'type'     => 'image/jpeg', // Claims to be JPEG
+            'tmp_name' => __DIR__ . '/../../fixtures/test-image.png', // Actually PNG
+            'error'    => UPLOAD_ERR_OK,
+            'size'     => 1000,
+        ];
+
+        $result = $this->image_service->upload($file);
+
+        $this->assertFalse($result['success']);
+        $this->assertStringContainsString('MIME type mismatch', $result['error']);
+    }
+
+    /**
+     * Tests MIME type mismatch in the reverse direction.
+     *
+     * Verifies that a JPEG file claiming to be a PNG is rejected.
+     */
+    public function testUploadMimeTypeMismatchReverse(): void {
+        $file = [
+            'name'     => 'fake.png',
+            'type'     => 'image/png', // Claims to be PNG
+            'tmp_name' => __DIR__ . '/../../fixtures/test-image.jpg', // Actually JPEG
+            'error'    => UPLOAD_ERR_OK,
+            'size'     => 1000,
+        ];
+
+        $result = $this->image_service->upload($file);
+
+        $this->assertFalse($result['success']);
+        $this->assertStringContainsString('MIME type mismatch', $result['error']);
+    }
+
+    /**
+     * Tests that a valid image with matching MIME type succeeds.
+     *
+     * Verifies the happy path still works after adding MIME validation.
+     */
+    public function testUploadValidImageMatchingMime(): void {
+        $file = [
+            'name'     => 'valid.jpg',
+            'type'     => 'image/jpeg',
+            'tmp_name' => __DIR__ . '/../../fixtures/test-image.jpg',
+            'error'    => UPLOAD_ERR_OK,
+            'size'     => 1000,
+        ];
+
+        $this->storage
+            ->expects($this->once())
+            ->method('writeFromPath')
+            ->willReturn(true);
+
+        $result = $this->image_service->upload($file);
+
+        $this->assertTrue($result['success']);
+        $this->assertArrayHasKey('path', $result);
+        $this->assertStringStartsWith('posts/', $result['path']);
+        $this->assertStringEndsWith('.jpg', $result['path']);
+    }
+
+    /**
+     * Tests that a valid PNG with matching MIME type succeeds.
+     */
+    public function testUploadValidPngMatchingMime(): void {
+        $file = [
+            'name'     => 'valid.png',
+            'type'     => 'image/png',
+            'tmp_name' => __DIR__ . '/../../fixtures/test-image.png',
+            'error'    => UPLOAD_ERR_OK,
+            'size'     => 1000,
+        ];
+
+        $this->storage
+            ->expects($this->once())
+            ->method('writeFromPath')
+            ->willReturn(true);
+
+        $result = $this->image_service->upload($file);
+
+        $this->assertTrue($result['success']);
+        $this->assertArrayHasKey('path', $result);
+        $this->assertStringEndsWith('.png', $result['path']);
     }
 }
