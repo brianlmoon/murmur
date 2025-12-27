@@ -102,6 +102,9 @@ Navigate to `/admin/settings` to configure site-wide options.
 | Setting | Description |
 |---------|-------------|
 | **Images Allowed** | Users can attach images to posts |
+| **Videos Allowed** | Users can attach videos to posts |
+| **Max Attachments** | Maximum number of images or videos per post (default: 10) |
+| **Max Video Size (MB)** | Maximum file size for uploaded videos, 1–1000 MB (default: 100) |
 | **Public Feed** | Visitors who aren't logged in can view the feed |
 | **Require Topic** | Posts must be assigned to a topic |
 
@@ -158,6 +161,42 @@ To turn off the messaging feature site-wide:
 
 The Messages link will no longer appear in navigation.
 
+### Configuring Video Uploads
+
+Videos require additional server configuration for large file uploads.
+
+**PHP settings** (in `php.ini` or `.htaccess`):
+
+```ini
+upload_max_filesize = 100M
+post_max_size = 105M
+max_execution_time = 300
+```
+
+**Nginx** (if applicable):
+
+```nginx
+client_max_body_size 100M;
+```
+
+To adjust the maximum video size in Murmur:
+
+1. Go to `/admin/settings`
+2. Set "Maximum Video Size (MB)" (1–1000)
+3. Save
+
+**Heads-up:** The Murmur setting must not exceed your server's `upload_max_filesize`.
+
+### Disabling Video Uploads
+
+To allow images but not videos:
+
+1. Go to `/admin/settings`
+2. Uncheck "Allow video uploads"
+3. Save
+
+Users will only see image file types in the upload picker.
+
 ## Moderation
 
 ### Handling Problem Users
@@ -196,9 +235,11 @@ mysqldump -u murmur -p murmur > murmur-backup-$(date +%Y%m%d).sql
 pg_dump -U murmur murmur > murmur-backup-$(date +%Y%m%d).sql
 ```
 
-### Image Uploads
+### Media Uploads
 
-User uploads are stored in `public/uploads/`. Back up this directory alongside your database.
+User uploads (images and videos) are stored in `public/uploads/`. Back up this directory alongside your database.
+
+**Heads-up:** Video files can be large. Monitor disk usage and consider cloud storage (S3) for production instances with heavy video uploads.
 
 ## Security Best Practices
 
