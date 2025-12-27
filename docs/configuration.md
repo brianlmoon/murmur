@@ -103,6 +103,90 @@ When enabled:
 
 This is auto-detected during setup. Only change if you move Murmur to a different path.
 
+## Storage Configuration
+
+Murmur supports local filesystem storage (default) and Amazon S3-compatible cloud storage for user uploads.
+
+### Local Filesystem (Default)
+
+If no storage configuration is provided, Murmur uses the `public/uploads/` directory. For explicit local configuration:
+
+```ini
+storage.uploads.adapter = local
+storage.uploads.local_path = "/var/www/murmur/public/uploads"
+storage.uploads.base_url = "/uploads"
+```
+
+| Key | Description | Required |
+|-----|-------------|----------|
+| `storage.uploads.adapter` | Storage adapter type: `local` or `s3` | No (defaults to `local`) |
+| `storage.uploads.local_path` | Absolute path to the uploads directory | Yes (for local) |
+| `storage.uploads.base_url` | URL prefix for uploaded files | No (defaults to `/uploads`) |
+
+### Amazon S3
+
+For Amazon S3 or S3-compatible services (MinIO, DigitalOcean Spaces, Backblaze B2, Cloudflare R2):
+
+```ini
+storage.uploads.adapter = s3
+storage.uploads.s3_key = AKIAIOSFODNN7EXAMPLE
+storage.uploads.s3_secret = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+storage.uploads.s3_region = us-east-1
+storage.uploads.s3_bucket = your-bucket-name
+storage.uploads.base_url = "https://your-bucket-name.s3.us-east-1.amazonaws.com"
+```
+
+| Key | Description | Required |
+|-----|-------------|----------|
+| `storage.uploads.adapter` | Must be `s3` | Yes |
+| `storage.uploads.s3_key` | AWS access key ID | Yes |
+| `storage.uploads.s3_secret` | AWS secret access key | Yes |
+| `storage.uploads.s3_region` | AWS region (e.g., `us-east-1`) | Yes |
+| `storage.uploads.s3_bucket` | S3 bucket name | Yes |
+| `storage.uploads.s3_endpoint` | Custom endpoint URL (for S3-compatible services) | No |
+| `storage.uploads.base_url` | Public URL prefix for the bucket | Yes |
+
+### S3-Compatible Services
+
+For services like MinIO, DigitalOcean Spaces, or Cloudflare R2, add the custom endpoint:
+
+```ini
+storage.uploads.adapter = s3
+storage.uploads.s3_key = your_access_key
+storage.uploads.s3_secret = your_secret_key
+storage.uploads.s3_region = us-east-1
+storage.uploads.s3_bucket = your-bucket-name
+storage.uploads.s3_endpoint = "https://your-endpoint.example.com"
+storage.uploads.base_url = "https://your-bucket-name.your-endpoint.example.com"
+```
+
+**Heads-up:** When using a custom endpoint, path-style URLs are automatically enabled.
+
+### S3 Bucket Configuration
+
+Your S3 bucket must be configured for public read access to serve uploaded images:
+
+1. **Create a bucket** with a name matching `storage.uploads.s3_bucket`
+2. **Enable public access** for the bucket (or configure CloudFront/CDN)
+3. **Add a bucket policy** allowing public reads:
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PublicReadGetObject",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::your-bucket-name/*"
+        }
+    ]
+}
+```
+
+4. **Configure CORS** if needed for direct browser uploads (optional)
+
 ## Directory Structure
 
 ### Required Directories
@@ -112,7 +196,7 @@ These directories must exist and be writable:
 | Directory | Purpose |
 |-----------|---------|
 | `data/` | SQLite database file (if using SQLite) |
-| `public/uploads/` | User-uploaded images |
+| `public/uploads/` | User-uploaded images (local storage only) |
 
 ### Optional Directories
 
