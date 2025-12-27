@@ -65,6 +65,7 @@
 
     {% if images_allowed %}
     <div class="compose-previews"></div>
+    <div class="compose-error" style="display: none; color: var(--color-error, #dc2626); padding: 0.5rem 0; font-size: 0.875rem;"></div>
     {% endif %}
 </form>
 
@@ -76,6 +77,7 @@
     const fileInput = form.querySelector('.compose-file');
     const previewsContainer = form.querySelector('.compose-previews');
     const uploadCount = form.querySelector('.compose-upload-count');
+    const errorContainer = form.querySelector('.compose-error');
     const maxAttachments = parseInt(form.dataset.maxAttachments) || 10;
 
     textarea.addEventListener('input', function() {
@@ -85,6 +87,10 @@
     if (fileInput && previewsContainer) {
         fileInput.addEventListener('change', function() {
             previewsContainer.innerHTML = '';
+            if (errorContainer) {
+                errorContainer.style.display = 'none';
+                errorContainer.textContent = '';
+            }
             
             if (this.files && this.files.length > 0) {
                 const fileCount = this.files.length;
@@ -123,8 +129,11 @@
     form.addEventListener('submit', function(e) {
         if (fileInput && fileInput.files && fileInput.files.length > maxAttachments) {
             e.preventDefault();
-            alert('Please select no more than ' + maxAttachments + ' images. You have selected ' + fileInput.files.length + '.');
-            return false;
+            if (errorContainer) {
+                errorContainer.textContent = 'Please select no more than ' + maxAttachments + ' images. You have selected ' + fileInput.files.length + '.';
+                errorContainer.style.display = 'block';
+                errorContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
         }
     });
 
