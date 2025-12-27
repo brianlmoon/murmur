@@ -45,7 +45,6 @@ class PostMapper extends AbstractMapper {
         'parent_id'  => [],
         'topic_id'   => [],
         'body'       => [],
-        'image_path' => [],
         'created_at' => ['read_only' => true],
         'updated_at' => ['read_only' => true],
     ];

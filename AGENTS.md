@@ -83,6 +83,7 @@ Set in `public/index.php`:
 - `images_allowed` - Whether image uploads are enabled
 - `theme` - Current theme name (e.g., "default")
 - `logo_url` - Optional logo URL (displays image instead of site name in header)
+- `max_attachments` - Maximum number of images allowed per post
 
 ### User Entity
 Key fields on the User entity:
@@ -108,8 +109,9 @@ Settings stored in `settings` table as key-value pairs:
 - `require_topic` - Whether a topic must be selected when creating posts
 - `messaging_enabled` - Whether private messaging is enabled
 - `base_url` - Base URL for subdirectory installations (auto-detected)
+- `max_attachments` - Maximum number of images allowed per post (default: 10)
 
-Access via `SettingMapper` helper methods (e.g., `isRegistrationOpen()`, `isPublicFeed()`, `isTopicRequired()`, `isMessagingEnabled()`).
+Access via `SettingMapper` helper methods (e.g., `isRegistrationOpen()`, `isPublicFeed()`, `isTopicRequired()`, `isMessagingEnabled()`, `getMaxAttachments()`).
 
 ## Coding Standards
 
@@ -237,6 +239,8 @@ The `post.html.twig` component accepts these parameters:
 - `reply_count` - Integer count (default: 0)
 - `topic` - Topic entity for top-level posts (optional)
 - `user_following` - Boolean, user follows topic (default: false)
+- `image_urls` - Array of image URL strings (default: empty array)
+- `avatar_url` - Author's avatar URL or null
 
 ### Post Entity Structure
 Key fields for templates:
@@ -244,8 +248,9 @@ Key fields for templates:
 - `parent_id` - Null for top-level posts, set for replies/comments
 - `topic_id` - Topic categorization (top-level posts only)
 - `body` - Post content
-- `image_path` - Optional image attachment
 - `created_at` - Timestamp string
+
+**Note:** Image attachments are stored in the separate `post_attachments` table, not on the Post entity. Use `attachments` array from PostService or `image_urls` from ImageService enrichment.
 
 **Using `parent_id` for logic:**
 - Check `{% if post.parent_id %}` to determine if post is a reply/comment
@@ -616,13 +621,49 @@ schema/
 1. `users` (no dependencies)
 2. `topics` (no dependencies)
 3. `posts` (depends on users, topics)
-4. `settings` (no dependencies)
-5. `likes` (depends on users, posts)
-6. `topic_follows` (depends on users, topics)
-7. `link_previews` (no dependencies)
-8. `user_follows` (depends on users)
-9. `conversations` (depends on users)
-10. `messages` (depends on conversations, users)
-11. `user_blocks` (depends on users)
+4. `post_attachments` (depends on posts)
+5. `settings` (no dependencies)
+6. `likes` (depends on users, posts)
+7. `topic_follows` (depends on users, topics)
+8. `link_previews` (no dependencies)
+9. `user_follows` (depends on users)
+10. `conversations` (depends on users)
+11. `messages` (depends on conversations, users)
+12. `user_blocks` (depends on users)
 
 When modifying the schema, update all three `schema.sql` files to maintain consistency across database types.
+
+## Post Attachments System
+
+Posts support multiple image attachments (configurable via `max_attachments` admin setting, default: 10).
+
+### Entities &amp; Mappers
+- `PostAttachment` entity with `attachment_id`, `post_id`, `file_path`, `sort_order`, `created_at`
+- `PostAttachmentMapper` with `findByPostId()`, `findByPostIds()` (batch), `getFilePathsByPostId()`
+
+### PostService Methods
+- `createPost(int $user_id, string $body, array $image_paths = [], ?int $topic_id = null)` - Creates post with attachments
+- `createReply(int $user_id, int $parent_id, string $body, array $image_paths = [])` - Creates reply with attachments
+- `deletePost(int $post_id, User $user)` - Returns `deleted_files` array for cleanup
+- `getMaxAttachments(): int` - Gets configured limit
+
+### ImageService Methods
+- `hasUploads(?array $files): bool` - Check for multi-file upload
+- `uploadMultiple(array $files, string $subdirectory, int $max_files): array` - Atomic batch upload
+- `enrichPostsWithUrls(array $posts): array` - Adds `image_urls` (array) and `avatar_url` to post items
+
+### Template Variables
+Posts now include:
+- `attachments` - Array of `PostAttachment` entities (from PostService)
+- `image_urls` - Array of URL strings (from ImageService enrichment)
+
+### Compose Form
+- Input name: `name="images[]"` with `multiple` attribute
+- JavaScript displays preview grid with count indicator
+- Validates against `max_attachments` setting (data attribute)
+
+### Post Display Layout
+Primary + thumbnails pattern:
+- First image displays large
+- Remaining images display as small thumbnails below
+- All images open in new tab when clicked

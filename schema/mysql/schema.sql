@@ -46,7 +46,6 @@ CREATE TABLE IF NOT EXISTS `posts` (
     `parent_id`  BIGINT UNSIGNED DEFAULT NULL,
     `topic_id`   INT DEFAULT NULL,
     `body`       MEDIUMTEXT NOT NULL,
-    `image_path` VARCHAR(255) DEFAULT NULL,
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`post_id`),
@@ -56,6 +55,21 @@ CREATE TABLE IF NOT EXISTS `posts` (
     CONSTRAINT `fk_posts_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE,
     CONSTRAINT `fk_posts_parent` FOREIGN KEY (`parent_id`) REFERENCES `posts` (`post_id`) ON DELETE CASCADE,
     CONSTRAINT `fk_posts_topic` FOREIGN KEY (`topic_id`) REFERENCES `topics` (`topic_id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- -----------------------------------------------------------------------------
+-- Post attachments table
+-- Stores image attachments for posts (supports multiple images per post).
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `post_attachments` (
+    `attachment_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `post_id`       BIGINT UNSIGNED NOT NULL,
+    `file_path`     VARCHAR(255) NOT NULL,
+    `sort_order`    INT NOT NULL DEFAULT 0,
+    `created_at`    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`attachment_id`),
+    KEY `idx_post_attachments_post_id` (`post_id`),
+    CONSTRAINT `fk_post_attachments_post` FOREIGN KEY (`post_id`) REFERENCES `posts` (`post_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- -----------------------------------------------------------------------------

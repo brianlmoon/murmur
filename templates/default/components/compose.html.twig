@@ -5,6 +5,7 @@
     - action: Form action URL
     - csrf_token: CSRF token (from base)
     - max_length: Maximum body length
+    - max_attachments: Maximum attachments allowed (optional, from global)
     - placeholder: Placeholder text (optional)
     - button_text: Submit button text (optional, default "Post")
     - autofocus: Whether to focus the textarea (optional, default false)
@@ -19,8 +20,9 @@
 {% set is_reply = is_reply | default(false) %}
 {% set require_topic = require_topic | default(false) %}
 {% set selected_topic_id = selected_topic_id | default(null) %}
+{% set max_attachments = max_attachments | default(10) %}
 
-<form action="{{ action }}" method="post" enctype="multipart/form-data" class="compose-form"{% if form_id %} id="{{ form_id }}"{% endif %}>
+<form action="{{ action }}" method="post" enctype="multipart/form-data" class="compose-form"{% if form_id %} id="{{ form_id }}"{% endif %} data-max-attachments="{{ max_attachments }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
     {% if not is_reply and topics is defined and topics is not empty %}
@@ -51,8 +53,9 @@
     <div class="compose-footer">
         {% if images_allowed %}
         <label class="compose-upload">
-            <input type="file" name="image" accept="image/jpeg,image/png,image/gif,image/webp" class="compose-file">
-            <span class="compose-upload-label">Add image</span>
+            <input type="file" name="images[]" accept="image/jpeg,image/png,image/gif,image/webp" class="compose-file" multiple>
+            <span class="compose-upload-label">Add images</span>
+            <span class="compose-upload-count"></span>
         </label>
         {% else %}
         <span></span>
@@ -61,10 +64,7 @@
     </div>
 
     {% if images_allowed %}
-    <div class="compose-preview" style="display: none;">
-        <img src="" alt="Preview" class="compose-preview-img">
-        <button type="button" class="compose-preview-remove">&times;</button>
-    </div>
+    <div class="compose-previews"></div>
     {% endif %}
 </form>
 
@@ -74,30 +74,48 @@
     const textarea = form.querySelector('.compose-textarea');
     const counter = form.querySelector('.compose-counter-current');
     const fileInput = form.querySelector('.compose-file');
-    const preview = form.querySelector('.compose-preview');
-    const previewImg = form.querySelector('.compose-preview-img');
-    const removeBtn = form.querySelector('.compose-preview-remove');
+    const previewsContainer = form.querySelector('.compose-previews');
+    const uploadCount = form.querySelector('.compose-upload-count');
+    const maxAttachments = parseInt(form.dataset.maxAttachments) || 10;
 
     textarea.addEventListener('input', function() {
         counter.textContent = this.value.length;
     });
 
-    if (fileInput && preview && previewImg && removeBtn) {
+    if (fileInput && previewsContainer) {
         fileInput.addEventListener('change', function() {
-            if (this.files && this.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImg.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(this.files[0]);
+            previewsContainer.innerHTML = '';
+            
+            if (this.files && this.files.length > 0) {
+                const fileCount = this.files.length;
+                
+                if (fileCount > maxAttachments) {
+                    uploadCount.textContent = ' (' + fileCount + '/' + maxAttachments + ' - too many!)';
+                    uploadCount.style.color = 'var(--color-error, #dc2626)';
+                } else {
+                    uploadCount.textContent = ' (' + fileCount + '/' + maxAttachments + ')';
+                    uploadCount.style.color = '';
+                }
+                
+                Array.from(this.files).forEach(function(file, index) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const previewItem = document.createElement('div');
+                        previewItem.className = 'compose-preview-item';
+                        
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = 'Preview ' + (index + 1);
+                        img.className = 'compose-preview-img';
+                        
+                        previewItem.appendChild(img);
+                        previewsContainer.appendChild(previewItem);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            } else {
+                uploadCount.textContent = '';
             }
-        });
-
-        removeBtn.addEventListener('click', function() {
-            fileInput.value = '';
-            preview.style.display = 'none';
-            previewImg.src = '';
         });
     }
 

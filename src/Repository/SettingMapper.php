@@ -193,4 +193,15 @@ class SettingMapper extends AbstractMapper {
 
         return (int) ($value ?? 500);
     }
+
+    /**
+     * Retrieves the maximum number of attachments allowed per post.
+     *
+     * @return int The maximum attachments count.
+     */
+    public function getMaxAttachments(): int {
+        $value = $this->getSetting('max_attachments', '10');
+
+        return (int) ($value ?? 10);
+    }
 }

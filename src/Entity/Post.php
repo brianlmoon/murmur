@@ -9,7 +9,8 @@ use Moonspot\ValueObjects\ValueObject;
 /**
  * Post entity representing a user's post or reply.
  *
- * Maps to the `posts` table in the database.
+ * Maps to the `posts` table in the database. Image attachments are stored
+ * separately in the `post_attachments` table and loaded via PostAttachmentMapper.
  */
 class Post extends ValueObject {
 
@@ -40,11 +41,6 @@ class Post extends ValueObject {
      * Text content of the post.
      */
     public string $body = '';
-
-    /**
-     * Path to an attached image, if any.
-     */
-    public ?string $image_path = null;
 
     /**
      * Timestamp when the post was created.

@@ -63,6 +63,17 @@
             </div>
 
             <div class="form-group">
+                <label for="max_attachments" class="form-label">Maximum Attachments per Post</label>
+                <input type="number" id="max_attachments" name="max_attachments" class="form-input"
+                       value="{{ max_attachments }}"
+                       min="1"
+                       required>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.25rem;">
+                    Maximum number of images that can be attached to a single post.
+                </p>
+            </div>
+
+            <div class="form-group">
                 <label class="form-checkbox">
                     <input type="checkbox" name="require_approval" value="1"
                            {% if require_approval %}checked{% endif %}>

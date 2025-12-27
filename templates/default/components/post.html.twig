@@ -13,6 +13,7 @@
     - reply_count: int (optional, default 0)
     - topic: Topic entity (optional, for top-level posts)
     - user_following: bool (optional, default false, whether current user follows the topic)
+    - image_urls: array of image URLs (optional, default empty array)
 #}
 {% set is_reply = is_reply | default(false) %}
 {% set show_reply_link = show_reply_link | default(true) %}
@@ -21,7 +22,7 @@
 {% set reply_count = reply_count | default(0) %}
 {% set user_following = user_following | default(false) %}
 {% set avatar_url = avatar_url | default(null) %}
-{% set image_url = image_url | default(null) %}
+{% set image_urls = image_urls | default([]) %}
 
 <article class="post {{ is_reply ? 'post--reply' : '' }}"{% if post.parent_id %} id="comment-{{ post.post_id }}"{% endif %}>
     <div class="post-header">
@@ -49,16 +50,16 @@
             {% endif %}
         </div>
         {% if post.parent_id %}
-            <a href="{{ base_url }}/post/{{ post.parent_id }}#comment-{{ post.post_id }}" 
-               class="post-time-link" 
+            <a href="{{ base_url }}/post/{{ post.parent_id }}#comment-{{ post.post_id }}"
+               class="post-time-link"
                aria-label="View comment from {{ post.created_at | date('M j, Y \\a\\t g:i a') }}">
                 <time class="post-time" datetime="{{ post.created_at }}" title="{{ post.created_at | date('M j, Y \\a\\t g:i a') }}">
                     {{ post.created_at | relative_date }}
                 </time>
             </a>
         {% else %}
-            <a href="{{ base_url }}/post/{{ post.post_id }}" 
-               class="post-time-link" 
+            <a href="{{ base_url }}/post/{{ post.post_id }}"
+               class="post-time-link"
                aria-label="View post from {{ post.created_at | date('M j, Y \\a\\t g:i a') }}">
                 <time class="post-time" datetime="{{ post.created_at }}" title="{{ post.created_at | date('M j, Y \\a\\t g:i a') }}">
                     {{ post.created_at | relative_date }}
@@ -92,11 +93,24 @@
         </a>
     {% endif %}
 
-    {% if image_url %}
-        <div class="post-image">
-            <a href="{{ image_url }}" target="_blank" rel="noopener noreferrer" aria-label="Open full-size image in new tab">
-                <img src="{{ image_url }}" alt="Post attachment" loading="lazy">
-            </a>
+    {% if image_urls is not empty %}
+        <div class="post-images">
+            {# Primary image (first) #}
+            <div class="post-image post-image--primary">
+                <a href="{{ image_urls[0] }}" target="_blank" rel="noopener noreferrer">
+                    <img src="{{ image_urls[0] }}" alt="Post attachment" loading="lazy">
+                </a>
+            </div>
+            {# Thumbnails (rest) #}
+            {% if image_urls | length > 1 %}
+                <div class="post-image-thumbnails">
+                    {% for url in image_urls | slice(1) %}
+                        <a href="{{ url }}" target="_blank" rel="noopener noreferrer" class="post-image-thumbnail">
+                            <img src="{{ url }}" alt="Post attachment" loading="lazy">
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
     {% endif %}
 

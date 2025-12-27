@@ -142,7 +142,7 @@
     {% include theme ~ '/components/post.html.twig' with {
         'post': post,
         'author': author,
-        'image_url': image_url,
+        'image_urls': image_urls,
         'avatar_url': avatar_url,
         'like_count': like_count,
         'user_liked': user_liked,
@@ -191,7 +191,7 @@
                 {% include theme ~ '/components/post.html.twig' with {
                     'post': item.post,
                     'author': item.author,
-                    'image_url': item.image_url,
+                    'image_urls': item.image_urls,
                     'avatar_url': item.avatar_url,
                     'like_count': item.like_count,
                     'user_liked': item.user_liked,

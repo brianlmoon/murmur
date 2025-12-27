@@ -63,7 +63,6 @@ CREATE TABLE IF NOT EXISTS posts (
     parent_id  BIGINT DEFAULT NULL,
     topic_id   INTEGER DEFAULT NULL,
     body       TEXT NOT NULL,
-    image_path VARCHAR(255) DEFAULT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_posts_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE,
@@ -80,6 +79,20 @@ CREATE TRIGGER trg_posts_updated_at
     BEFORE UPDATE ON posts
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
+
+-- -----------------------------------------------------------------------------
+-- Post attachments table
+-- Stores image attachments for posts (supports multiple images per post).
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS post_attachments (
+    attachment_id BIGSERIAL PRIMARY KEY,
+    post_id       BIGINT NOT NULL REFERENCES posts(post_id) ON DELETE CASCADE,
+    file_path     VARCHAR(255) NOT NULL,
+    sort_order    INTEGER NOT NULL DEFAULT 0,
+    created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_post_attachments_post_id ON post_attachments(post_id);
 
 -- -----------------------------------------------------------------------------
 -- Settings table

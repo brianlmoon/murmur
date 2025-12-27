@@ -20,6 +20,7 @@ use Murmur\Repository\ConversationMapper;
 use Murmur\Repository\LikeMapper;
 use Murmur\Repository\LinkPreviewMapper;
 use Murmur\Repository\MessageMapper;
+use Murmur\Repository\PostAttachmentMapper;
 use Murmur\Repository\PostMapper;
 use Murmur\Repository\SettingMapper;
 use Murmur\Repository\TopicFollowMapper;
@@ -63,6 +64,7 @@ $twig->addExtension(new LinkifyExtension());
 // Initialize Mappers
 $user_mapper = new UserMapper();
 $post_mapper = new PostMapper();
+$post_attachment_mapper = new PostAttachmentMapper();
 $setting_mapper = new SettingMapper();
 $like_mapper = new LikeMapper();
 $topic_mapper = new TopicMapper();
@@ -81,6 +83,7 @@ $twig->addGlobal('images_allowed', $setting_mapper->areImagesAllowed());
 $twig->addGlobal('theme', $setting_mapper->getTheme());
 $twig->addGlobal('logo_url', $setting_mapper->getLogoUrl());
 $twig->addGlobal('has_topics', count($topic_mapper->findAll()) > 0);
+$twig->addGlobal('max_attachments', $setting_mapper->getMaxAttachments());
 
 // Initialize Storage
 // Load storage configuration from config.ini (falls back to local if not configured)
@@ -102,7 +105,7 @@ $storage = StorageFactory::create($storage_config);
 // Initialize Services
 $session_service = new SessionService($user_mapper);
 $auth_service = new AuthService($user_mapper, $setting_mapper);
-$post_service = new PostService($post_mapper, $user_mapper, $like_mapper, $topic_mapper, $setting_mapper);
+$post_service = new PostService($post_mapper, $user_mapper, $like_mapper, $topic_mapper, $setting_mapper, $post_attachment_mapper);
 $profile_service = new ProfileService($user_mapper);
 $admin_service = new AdminService($user_mapper, $post_mapper, $setting_mapper);
 $image_service = new ImageService($storage);

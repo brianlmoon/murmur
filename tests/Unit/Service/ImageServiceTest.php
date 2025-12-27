@@ -231,14 +231,16 @@ class ImageServiceTest extends TestCase {
     }
 
     public function testEnrichPostsWithUrls(): void {
-        $post = new \stdClass();
-        $post->image_path = 'posts/image.jpg';
+        $attachment1 = new \stdClass();
+        $attachment1->file_path = 'posts/image.jpg';
 
         $author = new \stdClass();
         $author->avatar_path = 'avatars/avatar.jpg';
 
+        $post = new \stdClass();
+
         $posts = [
-            ['post' => $post, 'author' => $author],
+            ['post' => $post, 'author' => $author, 'attachments' => [$attachment1]],
         ];
 
         $this->storage
@@ -251,50 +253,59 @@ class ImageServiceTest extends TestCase {
         $result = $this->image_service->enrichPostsWithUrls($posts);
 
         $this->assertCount(1, $result);
-        $this->assertEquals('/uploads/posts/image.jpg', $result[0]['image_url']);
+        $this->assertIsArray($result[0]['image_urls']);
+        $this->assertCount(1, $result[0]['image_urls']);
+        $this->assertEquals('/uploads/posts/image.jpg', $result[0]['image_urls'][0]);
         $this->assertEquals('/uploads/avatars/avatar.jpg', $result[0]['avatar_url']);
     }
 
-    public function testEnrichPostsWithUrlsNullPaths(): void {
-        $post = new \stdClass();
-        $post->image_path = null;
-
+    public function testEnrichPostsWithUrlsNoAttachments(): void {
         $author = new \stdClass();
         $author->avatar_path = null;
 
+        $post = new \stdClass();
+
         $posts = [
-            ['post' => $post, 'author' => $author],
+            ['post' => $post, 'author' => $author, 'attachments' => []],
         ];
 
         $result = $this->image_service->enrichPostsWithUrls($posts);
 
         $this->assertCount(1, $result);
-        $this->assertNull($result[0]['image_url']);
+        $this->assertIsArray($result[0]['image_urls']);
+        $this->assertEmpty($result[0]['image_urls']);
         $this->assertNull($result[0]['avatar_url']);
     }
 
-    public function testEnrichPostsWithUrlsMixedPaths(): void {
-        $post = new \stdClass();
-        $post->image_path = 'posts/image.jpg';
+    public function testEnrichPostsWithUrlsMultipleAttachments(): void {
+        $attachment1 = new \stdClass();
+        $attachment1->file_path = 'posts/image1.jpg';
+
+        $attachment2 = new \stdClass();
+        $attachment2->file_path = 'posts/image2.jpg';
 
         $author = new \stdClass();
         $author->avatar_path = null;
 
+        $post = new \stdClass();
+
         $posts = [
-            ['post' => $post, 'author' => $author],
+            ['post' => $post, 'author' => $author, 'attachments' => [$attachment1, $attachment2]],
         ];
 
         $this->storage
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getUrl')
-            ->with('posts/image.jpg')
-            ->willReturn('/uploads/posts/image.jpg');
+            ->willReturnCallback(function ($path) {
+                return '/uploads/' . $path;
+            });
 
         $result = $this->image_service->enrichPostsWithUrls($posts);
 
         $this->assertCount(1, $result);
-        $this->assertEquals('/uploads/posts/image.jpg', $result[0]['image_url']);
-        $this->assertNull($result[0]['avatar_url']);
+        $this->assertCount(2, $result[0]['image_urls']);
+        $this->assertEquals('/uploads/posts/image1.jpg', $result[0]['image_urls'][0]);
+        $this->assertEquals('/uploads/posts/image2.jpg', $result[0]['image_urls'][1]);
     }
 
     public function testEnrichPostsWithUrlsEmptyArray(): void {

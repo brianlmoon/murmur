@@ -272,10 +272,11 @@ class AdminService {
      * @param bool   $require_topic     Whether a topic must be selected when creating posts.
      * @param bool   $messaging_enabled Whether private messaging is enabled.
      * @param int    $max_post_length   Maximum characters allowed per post.
+     * @param int    $max_attachments   Maximum image attachments allowed per post.
      *
      * @return array{success: bool, error?: string}
      */
-    public function updateSettings(string $site_name, bool $registration_open, bool $images_allowed, string $theme, string $logo_url = '', bool $require_approval = false, bool $public_feed = true, bool $require_topic = false, bool $messaging_enabled = true, int $max_post_length = 500): array {
+    public function updateSettings(string $site_name, bool $registration_open, bool $images_allowed, string $theme, string $logo_url = '', bool $require_approval = false, bool $public_feed = true, bool $require_topic = false, bool $messaging_enabled = true, int $max_post_length = 500, int $max_attachments = 10): array {
         $result = ['success' => false];
 
         $site_name = trim($site_name);
@@ -292,6 +293,8 @@ class AdminService {
             $result['error'] = 'Maximum post length must be at least 100 characters.';
         } elseif ($max_post_length > 50000) {
             $result['error'] = 'Maximum post length cannot exceed 50,000 characters.';
+        } elseif ($max_attachments < 1) {
+            $result['error'] = 'Maximum attachments must be at least 1.';
         } else {
             $this->setting_mapper->saveSetting('site_name', $site_name);
             $this->setting_mapper->saveSetting('registration_open', $registration_open ? '1' : '0');
@@ -303,6 +306,7 @@ class AdminService {
             $this->setting_mapper->saveSetting('require_topic', $require_topic ? '1' : '0');
             $this->setting_mapper->saveSetting('messaging_enabled', $messaging_enabled ? '1' : '0');
             $this->setting_mapper->saveSetting('max_post_length', (string) $max_post_length);
+            $this->setting_mapper->saveSetting('max_attachments', (string) $max_attachments);
             $result['success'] = true;
         }
 
@@ -352,6 +356,15 @@ class AdminService {
      */
     public function getMaxPostLength(): int {
         return $this->setting_mapper->getMaxPostLength();
+    }
+
+    /**
+     * Gets the maximum number of attachments allowed per post.
+     *
+     * @return int The maximum attachment count.
+     */
+    public function getMaxAttachments(): int {
+        return $this->setting_mapper->getMaxAttachments();
     }
 
     /**
