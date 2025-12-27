@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace Murmur\Tests\Unit\Service;
 
-use Murmur\Service\ImageService;
+use Murmur\Service\MediaService;
 use Murmur\Storage\StorageInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Unit tests for ImageService.
+ * Unit tests for MediaService.
  */
-class ImageServiceTest extends TestCase {
+class MediaServiceTest extends TestCase {
 
-    protected ImageService $image_service;
+    protected MediaService $media_service;
 
     protected StorageInterface $storage;
 
     protected function setUp(): void {
         $this->storage = $this->createMock(StorageInterface::class);
-        $this->image_service = new ImageService($this->storage);
+        $this->media_service = new MediaService($this->storage);
     }
 
     public function testHasUploadTrue(): void {
@@ -27,7 +27,7 @@ class ImageServiceTest extends TestCase {
             'error' => UPLOAD_ERR_OK,
         ];
 
-        $result = $this->image_service->hasUpload($file);
+        $result = $this->media_service->hasUpload($file);
 
         $this->assertTrue($result);
     }
@@ -37,13 +37,13 @@ class ImageServiceTest extends TestCase {
             'error' => UPLOAD_ERR_NO_FILE,
         ];
 
-        $result = $this->image_service->hasUpload($file);
+        $result = $this->media_service->hasUpload($file);
 
         $this->assertFalse($result);
     }
 
     public function testHasUploadFalseNull(): void {
-        $result = $this->image_service->hasUpload(null);
+        $result = $this->media_service->hasUpload(null);
 
         $this->assertFalse($result);
     }
@@ -57,7 +57,7 @@ class ImageServiceTest extends TestCase {
             'size'     => 10000000,
         ];
 
-        $result = $this->image_service->upload($file);
+        $result = $this->media_service->upload($file);
 
         $this->assertFalse($result['success']);
         $this->assertEquals('File exceeds the server upload limit.', $result['error']);
@@ -72,7 +72,7 @@ class ImageServiceTest extends TestCase {
             'size'     => 10000000,
         ];
 
-        $result = $this->image_service->upload($file);
+        $result = $this->media_service->upload($file);
 
         $this->assertFalse($result['success']);
         $this->assertEquals('File exceeds the form upload limit.', $result['error']);
@@ -87,7 +87,7 @@ class ImageServiceTest extends TestCase {
             'size'     => 1000,
         ];
 
-        $result = $this->image_service->upload($file);
+        $result = $this->media_service->upload($file);
 
         $this->assertFalse($result['success']);
         $this->assertEquals('File was only partially uploaded.', $result['error']);
@@ -102,10 +102,10 @@ class ImageServiceTest extends TestCase {
             'size'     => 6 * 1024 * 1024, // 6MB
         ];
 
-        $result = $this->image_service->upload($file);
+        $result = $this->media_service->upload($file);
 
         $this->assertFalse($result['success']);
-        $this->assertEquals('File is too large. Maximum size is 5MB.', $result['error']);
+        $this->assertEquals('Image is too large. Maximum size is 5MB.', $result['error']);
     }
 
     public function testUploadInvalidMimeType(): void {
@@ -117,10 +117,10 @@ class ImageServiceTest extends TestCase {
             'size'     => 1000,
         ];
 
-        $result = $this->image_service->upload($file);
+        $result = $this->media_service->upload($file);
 
         $this->assertFalse($result['success']);
-        $this->assertEquals('Invalid file type. Allowed: JPEG, PNG, GIF, WebP.', $result['error']);
+        $this->assertEquals('Invalid file type. Allowed: JPEG, PNG, GIF, WebP, MP4, WebM.', $result['error']);
     }
 
     public function testDeleteCallsStorage(): void {
@@ -130,7 +130,7 @@ class ImageServiceTest extends TestCase {
             ->with('posts/image.jpg')
             ->willReturn(true);
 
-        $result = $this->image_service->delete('posts/image.jpg');
+        $result = $this->media_service->delete('posts/image.jpg');
 
         $this->assertTrue($result);
     }
@@ -141,7 +141,7 @@ class ImageServiceTest extends TestCase {
             ->method('delete')
             ->willReturn(true);
 
-        $result = $this->image_service->delete('nonexistent/file.jpg');
+        $result = $this->media_service->delete('nonexistent/file.jpg');
 
         $this->assertTrue($result);
     }
@@ -153,7 +153,7 @@ class ImageServiceTest extends TestCase {
             ->with('posts/test.jpg')
             ->willReturn('/uploads/posts/test.jpg');
 
-        $result = $this->image_service->getUrl('posts/test.jpg');
+        $result = $this->media_service->getUrl('posts/test.jpg');
 
         $this->assertEquals('/uploads/posts/test.jpg', $result);
     }
@@ -165,7 +165,7 @@ class ImageServiceTest extends TestCase {
             ->with('posts/test.jpg')
             ->willReturn('https://bucket.s3.us-east-1.amazonaws.com/posts/test.jpg');
 
-        $result = $this->image_service->getUrl('posts/test.jpg');
+        $result = $this->media_service->getUrl('posts/test.jpg');
 
         $this->assertEquals('https://bucket.s3.us-east-1.amazonaws.com/posts/test.jpg', $result);
     }
@@ -179,7 +179,7 @@ class ImageServiceTest extends TestCase {
             'size'     => 0,
         ];
 
-        $result = $this->image_service->upload($file);
+        $result = $this->media_service->upload($file);
 
         $this->assertFalse($result['success']);
         $this->assertEquals('No file was uploaded.', $result['error']);
@@ -194,7 +194,7 @@ class ImageServiceTest extends TestCase {
             'size'     => 1000,
         ];
 
-        $result = $this->image_service->upload($file);
+        $result = $this->media_service->upload($file);
 
         $this->assertFalse($result['success']);
         $this->assertEquals('Server configuration error: missing temp directory.', $result['error']);
@@ -209,7 +209,7 @@ class ImageServiceTest extends TestCase {
             'size'     => 1000,
         ];
 
-        $result = $this->image_service->upload($file);
+        $result = $this->media_service->upload($file);
 
         $this->assertFalse($result['success']);
         $this->assertEquals('Server configuration error: cannot write to disk.', $result['error']);
@@ -224,7 +224,7 @@ class ImageServiceTest extends TestCase {
             'size'     => 1000,
         ];
 
-        $result = $this->image_service->upload($file);
+        $result = $this->media_service->upload($file);
 
         $this->assertFalse($result['success']);
         $this->assertEquals('Upload blocked by server extension.', $result['error']);
@@ -250,7 +250,7 @@ class ImageServiceTest extends TestCase {
                 return '/uploads/' . $path;
             });
 
-        $result = $this->image_service->enrichPostsWithUrls($posts);
+        $result = $this->media_service->enrichPostsWithUrls($posts);
 
         $this->assertCount(1, $result);
         $this->assertIsArray($result[0]['image_urls']);
@@ -269,7 +269,7 @@ class ImageServiceTest extends TestCase {
             ['post' => $post, 'author' => $author, 'attachments' => []],
         ];
 
-        $result = $this->image_service->enrichPostsWithUrls($posts);
+        $result = $this->media_service->enrichPostsWithUrls($posts);
 
         $this->assertCount(1, $result);
         $this->assertIsArray($result[0]['image_urls']);
@@ -300,7 +300,7 @@ class ImageServiceTest extends TestCase {
                 return '/uploads/' . $path;
             });
 
-        $result = $this->image_service->enrichPostsWithUrls($posts);
+        $result = $this->media_service->enrichPostsWithUrls($posts);
 
         $this->assertCount(1, $result);
         $this->assertCount(2, $result[0]['image_urls']);
@@ -310,7 +310,7 @@ class ImageServiceTest extends TestCase {
     }
 
     public function testEnrichPostsWithUrlsEmptyArray(): void {
-        $result = $this->image_service->enrichPostsWithUrls([]);
+        $result = $this->media_service->enrichPostsWithUrls([]);
 
         $this->assertCount(0, $result);
     }
@@ -327,7 +327,7 @@ class ImageServiceTest extends TestCase {
             'size'     => [1000, 2000],
         ];
 
-        $result = $this->image_service->hasUploads($files);
+        $result = $this->media_service->hasUploads($files);
 
         $this->assertTrue($result);
     }
@@ -341,7 +341,7 @@ class ImageServiceTest extends TestCase {
             'size'     => [1000],
         ];
 
-        $result = $this->image_service->hasUploads($files);
+        $result = $this->media_service->hasUploads($files);
 
         $this->assertTrue($result);
     }
@@ -355,7 +355,7 @@ class ImageServiceTest extends TestCase {
             'size'     => [1000, 0],
         ];
 
-        $result = $this->image_service->hasUploads($files);
+        $result = $this->media_service->hasUploads($files);
 
         $this->assertTrue($result);
     }
@@ -369,13 +369,13 @@ class ImageServiceTest extends TestCase {
             'size'     => [0, 0],
         ];
 
-        $result = $this->image_service->hasUploads($files);
+        $result = $this->media_service->hasUploads($files);
 
         $this->assertFalse($result);
     }
 
     public function testHasUploadsFalseNull(): void {
-        $result = $this->image_service->hasUploads(null);
+        $result = $this->media_service->hasUploads(null);
 
         $this->assertFalse($result);
     }
@@ -388,7 +388,7 @@ class ImageServiceTest extends TestCase {
             'size'     => [1000],
         ];
 
-        $result = $this->image_service->hasUploads($files);
+        $result = $this->media_service->hasUploads($files);
 
         $this->assertFalse($result);
     }
@@ -402,7 +402,7 @@ class ImageServiceTest extends TestCase {
             'size'     => 1000,
         ];
 
-        $result = $this->image_service->hasUploads($files);
+        $result = $this->media_service->hasUploads($files);
 
         $this->assertFalse($result);
     }
@@ -425,13 +425,15 @@ class ImageServiceTest extends TestCase {
             ->method('writeFromPath')
             ->willReturn(true);
 
-        $result = $this->image_service->uploadMultiple($files, 'posts', 10);
+        $result = $this->media_service->uploadMultiple($files, 'posts', 10);
 
         $this->assertTrue($result['success']);
         $this->assertIsArray($result['paths']);
         $this->assertCount(2, $result['paths']);
-        $this->assertStringStartsWith('posts/', $result['paths'][0]);
-        $this->assertStringStartsWith('posts/', $result['paths'][1]);
+        $this->assertStringStartsWith('posts/', $result['paths'][0]['path']);
+        $this->assertEquals('image', $result['paths'][0]['media_type']);
+        $this->assertStringStartsWith('posts/', $result['paths'][1]['path']);
+        $this->assertEquals('image', $result['paths'][1]['media_type']);
     }
 
     public function testUploadMultipleEmptyUploads(): void {
@@ -443,7 +445,7 @@ class ImageServiceTest extends TestCase {
             'size'     => [0, 0],
         ];
 
-        $result = $this->image_service->uploadMultiple($files, 'posts', 10);
+        $result = $this->media_service->uploadMultiple($files, 'posts', 10);
 
         $this->assertTrue($result['success']);
         $this->assertIsArray($result['paths']);
@@ -459,7 +461,7 @@ class ImageServiceTest extends TestCase {
             'size'     => [1000, 2000, 3000],
         ];
 
-        $result = $this->image_service->uploadMultiple($files, 'posts', 2);
+        $result = $this->media_service->uploadMultiple($files, 'posts', 2);
 
         $this->assertFalse($result['success']);
         $this->assertEquals('Too many files. Maximum allowed is 2.', $result['error']);
@@ -479,7 +481,7 @@ class ImageServiceTest extends TestCase {
             ->expects($this->never())
             ->method('writeFromPath');
 
-        $result = $this->image_service->uploadMultiple($files, 'posts', 10);
+        $result = $this->media_service->uploadMultiple($files, 'posts', 10);
 
         $this->assertFalse($result['success']);
         $this->assertStringContainsString('File 2:', $result['error']);
@@ -495,7 +497,7 @@ class ImageServiceTest extends TestCase {
             'size'     => [1000, 2000],
         ];
 
-        $result = $this->image_service->uploadMultiple($files, 'posts', 10);
+        $result = $this->media_service->uploadMultiple($files, 'posts', 10);
 
         $this->assertFalse($result['success']);
         $this->assertStringContainsString('File 1:', $result['error']);
@@ -536,7 +538,7 @@ class ImageServiceTest extends TestCase {
             }))
             ->willReturn(true);
 
-        $result = $this->image_service->uploadMultiple($files, 'posts', 10);
+        $result = $this->media_service->uploadMultiple($files, 'posts', 10);
 
         $this->assertFalse($result['success']);
         $this->assertEquals('Failed to save uploaded file.', $result['error']);
@@ -557,7 +559,7 @@ class ImageServiceTest extends TestCase {
             ->method('writeFromPath')
             ->willReturn(true);
 
-        $result = $this->image_service->uploadMultiple($files, 'posts', 10);
+        $result = $this->media_service->uploadMultiple($files, 'posts', 10);
 
         $this->assertTrue($result['success']);
         $this->assertCount(1, $result['paths']);
@@ -578,7 +580,7 @@ class ImageServiceTest extends TestCase {
             ->method('writeFromPath')
             ->willReturn(true);
 
-        $result = $this->image_service->uploadMultiple($files, 'posts', 10);
+        $result = $this->media_service->uploadMultiple($files, 'posts', 10);
 
         $this->assertTrue($result['success']);
         $this->assertCount(1, $result['paths']);
@@ -593,10 +595,10 @@ class ImageServiceTest extends TestCase {
             'size'     => [6 * 1024 * 1024], // 6MB - exceeds 5MB limit
         ];
 
-        $result = $this->image_service->uploadMultiple($files, 'posts', 10);
+        $result = $this->media_service->uploadMultiple($files, 'posts', 10);
 
         $this->assertFalse($result['success']);
-        $this->assertStringContainsString('File is too large', $result['error']);
+        $this->assertStringContainsString('Image is too large', $result['error']);
     }
 
     public function testUploadMultipleUploadError(): void {
@@ -608,7 +610,7 @@ class ImageServiceTest extends TestCase {
             'size'     => [1000],
         ];
 
-        $result = $this->image_service->uploadMultiple($files, 'posts', 10);
+        $result = $this->media_service->uploadMultiple($files, 'posts', 10);
 
         $this->assertFalse($result['success']);
         $this->assertStringContainsString('File was only partially uploaded', $result['error']);
@@ -628,7 +630,7 @@ class ImageServiceTest extends TestCase {
             'size'     => 1000,
         ];
 
-        $result = $this->image_service->upload($file);
+        $result = $this->media_service->upload($file);
 
         $this->assertFalse($result['success']);
         $this->assertStringContainsString('MIME type mismatch', $result['error']);
@@ -648,7 +650,7 @@ class ImageServiceTest extends TestCase {
             'size'     => 1000,
         ];
 
-        $result = $this->image_service->upload($file);
+        $result = $this->media_service->upload($file);
 
         $this->assertFalse($result['success']);
         $this->assertStringContainsString('MIME type mismatch', $result['error']);
@@ -673,7 +675,7 @@ class ImageServiceTest extends TestCase {
             ->method('writeFromPath')
             ->willReturn(true);
 
-        $result = $this->image_service->upload($file);
+        $result = $this->media_service->upload($file);
 
         $this->assertTrue($result['success']);
         $this->assertArrayHasKey('path', $result);
@@ -698,10 +700,105 @@ class ImageServiceTest extends TestCase {
             ->method('writeFromPath')
             ->willReturn(true);
 
-        $result = $this->image_service->upload($file);
+        $result = $this->media_service->upload($file);
 
         $this->assertTrue($result['success']);
         $this->assertArrayHasKey('path', $result);
         $this->assertStringEndsWith('.png', $result['path']);
+    }
+
+    /**
+     * Tests uploading a valid MP4 video.
+     */
+    public function testUploadVideoSuccess(): void {
+        $file = [
+            'name'     => 'test.mp4',
+            'type'     => 'video/mp4',
+            'tmp_name' => __DIR__ . '/../../fixtures/test-video.mp4',
+            'error'    => UPLOAD_ERR_OK,
+            'size'     => 1000,
+        ];
+
+        $this->storage
+            ->expects($this->once())
+            ->method('writeFromPath')
+            ->willReturn(true);
+
+        $result = $this->media_service->upload($file);
+
+        $this->assertTrue($result['success']);
+        $this->assertArrayHasKey('path', $result);
+        $this->assertArrayHasKey('media_type', $result);
+        $this->assertEquals('video', $result['media_type']);
+        $this->assertStringEndsWith('.mp4', $result['path']);
+    }
+
+    /**
+     * Tests that video exceeding max size is rejected.
+     */
+    public function testUploadVideoTooLarge(): void {
+        // Create service with 50MB limit
+        $service = new MediaService($this->storage, 50 * 1024 * 1024);
+
+        $file = [
+            'name'     => 'large.mp4',
+            'type'     => 'video/mp4',
+            'tmp_name' => __DIR__ . '/../../fixtures/test-video.mp4',
+            'error'    => UPLOAD_ERR_OK,
+            'size'     => 100 * 1024 * 1024, // 100MB exceeds 50MB limit
+        ];
+
+        $result = $service->upload($file);
+
+        $this->assertFalse($result['success']);
+        $this->assertStringContainsString('Video is too large', $result['error']);
+        $this->assertStringContainsString('50MB', $result['error']);
+    }
+
+    /**
+     * Tests getMediaType returns correct type for image MIME.
+     */
+    public function testGetMediaTypeImage(): void {
+        $result = $this->media_service->getMediaType('image/jpeg');
+        $this->assertEquals('image', $result);
+    }
+
+    /**
+     * Tests getMediaType returns correct type for video MIME.
+     */
+    public function testGetMediaTypeVideo(): void {
+        $result = $this->media_service->getMediaType('video/mp4');
+        $this->assertEquals('video', $result);
+    }
+
+    /**
+     * Tests getMediaType returns unknown for unsupported MIME.
+     */
+    public function testGetMediaTypeUnknown(): void {
+        $result = $this->media_service->getMediaType('application/pdf');
+        $this->assertEquals('unknown', $result);
+    }
+
+    /**
+     * Tests upload returns media_type in result.
+     */
+    public function testUploadReturnsMediaType(): void {
+        $file = [
+            'name'     => 'test.jpg',
+            'type'     => 'image/jpeg',
+            'tmp_name' => __DIR__ . '/../../fixtures/test-image.jpg',
+            'error'    => UPLOAD_ERR_OK,
+            'size'     => 1000,
+        ];
+
+        $this->storage
+            ->expects($this->once())
+            ->method('writeFromPath')
+            ->willReturn(true);
+
+        $result = $this->media_service->upload($file);
+
+        $this->assertTrue($result['success']);
+        $this->assertEquals('image', $result['media_type']);
     }
 }

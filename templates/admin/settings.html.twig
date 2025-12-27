@@ -69,7 +69,30 @@
                        min="1"
                        required>
                 <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.25rem;">
-                    Maximum number of images that can be attached to a single post.
+                    Maximum number of images or videos that can be attached to a single post.
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-checkbox">
+                    <input type="checkbox" name="videos_allowed" value="1"
+                           {% if videos_allowed %}checked{% endif %}>
+                    <span>Allow video uploads</span>
+                </label>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.25rem;">
+                    When disabled, users cannot attach videos to posts.
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="max_video_size_mb" class="form-label">Maximum Video Size (MB)</label>
+                <input type="number" id="max_video_size_mb" name="max_video_size_mb" class="form-input"
+                       value="{{ max_video_size_mb }}"
+                       min="1"
+                       max="1000"
+                       required>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.25rem;">
+                    Maximum file size for uploaded videos (1-1000 MB). Requires server configuration for large files.
                 </p>
             </div>
 

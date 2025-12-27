@@ -118,6 +118,9 @@ post:
     
     # Reply indicator on profile
     commenting_on: "Commenting on a post"
+    
+    # Video
+    video_not_supported: "Your browser does not support video playback."
 
 # =============================================================================
 # Compose Form
@@ -130,8 +133,10 @@ compose:
     topic_select_optional: "Select a topic (optional)"
     topic_select_required: "Select a topic"
     add_images: "Add images"
+    add_media: "Add images or video"
     too_many_images: "too many!"
     image_limit_error: "Please select no more than %max% images. You have selected %count%."
+    uploading: "Uploading..."
 
 # =============================================================================
 # Profile

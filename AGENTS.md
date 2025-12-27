@@ -103,6 +103,8 @@ Settings stored in `settings` table as key-value pairs:
 - `site_name` - Instance name
 - `registration_open` - Whether new users can register
 - `images_allowed` - Whether image uploads are enabled
+- `videos_allowed` - Whether video uploads are enabled
+- `max_video_size_mb` - Maximum video file size in megabytes (default: 100)
 - `theme` - Current theme name
 - `logo_url` - Optional logo URL
 - `require_approval` - Whether new accounts need admin approval
@@ -110,9 +112,9 @@ Settings stored in `settings` table as key-value pairs:
 - `require_topic` - Whether a topic must be selected when creating posts
 - `messaging_enabled` - Whether private messaging is enabled
 - `base_url` - Base URL for subdirectory installations (auto-detected)
-- `max_attachments` - Maximum number of images allowed per post (default: 10)
+- `max_attachments` - Maximum number of media attachments per post (default: 10)
 
-Access via `SettingMapper` helper methods (e.g., `isRegistrationOpen()`, `isPublicFeed()`, `isTopicRequired()`, `isMessagingEnabled()`, `getMaxAttachments()`).
+Access via `SettingMapper` helper methods (e.g., `isRegistrationOpen()`, `isPublicFeed()`, `isTopicRequired()`, `isMessagingEnabled()`, `getMaxAttachments()`, `areVideosAllowed()`, `getMaxVideoSizeMb()`).
 
 ## Coding Standards
 
@@ -251,7 +253,7 @@ Key fields for templates:
 - `body` - Post content
 - `created_at` - Timestamp string
 
-**Note:** Image attachments are stored in the separate `post_attachments` table, not on the Post entity. Use `attachments` array from PostService or `image_urls` from ImageService enrichment.
+**Note:** Media attachments are stored in the separate `post_attachments` table, not on the Post entity. Use `attachments` array from PostService or `image_urls`/`video_urls` from MediaService enrichment.
 
 **Using `parent_id` for logic:**
 - Check `{% if post.parent_id %}` to determine if post is a reply/comment
@@ -636,38 +638,57 @@ When modifying the schema, update all three `schema.sql` files to maintain consi
 
 ## Post Attachments System
 
-Posts support multiple image attachments (configurable via `max_attachments` admin setting, default: 10).
+Posts support multiple media attachments (images and videos, configurable via `max_attachments` admin setting, default: 10).
 
 ### Entities &amp; Mappers
-- `PostAttachment` entity with `attachment_id`, `post_id`, `file_path`, `sort_order`, `created_at`
+- `PostAttachment` entity with `attachment_id`, `post_id`, `file_path`, `media_type`, `sort_order`, `created_at`
 - `PostAttachmentMapper` with `findByPostId()`, `findByPostIds()` (batch), `getFilePathsByPostId()`
 
+### Media Types
+- `media_type` field: `'image'` or `'video'`
+- Images: JPEG, PNG, GIF, WebP (max 5MB)
+- Videos: MP4, WebM (max configurable via `max_video_size_mb`, default 100MB)
+
 ### PostService Methods
-- `createPost(int $user_id, string $body, array $image_paths = [], ?int $topic_id = null)` - Creates post with attachments
-- `createReply(int $user_id, int $parent_id, string $body, array $image_paths = [])` - Creates reply with attachments
+- `createPost(int $user_id, string $body, array $media_paths = [], ?int $topic_id = null)` - Creates post with attachments
+- `createReply(int $user_id, int $parent_id, string $body, array $media_paths = [])` - Creates reply with attachments
 - `deletePost(int $post_id, User $user)` - Returns `deleted_files` array for cleanup
 - `getMaxAttachments(): int` - Gets configured limit
 
-### ImageService Methods
+The `$media_paths` parameter accepts arrays of `{path, media_type}` from `MediaService::uploadMultiple()`.
+
+### MediaService Methods
 - `hasUploads(?array $files): bool` - Check for multi-file upload
-- `uploadMultiple(array $files, string $subdirectory, int $max_files): array` - Atomic batch upload
-- `enrichPostsWithUrls(array $posts): array` - Adds `image_urls` (array) and `avatar_url` to post items
+- `upload(array $file, string $subdirectory): array` - Upload single file, returns `{success, path, media_type}`
+- `uploadMultiple(array $files, string $subdirectory, int $max_files): array` - Atomic batch upload, returns `{success, paths: [{path, media_type}]}`
+- `getMediaType(string $mime): string` - Returns 'image', 'video', or 'unknown'
+- `enrichPostsWithUrls(array $posts): array` - Adds `image_urls`, `video_urls`, and `avatar_url` to post items
+- `getUrl(string $path): string` - Get public URL for stored file
+- `delete(string $path): bool` - Delete file from storage
 
 ### Template Variables
 Posts now include:
 - `attachments` - Array of `PostAttachment` entities (from PostService)
-- `image_urls` - Array of URL strings (from ImageService enrichment)
+- `image_urls` - Array of image URL strings (from MediaService enrichment)
+- `video_urls` - Array of video URL strings (from MediaService enrichment)
 
 ### Compose Form
-- Input name: `name="images[]"` with `multiple` attribute
+- Input name: `name="media[]"` with `multiple` attribute
+- Accepts images (JPEG, PNG, GIF, WebP) and videos (MP4, WebM)
 - JavaScript displays preview grid with count indicator
+- Progress bar shows during upload
 - Validates against `max_attachments` setting (data attribute)
 
 ### Post Display Layout
-Primary + thumbnails pattern:
+Images use primary + thumbnails pattern:
 - First image displays large
 - Remaining images display as small thumbnails below
 - All images open in new tab when clicked
+
+Videos display inline:
+- Native HTML5 video player with controls
+- `preload="metadata"` shows first frame
+- Click to play (no autoplay)
 
 ## Storage System
 
@@ -721,12 +742,12 @@ storage.uploads.s3_endpoint = "https://your-endpoint.example.com"
 ### Usage Pattern
 
 ```php
-// Storage is injected into ImageService
+// Storage is injected into MediaService
 $storage = StorageFactory::create($config);
-$image_service = new ImageService($storage);
+$media_service = new MediaService($storage);
 
 // Upload a file
-$path = $image_service->upload($_FILES['image'], 'posts');
+$path = $media_service->upload($_FILES['image'], 'posts');
 
 // Get public URL
 $url = $storage->getUrl($path);

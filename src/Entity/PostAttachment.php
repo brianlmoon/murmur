@@ -7,11 +7,11 @@ namespace Murmur\Entity;
 use Moonspot\ValueObjects\ValueObject;
 
 /**
- * PostAttachment entity representing an image attached to a post.
+ * PostAttachment entity representing media attached to a post.
  *
  * Maps to the `post_attachments` table in the database. Each post can have
- * multiple attachments, ordered by `sort_order`. The number of attachments
- * per post is limited by the `max_attachments` admin setting.
+ * multiple attachments (images or videos), ordered by `sort_order`. The number
+ * of attachments per post is limited by the `max_attachments` admin setting.
  */
 class PostAttachment extends ValueObject {
 
@@ -26,9 +26,14 @@ class PostAttachment extends ValueObject {
     public int $post_id = 0;
 
     /**
-     * Path to the stored image file (relative to uploads directory).
+     * Path to the stored media file (relative to uploads directory).
      */
     public string $file_path = '';
+
+    /**
+     * Type of media: 'image' or 'video'.
+     */
+    public string $media_type = 'image';
 
     /**
      * Sort order for displaying multiple attachments.

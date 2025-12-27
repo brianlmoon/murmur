@@ -6,7 +6,7 @@ namespace Murmur\Controller;
 
 use Murmur\Repository\SettingMapper;
 use Murmur\Repository\UserMapper;
-use Murmur\Service\ImageService;
+use Murmur\Service\MediaService;
 use Murmur\Service\MessageService;
 use Murmur\Service\SessionService;
 use Murmur\Service\UserBlockService;
@@ -36,9 +36,9 @@ class MessageController extends BaseController {
     protected UserMapper $user_mapper;
 
     /**
-     * Image service for avatar URLs.
+     * Media service for avatar URLs.
      */
-    protected ImageService $image_service;
+    protected MediaService $media_service;
 
     /**
      * Creates a new MessageController instance.
@@ -49,7 +49,7 @@ class MessageController extends BaseController {
      * @param MessageService   $message_service    Message service.
      * @param UserBlockService $user_block_service User block service.
      * @param UserMapper       $user_mapper        User mapper.
-     * @param ImageService     $image_service      Image service.
+     * @param MediaService     $media_service      Media service for avatar URLs.
      */
     public function __construct(
         Environment $twig,
@@ -58,13 +58,13 @@ class MessageController extends BaseController {
         MessageService $message_service,
         UserBlockService $user_block_service,
         UserMapper $user_mapper,
-        ImageService $image_service
+        MediaService $media_service
     ) {
         parent::__construct($twig, $session, $setting_mapper);
         $this->message_service = $message_service;
         $this->user_block_service = $user_block_service;
         $this->user_mapper = $user_mapper;
-        $this->image_service = $image_service;
+        $this->media_service = $media_service;
     }
 
     /**
@@ -103,7 +103,7 @@ class MessageController extends BaseController {
         // Enrich inbox items with avatar URLs
         foreach ($inbox as $key => $item) {
             $inbox[$key]['avatar_url'] = $item['other_user']->avatar_path !== null
-                ? $this->image_service->getUrl($item['other_user']->avatar_path)
+                ? $this->media_service->getUrl($item['other_user']->avatar_path)
                 : null;
         }
 
@@ -176,7 +176,7 @@ class MessageController extends BaseController {
 
             // Generate avatar URL for other user
             $other_user_avatar_url = $other_user->avatar_path !== null
-                ? $this->image_service->getUrl($other_user->avatar_path)
+                ? $this->media_service->getUrl($other_user->avatar_path)
                 : null;
 
             $result = $this->renderThemed('pages/conversation.html.twig', [
@@ -574,7 +574,7 @@ class MessageController extends BaseController {
                 if ($can_message['can_message']) {
                     $users[] = $user;
                     $avatar_urls[$user->user_id] = $user->avatar_path !== null
-                        ? $this->image_service->getUrl($user->avatar_path)
+                        ? $this->media_service->getUrl($user->avatar_path)
                         : null;
                 }
             }

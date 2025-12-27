@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Murmur\Controller;
 
 use Murmur\Repository\SettingMapper;
-use Murmur\Service\ImageService;
+use Murmur\Service\MediaService;
 use Murmur\Service\MessageService;
 use Murmur\Service\PostService;
 use Murmur\Service\ProfileService;
@@ -33,7 +33,7 @@ class ProfileController extends BaseController {
     /**
      * Image service for avatar uploads.
      */
-    protected ImageService $image_service;
+    protected MediaService $media_service;
 
     /**
      * User follow service for follow operations.
@@ -53,7 +53,7 @@ class ProfileController extends BaseController {
      * @param SettingMapper     $setting_mapper      Setting mapper.
      * @param ProfileService    $profile_service     Profile service.
      * @param PostService       $post_service        Post service.
-     * @param ImageService      $image_service       Image service.
+     * @param MediaService      $media_service       Media service for uploads.
      * @param UserFollowService $user_follow_service User follow service.
      * @param MessageService    $message_service     Message service.
      */
@@ -63,14 +63,14 @@ class ProfileController extends BaseController {
         SettingMapper $setting_mapper,
         ProfileService $profile_service,
         PostService $post_service,
-        ImageService $image_service,
+        MediaService $media_service,
         UserFollowService $user_follow_service,
         MessageService $message_service
     ) {
         parent::__construct($twig, $session, $setting_mapper);
         $this->profile_service = $profile_service;
         $this->post_service = $post_service;
-        $this->image_service = $image_service;
+        $this->media_service = $media_service;
         $this->user_follow_service = $user_follow_service;
         $this->message_service = $message_service;
     }
@@ -106,7 +106,7 @@ class ProfileController extends BaseController {
             $posts = $this->post_service->getPostsByUser($user->user_id, 50, 0, $current_user_id);
 
             // Enrich posts with image URLs
-            $posts = $this->image_service->enrichPostsWithUrls($posts);
+            $posts = $this->media_service->enrichPostsWithUrls($posts);
 
             // Get follow information
             $is_following = false;
@@ -129,7 +129,7 @@ class ProfileController extends BaseController {
 
             // Generate profile avatar URL
             $profile_avatar_url = $user->avatar_path !== null
-                ? $this->image_service->getUrl($user->avatar_path)
+                ? $this->media_service->getUrl($user->avatar_path)
                 : null;
 
             $result = $this->renderThemed('pages/profile.html.twig', [
@@ -159,7 +159,7 @@ class ProfileController extends BaseController {
         $user = $this->session->getCurrentUser();
 
         $avatar_url = $user->avatar_path !== null
-            ? $this->image_service->getUrl($user->avatar_path)
+            ? $this->media_service->getUrl($user->avatar_path)
             : null;
 
         return $this->renderThemed('pages/settings.html.twig', [
@@ -197,14 +197,14 @@ class ProfileController extends BaseController {
 
         // Generate current avatar URL for error cases
         $avatar_url = $user->avatar_path !== null
-            ? $this->image_service->getUrl($user->avatar_path)
+            ? $this->media_service->getUrl($user->avatar_path)
             : null;
 
         // Handle avatar upload
         $file = $_FILES['avatar'] ?? null;
 
-        if ($this->image_service->hasUpload($file)) {
-            $upload_result = $this->image_service->upload($file, 'avatars');
+        if ($this->media_service->hasUpload($file)) {
+            $upload_result = $this->media_service->upload($file, 'avatars');
 
             if (!$upload_result['success']) {
                 $result = $this->renderThemed('pages/settings.html.twig', [
@@ -223,7 +223,7 @@ class ProfileController extends BaseController {
 
             // Delete old avatar if exists
             if ($user->avatar_path !== null) {
-                $this->image_service->delete($user->avatar_path);
+                $this->media_service->delete($user->avatar_path);
             }
 
             $avatar_path = $upload_result['path'];
@@ -313,7 +313,7 @@ class ProfileController extends BaseController {
         $old_path = $this->profile_service->removeAvatar($user);
 
         if ($old_path !== null) {
-            $this->image_service->delete($old_path);
+            $this->media_service->delete($old_path);
         }
 
         $this->session->addFlash('success', 'Avatar removed.');

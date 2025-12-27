@@ -213,4 +213,24 @@ class SettingMapper extends AbstractMapper {
     public function getLocale(): string {
         return $this->getSetting('locale', 'en-US') ?? 'en-US';
     }
+
+    /**
+     * Checks if video uploads are allowed.
+     *
+     * @return bool True if videos are allowed.
+     */
+    public function areVideosAllowed(): bool {
+        return $this->getSetting('videos_allowed', '1') === '1';
+    }
+
+    /**
+     * Retrieves the maximum video file size in megabytes.
+     *
+     * @return int The maximum video size in MB.
+     */
+    public function getMaxVideoSizeMb(): int {
+        $value = $this->getSetting('max_video_size_mb', '100');
+
+        return (int) ($value ?? 100);
+    }
 }

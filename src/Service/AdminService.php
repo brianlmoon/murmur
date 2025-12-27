@@ -272,12 +272,14 @@ class AdminService {
      * @param bool   $require_topic     Whether a topic must be selected when creating posts.
      * @param bool   $messaging_enabled Whether private messaging is enabled.
      * @param int    $max_post_length   Maximum characters allowed per post.
-     * @param int    $max_attachments   Maximum image attachments allowed per post.
+     * @param int    $max_attachments   Maximum media attachments allowed per post.
      * @param string $locale            The locale code (e.g., 'en-US').
+     * @param bool   $videos_allowed    Whether video uploads are allowed.
+     * @param int    $max_video_size_mb Maximum video file size in megabytes.
      *
      * @return array{success: bool, error?: string}
      */
-    public function updateSettings(string $site_name, bool $registration_open, bool $images_allowed, string $theme, string $logo_url = '', bool $require_approval = false, bool $public_feed = true, bool $require_topic = false, bool $messaging_enabled = true, int $max_post_length = 500, int $max_attachments = 10, string $locale = 'en-US'): array {
+    public function updateSettings(string $site_name, bool $registration_open, bool $images_allowed, string $theme, string $logo_url = '', bool $require_approval = false, bool $public_feed = true, bool $require_topic = false, bool $messaging_enabled = true, int $max_post_length = 500, int $max_attachments = 10, string $locale = 'en-US', bool $videos_allowed = true, int $max_video_size_mb = 100): array {
         $result = ['success' => false];
 
         $site_name = trim($site_name);
@@ -299,6 +301,10 @@ class AdminService {
             $result['error'] = 'Maximum attachments must be at least 1.';
         } elseif ($locale === '') {
             $result['error'] = 'Locale cannot be empty.';
+        } elseif ($max_video_size_mb < 1) {
+            $result['error'] = 'Maximum video size must be at least 1 MB.';
+        } elseif ($max_video_size_mb > 1000) {
+            $result['error'] = 'Maximum video size cannot exceed 1000 MB.';
         } else {
             $this->setting_mapper->saveSetting('site_name', $site_name);
             $this->setting_mapper->saveSetting('registration_open', $registration_open ? '1' : '0');
@@ -312,6 +318,8 @@ class AdminService {
             $this->setting_mapper->saveSetting('max_post_length', (string) $max_post_length);
             $this->setting_mapper->saveSetting('max_attachments', (string) $max_attachments);
             $this->setting_mapper->saveSetting('locale', $locale);
+            $this->setting_mapper->saveSetting('videos_allowed', $videos_allowed ? '1' : '0');
+            $this->setting_mapper->saveSetting('max_video_size_mb', (string) $max_video_size_mb);
             $result['success'] = true;
         }
 
@@ -379,6 +387,24 @@ class AdminService {
      */
     public function getLocale(): string {
         return $this->setting_mapper->getLocale();
+    }
+
+    /**
+     * Checks if video uploads are allowed.
+     *
+     * @return bool True if videos are allowed.
+     */
+    public function areVideosAllowed(): bool {
+        return $this->setting_mapper->areVideosAllowed();
+    }
+
+    /**
+     * Gets the maximum video file size in megabytes.
+     *
+     * @return int The maximum video size in MB.
+     */
+    public function getMaxVideoSizeMb(): int {
+        return $this->setting_mapper->getMaxVideoSizeMb();
     }
 
     /**

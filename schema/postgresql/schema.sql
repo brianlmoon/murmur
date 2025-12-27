@@ -82,12 +82,13 @@ CREATE TRIGGER trg_posts_updated_at
 
 -- -----------------------------------------------------------------------------
 -- Post attachments table
--- Stores image attachments for posts (supports multiple images per post).
+-- Stores media attachments for posts (supports multiple images/videos per post).
 -- -----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS post_attachments (
     attachment_id BIGSERIAL PRIMARY KEY,
     post_id       BIGINT NOT NULL REFERENCES posts(post_id) ON DELETE CASCADE,
     file_path     VARCHAR(255) NOT NULL,
+    media_type    VARCHAR(10) NOT NULL DEFAULT 'image',
     sort_order    INTEGER NOT NULL DEFAULT 0,
     created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -105,7 +106,9 @@ CREATE TABLE IF NOT EXISTS settings (
 -- Default settings
 INSERT INTO settings (setting_name, setting_value) VALUES
     ('site_name', 'Murmur'),
-    ('registration_open', '1')
+    ('registration_open', '1'),
+    ('videos_allowed', '1'),
+    ('max_video_size_mb', '100')
 ON CONFLICT (setting_name) DO NOTHING;
 
 -- -----------------------------------------------------------------------------

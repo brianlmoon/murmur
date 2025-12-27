@@ -191,10 +191,10 @@ class AdminServiceTest extends TestCase {
 
     public function testUpdateSettingsSuccess(): void {
         $this->setting_mapper
-            ->expects($this->exactly(12))
+            ->expects($this->exactly(14))
             ->method('saveSetting');
 
-        $result = $this->admin_service->updateSettings('My Site', true, true, 'default', 'https://example.com/logo.png', false, true, false, true, 500, 10, 'en-US');
+        $result = $this->admin_service->updateSettings('My Site', true, true, 'default', 'https://example.com/logo.png', false, true, false, true, 500, 10, 'en-US', true, 100);
 
         $this->assertTrue($result['success']);
     }

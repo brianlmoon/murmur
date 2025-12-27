@@ -51,10 +51,10 @@
     </div>
 
     <div class="compose-footer">
-        {% if images_allowed %}
+        {% if images_allowed or videos_allowed %}
         <label class="compose-upload">
-            <input type="file" name="images[]" accept="image/jpeg,image/png,image/gif,image/webp" class="compose-file" multiple>
-            <span class="compose-upload-label">{{ 'compose.add_images'|trans }}</span>
+            <input type="file" name="media[]" accept="{% if images_allowed %}image/jpeg,image/png,image/gif,image/webp{% endif %}{% if images_allowed and videos_allowed %},{% endif %}{% if videos_allowed %}video/mp4,video/webm{% endif %}" class="compose-file" multiple>
+            <span class="compose-upload-label">{{ 'compose.add_media'|trans }}</span>
             <span class="compose-upload-count"></span>
         </label>
         {% else %}
@@ -63,8 +63,12 @@
         <button type="submit" class="btn btn-primary">{{ button_text }}</button>
     </div>
 
-    {% if images_allowed %}
+    {% if images_allowed or videos_allowed %}
     <div class="compose-previews"></div>
+    <div class="compose-progress" style="display: none;">
+        <div class="compose-progress-bar"></div>
+        <span class="compose-progress-text">0%</span>
+    </div>
     <div class="compose-error"></div>
     {% endif %}
 </form>
@@ -78,6 +82,9 @@
     const previewsContainer = form.querySelector('.compose-previews');
     const uploadCount = form.querySelector('.compose-upload-count');
     const errorContainer = form.querySelector('.compose-error');
+    const progressContainer = form.querySelector('.compose-progress');
+    const progressBar = form.querySelector('.compose-progress-bar');
+    const progressText = form.querySelector('.compose-progress-text');
     const maxAttachments = parseInt(form.dataset.maxAttachments) || 10;
 
     textarea.addEventListener('input', function() {
@@ -104,20 +111,31 @@
                 }
                 
                 Array.from(this.files).forEach(function(file, index) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const previewItem = document.createElement('div');
-                        previewItem.className = 'compose-preview-item';
-                        
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.alt = `Preview ${index + 1}`;
-                        img.className = 'compose-preview-img';
-                        
-                        previewItem.appendChild(img);
-                        previewsContainer.appendChild(previewItem);
-                    };
-                    reader.readAsDataURL(file);
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'compose-preview-item';
+                    
+                    if (file.type.startsWith('video/')) {
+                        // Video preview
+                        const video = document.createElement('video');
+                        video.src = URL.createObjectURL(file);
+                        video.className = 'compose-preview-video';
+                        video.muted = true;
+                        video.preload = 'metadata';
+                        previewItem.appendChild(video);
+                    } else {
+                        // Image preview
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.alt = `Preview ${index + 1}`;
+                            img.className = 'compose-preview-img';
+                            previewItem.appendChild(img);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                    
+                    previewsContainer.appendChild(previewItem);
                 });
             } else {
                 uploadCount.textContent = '';
@@ -125,16 +143,91 @@
         });
     }
 
-    // Prevent form submission if too many files selected
+    // Handle form submission with progress
     form.addEventListener('submit', function(e) {
+        // Check if too many files selected
         if (fileInput && fileInput.files && fileInput.files.length > maxAttachments) {
             e.preventDefault();
             if (errorContainer) {
-                errorContainer.textContent = `Please select no more than ${maxAttachments} images. You have selected ${fileInput.files.length}.`;
+                errorContainer.textContent = `Please select no more than ${maxAttachments} files. You have selected ${fileInput.files.length}.`;
                 errorContainer.style.display = 'block';
                 errorContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
+            return;
         }
+
+        // Use AJAX upload with progress bar
+        e.preventDefault();
+
+        const xhr = new XMLHttpRequest();
+        const formData = new FormData(form);
+
+        // Show progress bar
+        if (progressContainer) {
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '0%';
+            progressText.textContent = '0%';
+        }
+
+        // Hide error
+        if (errorContainer) {
+            errorContainer.style.display = 'none';
+        }
+
+        xhr.upload.addEventListener('progress', function(e) {
+            if (e.lengthComputable && progressBar && progressText) {
+                const percent = Math.round((e.loaded / e.total) * 100);
+                progressBar.style.width = percent + '%';
+                progressText.textContent = percent + '%';
+            }
+        });
+
+        xhr.addEventListener('load', function() {
+            if (xhr.status === 200) {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.success && response.redirect) {
+                        window.location.href = response.redirect;
+                    } else if (response.error) {
+                        if (errorContainer) {
+                            errorContainer.textContent = response.error;
+                            errorContainer.style.display = 'block';
+                        }
+                        if (progressContainer) {
+                            progressContainer.style.display = 'none';
+                        }
+                    } else {
+                        // Non-JSON response, likely a redirect - follow it
+                        window.location.reload();
+                    }
+                } catch (e) {
+                    // Not JSON, probably a redirect page
+                    window.location.reload();
+                }
+            } else {
+                if (errorContainer) {
+                    errorContainer.textContent = 'Upload failed. Please try again.';
+                    errorContainer.style.display = 'block';
+                }
+                if (progressContainer) {
+                    progressContainer.style.display = 'none';
+                }
+            }
+        });
+
+        xhr.addEventListener('error', function() {
+            if (errorContainer) {
+                errorContainer.textContent = 'Upload failed. Please try again.';
+                errorContainer.style.display = 'block';
+            }
+            if (progressContainer) {
+                progressContainer.style.display = 'none';
+            }
+        });
+
+        xhr.open('POST', form.action);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.send(formData);
     });
 
     // Scroll to form if #reply hash is present

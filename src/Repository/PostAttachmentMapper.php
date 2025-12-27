@@ -44,6 +44,7 @@ class PostAttachmentMapper extends AbstractMapper {
         'attachment_id' => [],
         'post_id'       => [],
         'file_path'     => [],
+        'media_type'    => [],
         'sort_order'    => [],
         'created_at'    => ['read_only' => true],
     ];

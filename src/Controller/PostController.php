@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Murmur\Controller;
 
 use Murmur\Repository\SettingMapper;
-use Murmur\Service\ImageService;
+use Murmur\Service\MediaService;
 use Murmur\Service\LikeService;
 use Murmur\Service\LinkPreviewService;
 use Murmur\Service\PostService;
@@ -28,7 +28,7 @@ class PostController extends BaseController {
     /**
      * Image service for uploads.
      */
-    protected ImageService $image_service;
+    protected MediaService $media_service;
 
     /**
      * Like service for like operations.
@@ -52,7 +52,7 @@ class PostController extends BaseController {
      * @param SessionService     $session              Session service.
      * @param SettingMapper      $setting_mapper       Setting mapper.
      * @param PostService        $post_service         Post service.
-     * @param ImageService       $image_service        Image service.
+     * @param MediaService       $media_service        Image service.
      * @param LikeService        $like_service         Like service.
      * @param TopicService       $topic_service        Topic service.
      * @param LinkPreviewService $link_preview_service Link preview service.
@@ -62,14 +62,14 @@ class PostController extends BaseController {
         SessionService $session,
         SettingMapper $setting_mapper,
         PostService $post_service,
-        ImageService $image_service,
+        MediaService $media_service,
         LikeService $like_service,
         TopicService $topic_service,
         LinkPreviewService $link_preview_service
     ) {
         parent::__construct($twig, $session, $setting_mapper);
         $this->post_service = $post_service;
-        $this->image_service = $image_service;
+        $this->media_service = $media_service;
         $this->like_service = $like_service;
         $this->topic_service = $topic_service;
         $this->link_preview_service = $link_preview_service;
@@ -141,7 +141,7 @@ class PostController extends BaseController {
         }
 
         // Enrich posts with image URLs for templates
-        $posts = $this->image_service->enrichPostsWithUrls($posts);
+        $posts = $this->media_service->enrichPostsWithUrls($posts);
 
         $topics = $this->topic_service->getAllTopics();
 
@@ -220,7 +220,7 @@ class PostController extends BaseController {
                 }
 
                 // Enrich replies with image URLs
-                $replies = $this->image_service->enrichPostsWithUrls($replies);
+                $replies = $this->media_service->enrichPostsWithUrls($replies);
 
                 $user_following = false;
                 if ($current_user_id !== null && $post_data['topic'] !== null) {
@@ -230,21 +230,28 @@ class PostController extends BaseController {
                 // Fetch link preview for the post (first URL only)
                 $preview = $this->link_preview_service->getPreviewForPost($post_data['post']->body);
 
-                // Generate image URLs for the main post attachments
+                // Generate media URLs for the main post attachments
                 $image_urls = [];
+                $video_urls = [];
                 if (isset($post_data['attachments']) && is_array($post_data['attachments'])) {
                     foreach ($post_data['attachments'] as $attachment) {
-                        $image_urls[] = $this->image_service->getUrl($attachment->file_path);
+                        $url = $this->media_service->getUrl($attachment->file_path);
+                        if ($attachment->media_type === 'video') {
+                            $video_urls[] = $url;
+                        } else {
+                            $image_urls[] = $url;
+                        }
                     }
                 }
                 $avatar_url = $post_data['author']->avatar_path !== null
-                    ? $this->image_service->getUrl($post_data['author']->avatar_path)
+                    ? $this->media_service->getUrl($post_data['author']->avatar_path)
                     : null;
 
                 $result = $this->renderThemed('pages/post.html.twig', [
                     'post'           => $post_data['post'],
                     'author'         => $post_data['author'],
                     'image_urls'     => $image_urls,
+                    'video_urls'     => $video_urls,
                     'avatar_url'     => $avatar_url,
                     'like_count'     => $post_data['like_count'],
                     'user_liked'     => $post_data['user_liked'],
@@ -279,19 +286,22 @@ class PostController extends BaseController {
 
         $user = $this->session->getCurrentUser();
         $body = (string) $this->getPost('body', '');
-        $image_paths = [];
+        $media_paths = [];
 
         // Handle topic_id
         $topic_id_input = $this->getPost('topic_id');
         $topic_id = ($topic_id_input !== null && $topic_id_input !== '') ? (int) $topic_id_input : null;
 
-        // Handle image uploads (only if images are allowed)
-        if ($this->setting_mapper->areImagesAllowed()) {
-            $files = $_FILES['images'] ?? null;
+        // Handle media uploads (only if images or videos are allowed)
+        $images_allowed = $this->setting_mapper->areImagesAllowed();
+        $videos_allowed = $this->setting_mapper->areVideosAllowed();
 
-            if ($this->image_service->hasUploads($files)) {
+        if ($images_allowed || $videos_allowed) {
+            $files = $_FILES['media'] ?? null;
+
+            if ($this->media_service->hasUploads($files)) {
                 $max_attachments = $this->post_service->getMaxAttachments();
-                $upload_result = $this->image_service->uploadMultiple($files, 'posts', $max_attachments);
+                $upload_result = $this->media_service->uploadMultiple($files, 'posts', $max_attachments);
 
                 if (!$upload_result['success']) {
                     $this->session->addFlash('error', $upload_result['error']);
@@ -299,11 +309,31 @@ class PostController extends BaseController {
                     return;
                 }
 
-                $image_paths = $upload_result['paths'];
+                $media_paths = $upload_result['paths'];
             }
         }
 
-        $result = $this->post_service->createPost($user->user_id, $body, $image_paths, $topic_id);
+        $result = $this->post_service->createPost($user->user_id, $body, $media_paths, $topic_id);
+
+        // Check if this is an AJAX request
+        $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+                   strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
+        if ($is_ajax) {
+            header('Content-Type: application/json');
+            if ($result['success']) {
+                echo json_encode([
+                    'success'  => true,
+                    'redirect' => $this->setting_mapper->getBaseUrl() . '/',
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'error'   => $result['error'],
+                ]);
+            }
+            exit;
+        }
 
         if ($result['success']) {
             $this->session->addFlash('success', 'Post created.');
@@ -334,15 +364,18 @@ class PostController extends BaseController {
 
         $user = $this->session->getCurrentUser();
         $body = (string) $this->getPost('body', '');
-        $image_paths = [];
+        $media_paths = [];
 
-        // Handle image uploads (only if images are allowed)
-        if ($this->setting_mapper->areImagesAllowed()) {
-            $files = $_FILES['images'] ?? null;
+        // Handle media uploads (only if images or videos are allowed)
+        $images_allowed = $this->setting_mapper->areImagesAllowed();
+        $videos_allowed = $this->setting_mapper->areVideosAllowed();
 
-            if ($this->image_service->hasUploads($files)) {
+        if ($images_allowed || $videos_allowed) {
+            $files = $_FILES['media'] ?? null;
+
+            if ($this->media_service->hasUploads($files)) {
                 $max_attachments = $this->post_service->getMaxAttachments();
-                $upload_result = $this->image_service->uploadMultiple($files, 'posts', $max_attachments);
+                $upload_result = $this->media_service->uploadMultiple($files, 'posts', $max_attachments);
 
                 if (!$upload_result['success']) {
                     $this->session->addFlash('error', $upload_result['error']);
@@ -350,11 +383,31 @@ class PostController extends BaseController {
                     return;
                 }
 
-                $image_paths = $upload_result['paths'];
+                $media_paths = $upload_result['paths'];
             }
         }
 
-        $result = $this->post_service->createReply($user->user_id, $post_id, $body, $image_paths);
+        $result = $this->post_service->createReply($user->user_id, $post_id, $body, $media_paths);
+
+        // Check if this is an AJAX request
+        $is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+                   strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
+        if ($is_ajax) {
+            header('Content-Type: application/json');
+            if ($result['success']) {
+                echo json_encode([
+                    'success'  => true,
+                    'redirect' => $this->setting_mapper->getBaseUrl() . '/post/' . $post_id,
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'error'   => $result['error'],
+                ]);
+            }
+            exit;
+        }
 
         if ($result['success']) {
             $this->session->addFlash('success', 'Reply posted.');
@@ -398,7 +451,7 @@ class PostController extends BaseController {
             // Clean up attachment files from storage
             if (isset($result['deleted_files']) && is_array($result['deleted_files'])) {
                 foreach ($result['deleted_files'] as $file_path) {
-                    $this->image_service->delete($file_path);
+                    $this->media_service->delete($file_path);
                 }
             }
             $this->session->addFlash('success', 'Post deleted.');
@@ -597,7 +650,7 @@ class PostController extends BaseController {
             }
 
             // Enrich posts with image URLs
-            $posts = $this->image_service->enrichPostsWithUrls($posts);
+            $posts = $this->media_service->enrichPostsWithUrls($posts);
 
             $user_following = false;
             if ($current_user_id !== null) {

@@ -75,12 +75,13 @@ END;
 
 -- -----------------------------------------------------------------------------
 -- Post attachments table
--- Stores image attachments for posts (supports multiple images per post).
+-- Stores media attachments for posts (supports multiple images/videos per post).
 -- -----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS post_attachments (
     attachment_id INTEGER PRIMARY KEY AUTOINCREMENT,
     post_id       INTEGER NOT NULL REFERENCES posts(post_id) ON DELETE CASCADE,
     file_path     TEXT NOT NULL,
+    media_type    TEXT NOT NULL DEFAULT 'image',
     sort_order    INTEGER NOT NULL DEFAULT 0,
     created_at    TEXT NOT NULL DEFAULT (datetime('now'))
 );
@@ -98,7 +99,9 @@ CREATE TABLE IF NOT EXISTS settings (
 -- Default settings
 INSERT OR IGNORE INTO settings (setting_name, setting_value) VALUES
     ('site_name', 'Murmur'),
-    ('registration_open', '1');
+    ('registration_open', '1'),
+    ('videos_allowed', '1'),
+    ('max_video_size_mb', '100');
 
 -- -----------------------------------------------------------------------------
 -- Likes table

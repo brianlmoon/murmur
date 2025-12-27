@@ -81,14 +81,15 @@ class PostService {
     /**
      * Creates a new post.
      *
-     * @param int          $user_id     The author's user ID.
-     * @param string       $body        The post content.
-     * @param array<string> $image_paths Array of paths to attached images.
-     * @param int|null     $topic_id    Optional topic ID for categorization.
+     * @param int   $user_id      The author's user ID.
+     * @param string $body        The post content.
+     * @param array  $media_paths Array of media info arrays with 'path' and 'media_type' keys,
+     *                            or array of path strings for backwards compatibility.
+     * @param int|null $topic_id  Optional topic ID for categorization.
      *
      * @return array{success: bool, post?: Post, error?: string}
      */
-    public function createPost(int $user_id, string $body, array $image_paths = [], ?int $topic_id = null): array {
+    public function createPost(int $user_id, string $body, array $media_paths = [], ?int $topic_id = null): array {
         $result = ['success' => false];
 
         $body = trim($body);
@@ -104,8 +105,8 @@ class PostService {
 
             $this->post_mapper->save($post);
 
-            // Create attachments for each image path
-            $this->createAttachments($post->post_id, $image_paths);
+            // Create attachments for each media path
+            $this->createAttachments($post->post_id, $media_paths);
 
             $result['success'] = true;
             $result['post'] = $post;
@@ -117,14 +118,15 @@ class PostService {
     /**
      * Creates a reply to an existing post.
      *
-     * @param int           $user_id     The author's user ID.
-     * @param int           $parent_id   The parent post ID.
-     * @param string        $body        The reply content.
-     * @param array<string> $image_paths Array of paths to attached images.
+     * @param int    $user_id     The author's user ID.
+     * @param int    $parent_id   The parent post ID.
+     * @param string $body        The reply content.
+     * @param array  $media_paths Array of media info arrays with 'path' and 'media_type' keys,
+     *                            or array of path strings for backwards compatibility.
      *
      * @return array{success: bool, post?: Post, error?: string}
      */
-    public function createReply(int $user_id, int $parent_id, string $body, array $image_paths = []): array {
+    public function createReply(int $user_id, int $parent_id, string $body, array $media_paths = []): array {
         $result = ['success' => false];
 
         $parent = $this->post_mapper->load($parent_id);
@@ -148,8 +150,8 @@ class PostService {
 
                 $this->post_mapper->save($post);
 
-                // Create attachments for each image path
-                $this->createAttachments($post->post_id, $image_paths);
+                // Create attachments for each media path
+                $this->createAttachments($post->post_id, $media_paths);
 
                 $result['success'] = true;
                 $result['post'] = $post;
@@ -162,17 +164,26 @@ class PostService {
     /**
      * Creates attachment records for a post.
      *
-     * @param int           $post_id     The post ID.
-     * @param array<string> $image_paths Array of image file paths.
+     * @param int   $post_id     The post ID.
+     * @param array $media_paths Array of media info arrays with 'path' and 'media_type' keys,
+     *                           or array of path strings for backwards compatibility.
      *
      * @return void
      */
-    protected function createAttachments(int $post_id, array $image_paths): void {
-        foreach ($image_paths as $sort_order => $file_path) {
+    protected function createAttachments(int $post_id, array $media_paths): void {
+        foreach ($media_paths as $sort_order => $media_info) {
             $attachment = new PostAttachment();
             $attachment->post_id = $post_id;
-            $attachment->file_path = $file_path;
             $attachment->sort_order = $sort_order;
+
+            // Support both new format {path, media_type} and old format (plain string)
+            if (is_array($media_info)) {
+                $attachment->file_path = $media_info['path'];
+                $attachment->media_type = $media_info['media_type'] ?? 'image';
+            } else {
+                $attachment->file_path = $media_info;
+                $attachment->media_type = 'image';
+            }
 
             $this->attachment_mapper->save($attachment);
         }

@@ -234,6 +234,8 @@ class AdminController extends BaseController {
             'max_post_length'   => $this->admin_service->getMaxPostLength(),
             'max_attachments'   => $this->admin_service->getMaxAttachments(),
             'locale'            => $this->admin_service->getLocale(),
+            'videos_allowed'    => $this->admin_service->areVideosAllowed(),
+            'max_video_size_mb' => $this->admin_service->getMaxVideoSizeMb(),
             'available_themes'  => $this->admin_service->getAvailableThemes($templates_path),
             'available_locales' => $this->translation_service->getAvailableLocalesWithNames(),
             'topics'            => $topics,
@@ -270,11 +272,13 @@ class AdminController extends BaseController {
         $max_post_length = (int) ($this->getPost('max_post_length') ?? 500);
         $max_attachments = (int) ($this->getPost('max_attachments') ?? 10);
         $locale = (string) $this->getPost('locale', 'en-US');
+        $videos_allowed = $this->getPost('videos_allowed') === '1';
+        $max_video_size_mb = (int) ($this->getPost('max_video_size_mb') ?? 100);
 
         $templates_path = dirname(__DIR__, 2) . '/templates';
         $topics = $this->topic_service->getAllTopics();
 
-        $update_result = $this->admin_service->updateSettings($site_name, $registration_open, $images_allowed, $theme, $logo_url, $require_approval, $public_feed, $require_topic, $messaging_enabled, $max_post_length, $max_attachments, $locale);
+        $update_result = $this->admin_service->updateSettings($site_name, $registration_open, $images_allowed, $theme, $logo_url, $require_approval, $public_feed, $require_topic, $messaging_enabled, $max_post_length, $max_attachments, $locale, $videos_allowed, $max_video_size_mb);
 
         if ($update_result['success']) {
             $this->session->addFlash('success', 'Settings saved.');
@@ -293,6 +297,8 @@ class AdminController extends BaseController {
                 'max_post_length'   => $max_post_length,
                 'max_attachments'   => $max_attachments,
                 'locale'            => $locale,
+                'videos_allowed'    => $videos_allowed,
+                'max_video_size_mb' => $max_video_size_mb,
                 'available_themes'  => $this->admin_service->getAvailableThemes($templates_path),
                 'available_locales' => $this->translation_service->getAvailableLocalesWithNames(),
                 'topics'            => $topics,

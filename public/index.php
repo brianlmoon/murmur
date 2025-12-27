@@ -30,7 +30,7 @@ use Murmur\Repository\UserFollowMapper;
 use Murmur\Repository\UserMapper;
 use Murmur\Service\AdminService;
 use Murmur\Service\AuthService;
-use Murmur\Service\ImageService;
+use Murmur\Service\MediaService;
 use Murmur\Service\LikeService;
 use Murmur\Service\LinkPreviewService;
 use Murmur\Service\MessageService;
@@ -83,10 +83,12 @@ $base_url = $setting_mapper->getBaseUrl();
 $twig->addGlobal('base_url', $base_url);
 $twig->addGlobal('site_name', $setting_mapper->getSiteName());
 $twig->addGlobal('images_allowed', $setting_mapper->areImagesAllowed());
+$twig->addGlobal('videos_allowed', $setting_mapper->areVideosAllowed());
 $twig->addGlobal('theme', $setting_mapper->getTheme());
 $twig->addGlobal('logo_url', $setting_mapper->getLogoUrl());
 $twig->addGlobal('has_topics', count($topic_mapper->findAll()) > 0);
 $twig->addGlobal('max_attachments', $setting_mapper->getMaxAttachments());
+$twig->addGlobal('max_video_size_mb', $setting_mapper->getMaxVideoSizeMb());
 
 // Initialize Translation Service
 $locale = $setting_mapper->getLocale();
@@ -118,7 +120,8 @@ $auth_service = new AuthService($user_mapper, $setting_mapper);
 $post_service = new PostService($post_mapper, $user_mapper, $like_mapper, $topic_mapper, $setting_mapper, $post_attachment_mapper);
 $profile_service = new ProfileService($user_mapper);
 $admin_service = new AdminService($user_mapper, $post_mapper, $setting_mapper);
-$image_service = new ImageService($storage);
+$max_video_size = $setting_mapper->getMaxVideoSizeMb() * 1024 * 1024;
+$media_service = new MediaService($storage, $max_video_size);
 $like_service = new LikeService($like_mapper);
 $topic_service = new TopicService($topic_mapper, $topic_follow_mapper);
 $link_preview_service = new LinkPreviewService($link_preview_mapper);
@@ -135,11 +138,11 @@ $message_service = new MessageService(
 
 // Initialize Controllers
 $auth_controller = new AuthController($twig, $session_service, $setting_mapper, $auth_service);
-$post_controller = new PostController($twig, $session_service, $setting_mapper, $post_service, $image_service, $like_service, $topic_service, $link_preview_service);
-$profile_controller = new ProfileController($twig, $session_service, $setting_mapper, $profile_service, $post_service, $image_service, $user_follow_service, $message_service);
+$post_controller = new PostController($twig, $session_service, $setting_mapper, $post_service, $media_service, $like_service, $topic_service, $link_preview_service);
+$profile_controller = new ProfileController($twig, $session_service, $setting_mapper, $profile_service, $post_service, $media_service, $user_follow_service, $message_service);
 $admin_controller = new AdminController($twig, $session_service, $setting_mapper, $admin_service, $topic_service, $translation_service);
 $setup_controller = new SetupController($twig, $session_service, $setting_mapper, $auth_service);
-$message_controller = new MessageController($twig, $session_service, $setting_mapper, $message_service, $user_block_service, $user_mapper, $image_service);
+$message_controller = new MessageController($twig, $session_service, $setting_mapper, $message_service, $user_block_service, $user_mapper, $media_service);
 
 // ---------------------------------------------------------------------------
 // First-Run Setup Check
