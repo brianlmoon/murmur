@@ -65,7 +65,7 @@
 
     {% if images_allowed %}
     <div class="compose-previews"></div>
-    <div class="compose-error" style="display: none; color: var(--color-error, #dc2626); padding: 0.5rem 0; font-size: 0.875rem;"></div>
+    <div class="compose-error"></div>
     {% endif %}
 </form>
 
@@ -96,10 +96,10 @@
                 const fileCount = this.files.length;
                 
                 if (fileCount > maxAttachments) {
-                    uploadCount.textContent = ' (' + fileCount + '/' + maxAttachments + ' - too many!)';
+                    uploadCount.textContent = ` (${fileCount}/${maxAttachments} - too many!)`;
                     uploadCount.style.color = 'var(--color-error, #dc2626)';
                 } else {
-                    uploadCount.textContent = ' (' + fileCount + '/' + maxAttachments + ')';
+                    uploadCount.textContent = ` (${fileCount}/${maxAttachments})`;
                     uploadCount.style.color = '';
                 }
                 
@@ -111,7 +111,7 @@
                         
                         const img = document.createElement('img');
                         img.src = e.target.result;
-                        img.alt = 'Preview ' + (index + 1);
+                        img.alt = `Preview ${index + 1}`;
                         img.className = 'compose-preview-img';
                         
                         previewItem.appendChild(img);
@@ -130,7 +130,7 @@
         if (fileInput && fileInput.files && fileInput.files.length > maxAttachments) {
             e.preventDefault();
             if (errorContainer) {
-                errorContainer.textContent = 'Please select no more than ' + maxAttachments + ' images. You have selected ' + fileInput.files.length + '.';
+                errorContainer.textContent = `Please select no more than ${maxAttachments} images. You have selected ${fileInput.files.length}.`;
                 errorContainer.style.display = 'block';
                 errorContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
