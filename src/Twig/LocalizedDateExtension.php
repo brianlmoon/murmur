@@ -59,9 +59,10 @@ class LocalizedDateExtension extends AbstractExtension {
      *   - long: Full date (e.g., "December 27, 2025")
      *   - time: Time only (e.g., "1:39 AM")
      *   - datetime: Full date and time (e.g., "December 27, 2025 1:39 AM")
+     *   - month_year: Month and year (e.g., "December 2025")
      *
      * @param string|\DateTimeInterface|null $date   The date to format.
-     * @param string                         $format The format name (short, long, time, datetime).
+     * @param string                         $format The format name (short, long, time, datetime, month_year).
      *
      * @return string The formatted date string, or empty string if date is null.
      */
@@ -103,10 +104,11 @@ class LocalizedDateExtension extends AbstractExtension {
      */
     protected function getDefaultFormat(string $format): string {
         $formats = [
-            'short'    => 'M j',
-            'long'     => 'F j, Y',
-            'time'     => 'g:i A',
-            'datetime' => 'F j, Y g:i A',
+            'short'      => 'M j',
+            'long'       => 'F j, Y',
+            'time'       => 'g:i A',
+            'datetime'   => 'F j, Y g:i A',
+            'month_year' => 'F Y',
         ];
 
         return $formats[$format] ?? 'F j, Y';
