@@ -8,6 +8,7 @@ use Murmur\Repository\SettingMapper;
 use Murmur\Service\AdminService;
 use Murmur\Service\SessionService;
 use Murmur\Service\TopicService;
+use Murmur\Service\TranslationService;
 use Twig\Environment;
 
 /**
@@ -28,24 +29,32 @@ class AdminController extends BaseController {
     protected TopicService $topic_service;
 
     /**
+     * Translation service for available locales.
+     */
+    protected TranslationService $translation_service;
+
+    /**
      * Creates a new AdminController instance.
      *
-     * @param Environment    $twig           Twig environment for rendering.
-     * @param SessionService $session        Session service.
-     * @param SettingMapper  $setting_mapper Setting mapper.
-     * @param AdminService   $admin_service  Admin service.
-     * @param TopicService   $topic_service  Topic service.
+     * @param Environment        $twig                Twig environment for rendering.
+     * @param SessionService     $session             Session service.
+     * @param SettingMapper      $setting_mapper      Setting mapper.
+     * @param AdminService       $admin_service       Admin service.
+     * @param TopicService       $topic_service       Topic service.
+     * @param TranslationService $translation_service Translation service.
      */
     public function __construct(
         Environment $twig,
         SessionService $session,
         SettingMapper $setting_mapper,
         AdminService $admin_service,
-        TopicService $topic_service
+        TopicService $topic_service,
+        TranslationService $translation_service
     ) {
         parent::__construct($twig, $session, $setting_mapper);
         $this->admin_service = $admin_service;
         $this->topic_service = $topic_service;
+        $this->translation_service = $translation_service;
     }
 
     /**
@@ -224,7 +233,9 @@ class AdminController extends BaseController {
             'messaging_enabled' => $this->admin_service->isMessagingEnabled(),
             'max_post_length'   => $this->admin_service->getMaxPostLength(),
             'max_attachments'   => $this->admin_service->getMaxAttachments(),
+            'locale'            => $this->admin_service->getLocale(),
             'available_themes'  => $this->admin_service->getAvailableThemes($templates_path),
+            'available_locales' => $this->translation_service->getAvailableLocalesWithNames(),
             'topics'            => $topics,
         ]);
     }
@@ -258,11 +269,12 @@ class AdminController extends BaseController {
         $messaging_enabled = $this->getPost('messaging_enabled') === '1';
         $max_post_length = (int) ($this->getPost('max_post_length') ?? 500);
         $max_attachments = (int) ($this->getPost('max_attachments') ?? 10);
+        $locale = (string) $this->getPost('locale', 'en-US');
 
         $templates_path = dirname(__DIR__, 2) . '/templates';
         $topics = $this->topic_service->getAllTopics();
 
-        $update_result = $this->admin_service->updateSettings($site_name, $registration_open, $images_allowed, $theme, $logo_url, $require_approval, $public_feed, $require_topic, $messaging_enabled, $max_post_length, $max_attachments);
+        $update_result = $this->admin_service->updateSettings($site_name, $registration_open, $images_allowed, $theme, $logo_url, $require_approval, $public_feed, $require_topic, $messaging_enabled, $max_post_length, $max_attachments, $locale);
 
         if ($update_result['success']) {
             $this->session->addFlash('success', 'Settings saved.');
@@ -280,7 +292,9 @@ class AdminController extends BaseController {
                 'messaging_enabled' => $messaging_enabled,
                 'max_post_length'   => $max_post_length,
                 'max_attachments'   => $max_attachments,
+                'locale'            => $locale,
                 'available_themes'  => $this->admin_service->getAvailableThemes($templates_path),
+                'available_locales' => $this->translation_service->getAvailableLocalesWithNames(),
                 'topics'            => $topics,
                 'error'             => $update_result['error'],
             ]);

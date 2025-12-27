@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ locale|default('en-US')|split('-')[0] }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -328,16 +328,16 @@
                 <img src="{{ logo_url ?: (base_url ~ '/images/logo.svg') }}" alt="{{ site_name }}" height="32">
             </a>
             <nav>
-                <a href="{{ base_url }}/" aria-label="View feed">Feed</a>
+                <a href="{{ base_url }}/" aria-label="{{ 'nav.view_feed'|trans }}">{{ 'nav.feed'|trans }}</a>
                 {% if has_topics is defined and has_topics %}
-                    <a href="{{ base_url }}/topics" aria-label="Browse all topics">Topics</a>
+                    <a href="{{ base_url }}/topics" aria-label="{{ 'nav.browse_topics'|trans }}">{{ 'nav.topics'|trans }}</a>
                 {% endif %}
                 {% if current_user %}
-                    <a href="{{ base_url }}/messages">Messages{% if unread_message_count is defined and unread_message_count > 0 %} <span class="badge">{{ unread_message_count }}</span>{% endif %}</a>
+                    <a href="{{ base_url }}/messages">{{ 'nav.messages'|trans }}{% if unread_message_count is defined and unread_message_count > 0 %} <span class="badge">{{ unread_message_count }}</span>{% endif %}</a>
                     <div class="user-menu">
                         <button type="button" 
                                 class="user-menu-toggle" 
-                                aria-label="User menu" 
+                                aria-label="{{ 'nav.user_menu'|trans }}" 
                                 aria-expanded="false"
                                 aria-haspopup="true">
                             <span class="hamburger-icon" aria-hidden="true">
@@ -349,18 +349,18 @@
                         <div class="user-menu-dropdown" role="menu">
                             <a href="{{ base_url }}/user/{{ current_user.username }}" role="menuitem">{{ current_user.username }}</a>
                             {% if current_user.is_admin %}
-                                <a href="{{ base_url }}/admin" role="menuitem">Admin</a>
+                                <a href="{{ base_url }}/admin" role="menuitem">{{ 'nav.admin'|trans }}</a>
                             {% endif %}
                             <div class="user-menu-divider" role="separator"></div>
                             <form action="{{ base_url }}/logout" method="post" class="logout-form">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                                <button type="submit" class="logout-btn" role="menuitem">Log out</button>
+                                <button type="submit" class="logout-btn" role="menuitem">{{ 'nav.log_out'|trans }}</button>
                             </form>
                         </div>
                     </div>
                 {% else %}
-                    <a href="{{ base_url }}/login">Log in</a>
-                    <a href="{{ base_url }}/register" class="btn btn-primary">Sign up</a>
+                    <a href="{{ base_url }}/login">{{ 'nav.log_in'|trans }}</a>
+                    <a href="{{ base_url }}/register" class="btn btn-primary">{{ 'nav.sign_up'|trans }}</a>
                 {% endif %}
             </nav>
         </div>

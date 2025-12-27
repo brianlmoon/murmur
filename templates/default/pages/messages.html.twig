@@ -129,14 +129,14 @@
 
 {% block content %}
     <div class="page-header">
-        <h1 class="page-title">Messages</h1>
-        <a href="{{ base_url }}/messages/search" class="btn btn-primary">New Message</a>
+        <h1 class="page-title">{{ 'messages.title'|trans }}</h1>
+        <a href="{{ base_url }}/messages/search" class="btn btn-primary">{{ 'messages.new_message'|trans }}</a>
     </div>
 
     {% if inbox is empty %}
         <div class="empty-state">
-            <p>No conversations yet.</p>
-            <a href="{{ base_url }}/messages/search" class="btn btn-primary">Start a conversation</a>
+            <p>{{ 'messages.no_conversations'|trans }}</p>
+            <a href="{{ base_url }}/messages/search" class="btn btn-primary">{{ 'messages.start_conversation'|trans }}</a>
         </div>
     {% else %}
         <div class="conversation-list">
@@ -166,7 +166,7 @@
                         </div>
                         {% if item.last_message %}
                             <div class="conversation-preview">
-                                {% if item.last_message.sender_id == current_user.user_id %}You: {% endif %}
+                                {% if item.last_message.sender_id == current_user.user_id %}{{ 'messages.you_prefix'|trans }} {% endif %}
                                 {{ item.last_message.body | slice(0, 100) }}{{ item.last_message.body | length > 100 ? '...' : '' }}
                             </div>
                         {% endif %}
@@ -182,13 +182,13 @@
         {% if page > 1 or has_more %}
             <div class="pagination">
                 {% if page > 1 %}
-                    <a href="{{ base_url }}/messages?page={{ page - 1 }}">← Newer</a>
+                    <a href="{{ base_url }}/messages?page={{ page - 1 }}">{{ 'messages.newer'|trans }}</a>
                 {% else %}
                     <span></span>
                 {% endif %}
 
                 {% if has_more %}
-                    <a href="{{ base_url }}/messages?page={{ page + 1 }}">Older →</a>
+                    <a href="{{ base_url }}/messages?page={{ page + 1 }}">{{ 'messages.older'|trans }}</a>
                 {% endif %}
             </div>
         {% endif %}

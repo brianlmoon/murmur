@@ -46,6 +46,7 @@ Controllers (thin) → Services (business logic) → Repositories (data mappers)
 - **moonspot/value-objects**: Entities extend `ValueObject` with typed public properties.
 - **pagemill/router**: HTTP routing.
 - **twig/twig**: Server-rendered templates.
+- **league/flysystem**: Storage abstraction for local and cloud backends (S3, etc.).
 
 ### Naming Conventions
 - Entities: singular (User, Post, Setting, Topic)
@@ -667,3 +668,183 @@ Primary + thumbnails pattern:
 - First image displays large
 - Remaining images display as small thumbnails below
 - All images open in new tab when clicked
+
+## Storage System
+
+Murmur uses a storage abstraction layer supporting local filesystem and S3-compatible cloud storage. This enables seamless migration from local development to cloud-hosted production.
+
+### Architecture
+
+```
+StorageFactory → creates → FlysystemStorage (implements StorageInterface)
+                              ↓
+                         UrlGenerator → generates public URLs
+```
+
+**Key Components:**
+- `StorageInterface` - Contract for all storage operations (write, read, delete, exists, getUrl)
+- `FlysystemStorage` - Flysystem-based implementation supporting multiple backends
+- `StorageFactory` - Creates storage instances from configuration
+- `UrlGenerator` - Generates public URLs for stored files
+
+### Configuration
+
+Storage is configured in `etc/config.ini` with the `storage.uploads.*` prefix:
+
+```ini
+# Local filesystem (default)
+storage.uploads.adapter = local
+storage.uploads.local_path = "/path/to/murmur/public/uploads"
+storage.uploads.base_url = "/uploads"
+
+# Amazon S3
+storage.uploads.adapter = s3
+storage.uploads.s3_key = AKIAIOSFODNN7EXAMPLE
+storage.uploads.s3_secret = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+storage.uploads.s3_region = us-east-1
+storage.uploads.s3_bucket = your-bucket-name
+storage.uploads.base_url = "https://your-bucket-name.s3.us-east-1.amazonaws.com"
+
+# S3-compatible services (MinIO, DigitalOcean Spaces, Cloudflare R2)
+storage.uploads.s3_endpoint = "https://your-endpoint.example.com"
+```
+
+### StorageInterface Methods
+
+- `write(string $path, string $content): bool` - Write content to storage
+- `writeFromPath(string $path, string $local_path): bool` - Write from local file (for uploads)
+- `read(string $path): ?string` - Read file content
+- `delete(string $path): bool` - Delete file (idempotent)
+- `exists(string $path): bool` - Check if file exists
+- `getUrl(string $path): string` - Get public URL for file
+
+### Usage Pattern
+
+```php
+// Storage is injected into ImageService
+$storage = StorageFactory::create($config);
+$image_service = new ImageService($storage);
+
+// Upload a file
+$path = $image_service->upload($_FILES['image'], 'posts');
+
+// Get public URL
+$url = $storage->getUrl($path);
+
+// Delete a file
+$storage->delete($path);
+```
+
+### URL Generation
+
+URLs are generated based on the configured `base_url`:
+
+| Adapter | base_url | Path | Result |
+|---------|----------|------|--------|
+| local | `/uploads` | `posts/abc123.jpg` | `/uploads/posts/abc123.jpg` |
+| s3 | `https://bucket.s3.amazonaws.com` | `posts/abc123.jpg` | `https://bucket.s3.amazonaws.com/posts/abc123.jpg` |
+
+### S3-Compatible Services
+
+The storage layer supports any S3-compatible service by setting a custom endpoint:
+
+- **MinIO** - Self-hosted S3-compatible storage
+- **DigitalOcean Spaces** - `s3_endpoint = "https://nyc3.digitaloceanspaces.com"`
+- **Backblaze B2** - `s3_endpoint = "https://s3.us-west-001.backblazeb2.com"`
+- **Cloudflare R2** - `s3_endpoint = "https://accountid.r2.cloudflarestorage.com"`
+
+**Heads-up:** When using a custom endpoint, path-style URLs are automatically enabled.
+
+### Adding Storage Support to Services
+
+When creating services that need file storage:
+
+1. Accept `StorageInterface` in the constructor
+2. Use `writeFromPath()` for uploaded files (from `$_FILES['tmp_name']`)
+3. Use `getUrl()` to generate URLs for templates
+4. Call `delete()` when removing content (returns success even if file missing)
+
+## Internationalization (i18n)
+
+Murmur supports multiple languages through the Symfony Translation component. The locale is configured site-wide in admin settings.
+
+### Translation Files
+
+Translation files are stored in `translations/` using YAML format:
+
+```
+translations/
+└── messages.en-US.yaml    # English (default)
+```
+
+Files follow the naming pattern `messages.{locale}.yaml` where locale uses IETF tags (e.g., `en-US`, `es-MX`, `fr-FR`).
+
+### Using Translations in Templates
+
+**Simple strings:**
+```twig
+<button>{{ 'auth.login_button'|trans }}</button>
+```
+
+**With variables:**
+```twig
+{{ 'profile.joined'|trans({'%date%': user.created_at|localized_date('month_year')}) }}
+```
+
+**Pluralization (ICU format):**
+```twig
+{{ 'profile.followers'|trans({'count': follower_count}) }}
+```
+
+In YAML:
+```yaml
+profile:
+    followers: "{count, plural, =1 {1 follower} other {# followers}}"
+```
+
+### Localized Dates
+
+Use `|localized_date` instead of `|date` for locale-aware formatting:
+
+```twig
+{{ post.created_at|localized_date('long') }}
+```
+
+Available formats: `short`, `long`, `time`, `datetime`, `month_year`
+
+Formats are defined in the translation file under `dates.format_*` keys.
+
+### Translation Key Naming
+
+Keys are organized hierarchically by feature:
+
+| Prefix | Description |
+|--------|-------------|
+| `common` | Shared UI elements |
+| `nav` | Navigation |
+| `auth` | Login/registration |
+| `feed` | Feed page |
+| `post` | Post display |
+| `compose` | Compose forms |
+| `profile` | User profiles |
+| `settings` | User settings |
+| `messages` | Private messaging |
+| `topics` | Topics |
+| `errors` | Error pages |
+| `dates` | Date format strings |
+| `relative` | Relative date strings |
+
+### TranslationService Methods
+
+- `getTranslator(): Translator` - Returns the Symfony Translator instance
+- `getLocale(): string` - Returns current locale code
+- `getAvailableLocales(): array` - Returns array of available locale codes
+- `getAvailableLocalesWithNames(): array` - Returns locale code => display name map
+
+### Adding a New Language
+
+1. Copy `translations/messages.en-US.yaml` to `translations/messages.{locale}.yaml`
+2. Translate all values (keep keys unchanged)
+3. New language appears automatically in admin settings
+
+See [docs/translations.md](docs/translations.md) for complete documentation.

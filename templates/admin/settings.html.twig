@@ -147,6 +147,20 @@
                 </p>
             </div>
 
+            <div class="form-group">
+                <label for="locale" class="form-label">Language</label>
+                <select id="locale" name="locale" class="form-input">
+                    {% for code, name in available_locales %}
+                        <option value="{{ code }}" {% if locale == code %}selected{% endif %}>
+                            {{ name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.25rem;">
+                    The language for user-facing pages. Add new languages by creating translation files.
+                </p>
+            </div>
+
             <button type="submit" class="btn btn-primary">Save Settings</button>
         </form>
     </div>

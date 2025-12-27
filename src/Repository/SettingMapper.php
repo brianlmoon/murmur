@@ -204,4 +204,13 @@ class SettingMapper extends AbstractMapper {
 
         return (int) ($value ?? 10);
     }
+
+    /**
+     * Retrieves the current locale setting.
+     *
+     * @return string The locale code (e.g., 'en-US').
+     */
+    public function getLocale(): string {
+        return $this->getSetting('locale', 'en-US') ?? 'en-US';
+    }
 }

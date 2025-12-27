@@ -137,7 +137,7 @@
 {% endblock %}
 
 {% block content %}
-    <a href="{{ base_url }}/" class="back-link">&larr; Back to feed</a>
+    <a href="{{ base_url }}/" class="back-link">{{ 'post.back_to_feed'|trans }}</a>
 
     {% include theme ~ '/components/post.html.twig' with {
         'post': post,
@@ -156,8 +156,8 @@
         {% include theme ~ '/components/compose.html.twig' with {
             'action': base_url ~ '/post/' ~ post.post_id ~ '/reply',
             'max_length': max_length,
-            'placeholder': 'Write a comment...',
-            'button_text': 'Comment',
+            'placeholder': 'compose.reply_placeholder'|trans,
+            'button_text': 'compose.comment_button'|trans,
             'form_id': 'reply',
             'is_reply': true
         } %}
@@ -165,27 +165,27 @@
 
     <div class="replies-section" id="replies">
         <div class="replies-header">
-            <h2 class="replies-title">Comments</h2>
+            <h2 class="replies-title">{{ 'post.comments_title'|trans }}</h2>
             {% if replies is not empty %}
                 <div class="replies-sort">
-                    Sort:
+                    {{ 'post.sort_label'|trans }}
                     {% if sort == 'oldest' %}
-                        <span class="sort-active">Oldest</span>
+                        <span class="sort-active">{{ 'post.sort_oldest'|trans }}</span>
                     {% else %}
-                        <a href="?sort=oldest#replies">Oldest</a>
+                        <a href="?sort=oldest#replies">{{ 'post.sort_oldest'|trans }}</a>
                     {% endif %}
                     |
                     {% if sort == 'newest' %}
-                        <span class="sort-active">Newest</span>
+                        <span class="sort-active">{{ 'post.sort_newest'|trans }}</span>
                     {% else %}
-                        <a href="?sort=newest#replies">Newest</a>
+                        <a href="?sort=newest#replies">{{ 'post.sort_newest'|trans }}</a>
                     {% endif %}
                 </div>
             {% endif %}
         </div>
 
         {% if replies is empty %}
-            <p class="no-replies">No comments yet. Be the first to respond.</p>
+            <p class="no-replies">{{ 'post.no_comments'|trans }}</p>
         {% else %}
             {% for item in replies %}
                 {% include theme ~ '/components/post.html.twig' with {

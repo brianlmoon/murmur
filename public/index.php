@@ -38,12 +38,15 @@ use Murmur\Service\PostService;
 use Murmur\Service\ProfileService;
 use Murmur\Service\SessionService;
 use Murmur\Service\TopicService;
+use Murmur\Service\TranslationService;
 use Murmur\Service\UserBlockService;
 use Murmur\Service\UserFollowService;
 use Murmur\Storage\StorageFactory;
 use Murmur\Twig\LinkifyExtension;
+use Murmur\Twig\LocalizedDateExtension;
 use Murmur\Twig\RelativeDateExtension;
 use PageMill\Router\Router;
+use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -84,6 +87,13 @@ $twig->addGlobal('theme', $setting_mapper->getTheme());
 $twig->addGlobal('logo_url', $setting_mapper->getLogoUrl());
 $twig->addGlobal('has_topics', count($topic_mapper->findAll()) > 0);
 $twig->addGlobal('max_attachments', $setting_mapper->getMaxAttachments());
+
+// Initialize Translation Service
+$locale = $setting_mapper->getLocale();
+$translation_service = new TranslationService($locale, __DIR__ . '/../translations');
+$twig->addExtension(new TranslationExtension($translation_service->getTranslator()));
+$twig->addExtension(new LocalizedDateExtension($translation_service->getTranslator()));
+$twig->addGlobal('locale', $locale);
 
 // Initialize Storage
 // Load storage configuration from config.ini (falls back to local if not configured)
@@ -127,7 +137,7 @@ $message_service = new MessageService(
 $auth_controller = new AuthController($twig, $session_service, $setting_mapper, $auth_service);
 $post_controller = new PostController($twig, $session_service, $setting_mapper, $post_service, $image_service, $like_service, $topic_service, $link_preview_service);
 $profile_controller = new ProfileController($twig, $session_service, $setting_mapper, $profile_service, $post_service, $image_service, $user_follow_service, $message_service);
-$admin_controller = new AdminController($twig, $session_service, $setting_mapper, $admin_service, $topic_service);
+$admin_controller = new AdminController($twig, $session_service, $setting_mapper, $admin_service, $topic_service, $translation_service);
 $setup_controller = new SetupController($twig, $session_service, $setting_mapper, $auth_service);
 $message_controller = new MessageController($twig, $session_service, $setting_mapper, $message_service, $user_block_service, $user_mapper, $image_service);
 

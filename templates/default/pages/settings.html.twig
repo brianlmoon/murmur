@@ -100,7 +100,7 @@
 {% endblock %}
 
 {% block content %}
-    <h1 style="font-size: 1.5rem; margin-bottom: 1.5rem;">Settings</h1>
+    <h1 style="font-size: 1.5rem; margin-bottom: 1.5rem;">{{ 'settings.title'|trans }}</h1>
 
     {% if error is defined and error %}
         <div class="flash flash-error" style="margin-bottom: 1rem;">
@@ -109,7 +109,7 @@
     {% endif %}
 
     <div class="settings-section">
-        <h2 class="settings-title">Profile</h2>
+        <h2 class="settings-title">{{ 'settings.profile_title'|trans }}</h2>
 
         <div class="avatar-section">
             {% if avatar_url %}
@@ -124,7 +124,7 @@
                 {% if profile_user.avatar_path %}
                     <form action="{{ base_url }}/settings/avatar/remove" method="post" class="avatar-remove">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                        <button type="submit">Remove avatar</button>
+                        <button type="submit">{{ 'settings.remove_avatar'|trans }}</button>
                     </form>
                 {% endif %}
             </div>
@@ -134,15 +134,15 @@
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
             <div class="form-group">
-                <label class="form-label">Avatar</label>
+                <label class="form-label">{{ 'settings.avatar_label'|trans }}</label>
                 <label class="avatar-upload">
                     <input type="file" name="avatar" accept="image/jpeg,image/png,image/gif,image/webp">
-                    <span class="avatar-upload-label">{{ profile_user.avatar_path ? 'Change avatar' : 'Upload avatar' }}</span>
+                    <span class="avatar-upload-label">{{ profile_user.avatar_path ? 'settings.change_avatar'|trans : 'settings.upload_avatar'|trans }}</span>
                 </label>
             </div>
 
             <div class="form-group">
-                <label for="name" class="form-label">Name</label>
+                <label for="name" class="form-label">{{ 'auth.name_label'|trans }}</label>
                 <input type="text" id="name" name="name" class="form-input"
                        value="{{ name | default(profile_user.name) }}"
                        maxlength="100"
@@ -150,7 +150,7 @@
             </div>
 
             <div class="form-group">
-                <label for="username" class="form-label">Username</label>
+                <label for="username" class="form-label">{{ 'auth.username_label'|trans }}</label>
                 <input type="text" id="username" name="username" class="form-input"
                        value="{{ username | default(profile_user.username) }}"
                        pattern="[a-zA-Z0-9_]+"
@@ -159,54 +159,54 @@
             </div>
 
             <div class="form-group">
-                <label for="email" class="form-label">Email</label>
+                <label for="email" class="form-label">{{ 'auth.email_label'|trans }}</label>
                 <input type="email" id="email" name="email" class="form-input"
                        value="{{ email | default(profile_user.email) }}"
                        required>
             </div>
 
             <div class="form-group">
-                <label for="bio" class="form-label">Bio</label>
+                <label for="bio" class="form-label">{{ 'settings.bio_label'|trans }}</label>
                 <textarea id="bio" name="bio" class="form-input"
                           maxlength="{{ max_bio_length }}"
                           rows="3"
-                          placeholder="Tell us about yourself...">{{ bio | default(profile_user.bio) }}</textarea>
+                          placeholder="{{ 'settings.bio_placeholder'|trans }}">{{ bio | default(profile_user.bio) }}</textarea>
                 <div class="bio-counter">
                     <span id="bio-count">{{ (bio | default(profile_user.bio)) | length }}</span>/{{ max_bio_length }}
                 </div>
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Save changes</button>
-                <a href="{{ base_url }}/user/{{ profile_user.username }}" class="btn" style="background: var(--color-bg);">View profile</a>
+                <button type="submit" class="btn btn-primary">{{ 'settings.save_changes'|trans }}</button>
+                <a href="{{ base_url }}/user/{{ profile_user.username }}" class="btn" style="background: var(--color-bg);">{{ 'settings.view_profile'|trans }}</a>
             </div>
         </form>
     </div>
 
     <div class="settings-section">
-        <h2 class="settings-title">Change Password</h2>
+        <h2 class="settings-title">{{ 'settings.password_title'|trans }}</h2>
 
         <form action="{{ base_url }}/settings/password" method="post">
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
             <div class="form-group">
-                <label for="current_password" class="form-label">Current password</label>
+                <label for="current_password" class="form-label">{{ 'settings.current_password'|trans }}</label>
                 <input type="password" id="current_password" name="current_password" class="form-input" required>
             </div>
 
             <div class="form-group">
-                <label for="new_password" class="form-label">New password</label>
+                <label for="new_password" class="form-label">{{ 'settings.new_password'|trans }}</label>
                 <input type="password" id="new_password" name="new_password" class="form-input"
                        minlength="8" required>
             </div>
 
             <div class="form-group">
-                <label for="confirm_password" class="form-label">Confirm new password</label>
+                <label for="confirm_password" class="form-label">{{ 'settings.confirm_new_password'|trans }}</label>
                 <input type="password" id="confirm_password" name="confirm_password" class="form-input"
                        minlength="8" required>
             </div>
 
-            <button type="submit" class="btn btn-primary">Update password</button>
+            <button type="submit" class="btn btn-primary">{{ 'settings.update_password'|trans }}</button>
         </form>
     </div>
 

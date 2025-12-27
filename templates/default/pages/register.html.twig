@@ -1,10 +1,10 @@
 {% extends theme ~ '/layouts/base.html.twig' %}
 
-{% block title %}Sign up - {{ site_name }}{% endblock %}
+{% block title %}{{ 'nav.sign_up'|trans }} - {{ site_name }}{% endblock %}
 
 {% block content %}
 <div class="card" style="max-width: 400px; margin: 0 auto;">
-    <h1 class="card-title text-center">Create an account</h1>
+    <h1 class="card-title text-center">{{ 'auth.register_title'|trans }}</h1>
 
     {% if error is defined and error %}
         <div class="flash flash-error">
@@ -16,56 +16,56 @@
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
         <div class="form-group">
-            <label for="name" class="form-label">Name</label>
+            <label for="name" class="form-label">{{ 'auth.name_label'|trans }}</label>
             <input type="text" id="name" name="name" class="form-input"
                    value="{{ name | default('') }}"
                    maxlength="100"
                    required autofocus>
             <p class="text-muted" style="font-size: 0.75rem; margin-top: 0.25rem;">
-                Your full name as you'd like it displayed.
+                {{ 'auth.name_help'|trans }}
             </p>
         </div>
 
         <div class="form-group">
-            <label for="username" class="form-label">Username</label>
+            <label for="username" class="form-label">{{ 'auth.username_label'|trans }}</label>
             <input type="text" id="username" name="username" class="form-input"
                    value="{{ username | default('') }}"
                    pattern="[a-zA-Z0-9_]+"
                    minlength="3" maxlength="30"
                    required>
             <p class="text-muted" style="font-size: 0.75rem; margin-top: 0.25rem;">
-                3-30 characters. Letters, numbers, and underscores only.
+                {{ 'auth.username_help'|trans }}
             </p>
         </div>
 
         <div class="form-group">
-            <label for="email" class="form-label">Email</label>
+            <label for="email" class="form-label">{{ 'auth.email_label'|trans }}</label>
             <input type="email" id="email" name="email" class="form-input"
                    value="{{ email | default('') }}" required>
         </div>
 
         <div class="form-group">
-            <label for="password" class="form-label">Password</label>
+            <label for="password" class="form-label">{{ 'auth.password_label'|trans }}</label>
             <input type="password" id="password" name="password" class="form-input"
                    minlength="8" required>
             <p class="text-muted" style="font-size: 0.75rem; margin-top: 0.25rem;">
-                At least 8 characters.
+                {{ 'auth.password_help'|trans }}
             </p>
         </div>
 
         <div class="form-group">
-            <label for="password_confirm" class="form-label">Confirm password</label>
+            <label for="password_confirm" class="form-label">{{ 'auth.confirm_password_label'|trans }}</label>
             <input type="password" id="password_confirm" name="password_confirm"
                    class="form-input" minlength="8" required>
         </div>
 
         <div class="form-group">
-            <button type="submit" class="btn btn-primary btn-block">Create account</button>
+            <button type="submit" class="btn btn-primary btn-block">{{ 'auth.register_button'|trans }}</button>
         </div>
     </form>
 
     <p class="text-center text-muted mt-2">
-        Already have an account? <a href="{{ base_url }}/login">Log in</a>
+        {{ 'auth.has_account'|trans }} <a href="{{ base_url }}/login">{{ 'nav.log_in'|trans }}</a>
     </p>
 </div>
 {% endblock %}

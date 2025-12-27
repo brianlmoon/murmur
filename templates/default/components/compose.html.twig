@@ -13,8 +13,8 @@
     - require_topic: Whether topic selection is required (optional, default false)
     - is_reply: Whether this is a reply form (optional, default false)
 #}
-{% set placeholder = placeholder | default("What's on your mind?") %}
-{% set button_text = button_text | default("Post") %}
+{% set placeholder = placeholder | default('compose.placeholder'|trans) %}
+{% set button_text = button_text | default('compose.post_button'|trans) %}
 {% set autofocus = autofocus | default(false) %}
 {% set form_id = form_id | default('') %}
 {% set is_reply = is_reply | default(false) %}
@@ -29,9 +29,9 @@
     <div class="compose-topic">
         <select name="topic_id" class="compose-topic-select"{% if require_topic %} required{% endif %}>
             {% if not require_topic %}
-            <option value="">Select a topic (optional)</option>
+            <option value="">{{ 'compose.topic_select_optional'|trans }}</option>
             {% else %}
-            <option value="">Select a topic</option>
+            <option value="">{{ 'compose.topic_select_required'|trans }}</option>
             {% endif %}
             {% for topic in topics %}
             <option value="{{ topic.topic_id }}"{% if selected_topic_id == topic.topic_id %} selected{% endif %}>{{ topic.name }}</option>
@@ -54,7 +54,7 @@
         {% if images_allowed %}
         <label class="compose-upload">
             <input type="file" name="images[]" accept="image/jpeg,image/png,image/gif,image/webp" class="compose-file" multiple>
-            <span class="compose-upload-label">Add images</span>
+            <span class="compose-upload-label">{{ 'compose.add_images'|trans }}</span>
             <span class="compose-upload-count"></span>
         </label>
         {% else %}

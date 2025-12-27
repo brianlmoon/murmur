@@ -19,6 +19,7 @@ Modern social platforms optimize for engagement, not connection. Murmur takes a 
 - **Topics** — Organize conversations by category; follow topics that interest you
 - **User Follows** — Build your own feed by following people you care about
 - **Private Messaging** — One-to-one conversations between mutual follows
+- **Multi-Language** — Full internationalization support with YAML translation files
 - **Theming** — Customizable themes with CSS-only styling
 - **Admin Controls** — User management, registration settings, approval workflows
 - **Multi-Database** — MySQL, MariaDB, PostgreSQL, or SQLite
@@ -50,6 +51,7 @@ Visit `http://localhost:8000` and complete the setup wizard to create your admin
 | [Installation](docs/installation.md) | Complete setup instructions for all databases |
 | [Configuration](docs/configuration.md) | Database, settings, and environment options |
 | [Administration](docs/administration.md) | Managing users, topics, and site settings |
+| [Translations](docs/translations.md) | Adding new languages and customizing text |
 
 ## Requirements
 
@@ -70,6 +72,7 @@ murmur/
 ├── templates/       # Twig templates
 │   ├── admin/       # Admin panel (not themed)
 │   └── default/     # Default user-facing theme
+├── translations/    # YAML translation files (messages.en-US.yaml, etc.)
 ├── schema/          # Database schema files
 │   ├── mysql/
 │   ├── postgresql/
@@ -118,5 +121,6 @@ Copyright (c) 2023, Brian Moon
 
 Built with:
 - [Twig](https://twig.symfony.com/) — Template engine
+- [Symfony Translation](https://symfony.com/doc/current/translation.html) — Internationalization
 - [dealnews/db](https://github.com/dealnews/db) — Database abstraction
 - [pagemill/router](https://github.com/PageMill/Router) — HTTP routing
