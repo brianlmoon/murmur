@@ -20,6 +20,7 @@ Modern social platforms optimize for engagement, not connection. Murmur takes a 
 - **User Follows** — Build your own feed by following people you care about
 - **Private Messaging** — One-to-one conversations between mutual follows
 - **Multi-Language** — Full internationalization support with YAML translation files
+- **Flexible Storage** — Local filesystem or S3-compatible cloud storage (Amazon S3, DigitalOcean Spaces, MinIO, Cloudflare R2)
 - **Theming** — Customizable themes with CSS-only styling
 - **Admin Controls** — User management, registration settings, approval workflows
 - **Multi-Database** — MySQL, MariaDB, PostgreSQL, or SQLite
