@@ -165,6 +165,14 @@
             return;
         }
 
+        // Only use AJAX upload with progress bar if files are selected
+        const hasFiles = fileInput && fileInput.files && fileInput.files.length > 0;
+        
+        if (!hasFiles) {
+            // No files selected, allow normal form submission
+            return;
+        }
+
         // Use AJAX upload with progress bar
         e.preventDefault();
 
