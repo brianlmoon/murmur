@@ -115,7 +115,7 @@ session_set_save_handler($session_handler, true);
 ini_set('session.gc_maxlifetime', (string) $session_lifetime);
 ini_set('session.cookie_lifetime', (string) $session_lifetime);
 ini_set('session.cookie_httponly', '1');
-ini_set('session.cookie_secure', ($_SERVER['HTTPS'] ?? '') === 'on' ? '1' : '0');
+ini_set('session.cookie_secure', (($_SERVER['HTTPS'] ?? '') === 'on' || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https')) ? '1' : '0');
 ini_set('session.cookie_samesite', 'Lax');
 ini_set('session.use_strict_mode', '1');
 
