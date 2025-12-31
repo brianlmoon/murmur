@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Murmur\Twig;
 
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
@@ -25,6 +26,20 @@ class RelativeDateExtension extends AbstractExtension {
      * Default date format for absolute dates.
      */
     protected const DEFAULT_FORMAT = 'M j, Y \a\t g:i a';
+
+    /**
+     * The translator instance for retrieving relative date strings.
+     */
+    protected TranslatorInterface $translator;
+
+    /**
+     * Creates a new RelativeDateExtension instance.
+     *
+     * @param TranslatorInterface $translator The translator for relative date strings.
+     */
+    public function __construct(TranslatorInterface $translator) {
+        $this->translator = $translator;
+    }
 
     /**
      * Returns the list of filters provided by this extension.
@@ -77,16 +92,22 @@ class RelativeDateExtension extends AbstractExtension {
         $result = '';
 
         if ($seconds < 60) {
-            $result = 'just now';
+            $result = $this->translator->trans('relative.just_now');
         } elseif ($seconds < 3600) {
             $minutes = (int) floor($seconds / 60);
-            $result = $minutes === 1 ? '1 minute ago' : $minutes . ' minutes ago';
+            $result = $minutes === 1
+                ? $this->translator->trans('relative.minutes_ago_one')
+                : $this->translator->trans('relative.minutes_ago', ['%count%' => $minutes]);
         } elseif ($seconds < 86400) {
             $hours = (int) floor($seconds / 3600);
-            $result = $hours === 1 ? '1 hour ago' : $hours . ' hours ago';
+            $result = $hours === 1
+                ? $this->translator->trans('relative.hours_ago_one')
+                : $this->translator->trans('relative.hours_ago', ['%count%' => $hours]);
         } else {
             $days = (int) floor($seconds / 86400);
-            $result = $days === 1 ? '1 day ago' : $days . ' days ago';
+            $result = $days === 1
+                ? $this->translator->trans('relative.days_ago_one')
+                : $this->translator->trans('relative.days_ago', ['%count%' => $days]);
         }
 
         return $result;
