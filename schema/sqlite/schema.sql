@@ -104,6 +104,20 @@ INSERT OR IGNORE INTO settings (setting_name, setting_value) VALUES
     ('max_video_size_mb', '100');
 
 -- -----------------------------------------------------------------------------
+-- Sessions table
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS sessions (
+    session_id   TEXT PRIMARY KEY NOT NULL,
+    user_id      INTEGER DEFAULT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    data         TEXT NOT NULL,
+    last_active  INTEGER NOT NULL,
+    created_at   TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_sessions_last_active ON sessions(last_active);
+CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
+
+-- -----------------------------------------------------------------------------
 -- Likes table
 -- -----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS likes (

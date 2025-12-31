@@ -16,12 +16,14 @@ use Murmur\Controller\MessageController;
 use Murmur\Controller\PostController;
 use Murmur\Controller\ProfileController;
 use Murmur\Controller\SetupController;
+use Murmur\Handler\DatabaseSessionHandler;
 use Murmur\Repository\ConversationMapper;
 use Murmur\Repository\LikeMapper;
 use Murmur\Repository\LinkPreviewMapper;
 use Murmur\Repository\MessageMapper;
 use Murmur\Repository\PostAttachmentMapper;
 use Murmur\Repository\PostMapper;
+use Murmur\Repository\SessionMapper;
 use Murmur\Repository\SettingMapper;
 use Murmur\Repository\TopicFollowMapper;
 use Murmur\Repository\TopicMapper;
@@ -61,7 +63,6 @@ $twig = new Environment($twig_loader, [
     'auto_reload' => true,
     'autoescape' => 'html',
 ]);
-$twig->addExtension(new RelativeDateExtension());
 $twig->addExtension(new LinkifyExtension());
 
 // Initialize Mappers
@@ -95,11 +96,29 @@ $locale = $setting_mapper->getLocale();
 $translation_service = new TranslationService($locale, __DIR__ . '/../translations');
 $twig->addExtension(new TranslationExtension($translation_service->getTranslator()));
 $twig->addExtension(new LocalizedDateExtension($translation_service->getTranslator()));
+$twig->addExtension(new RelativeDateExtension($translation_service->getTranslator()));
 $twig->addGlobal('locale', $locale);
 
 // Initialize Storage
 // Load storage configuration from config.ini (falls back to local if not configured)
 $config = \DealNews\GetConfig\GetConfig::init();
+
+// Session configuration
+$session_mapper   = new SessionMapper();
+$session_lifetime = (int) ($config->get('session.lifetime') ?? 604800); // 7 days default
+
+// Register database session handler
+$session_handler = new DatabaseSessionHandler($session_mapper, $session_lifetime);
+session_set_save_handler($session_handler, true);
+
+// Configure session settings
+ini_set('session.gc_maxlifetime', (string) $session_lifetime);
+ini_set('session.cookie_lifetime', (string) $session_lifetime);
+ini_set('session.cookie_httponly', '1');
+ini_set('session.cookie_secure', (($_SERVER['HTTPS'] ?? '') === 'on' || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https')) ? '1' : '0');
+ini_set('session.cookie_samesite', 'Lax');
+ini_set('session.use_strict_mode', '1');
+
 $storage_adapter = $config->get('storage.uploads.adapter') ?? 'local';
 
 $storage_config = [
@@ -115,7 +134,7 @@ $storage_config = [
 $storage = StorageFactory::create($storage_config);
 
 // Initialize Services
-$session_service = new SessionService($user_mapper);
+$session_service = new SessionService($user_mapper, $session_mapper);
 $auth_service = new AuthService($user_mapper, $setting_mapper);
 $post_service = new PostService($post_mapper, $user_mapper, $like_mapper, $topic_mapper, $setting_mapper, $post_attachment_mapper);
 $profile_service = new ProfileService($user_mapper);
@@ -139,7 +158,7 @@ $message_service = new MessageService(
 // Initialize Controllers
 $auth_controller = new AuthController($twig, $session_service, $setting_mapper, $auth_service);
 $post_controller = new PostController($twig, $session_service, $setting_mapper, $post_service, $media_service, $like_service, $topic_service, $link_preview_service);
-$profile_controller = new ProfileController($twig, $session_service, $setting_mapper, $profile_service, $post_service, $media_service, $user_follow_service, $message_service);
+$profile_controller = new ProfileController($twig, $session_service, $setting_mapper, $profile_service, $post_service, $media_service, $user_follow_service, $message_service, $translation_service, $link_preview_service);
 $admin_controller = new AdminController($twig, $session_service, $setting_mapper, $admin_service, $topic_service, $translation_service);
 $setup_controller = new SetupController($twig, $session_service, $setting_mapper, $auth_service);
 $message_controller = new MessageController($twig, $session_service, $setting_mapper, $message_service, $user_block_service, $user_mapper, $media_service);
@@ -228,6 +247,7 @@ $router->add('exact', '/settings', ['controller' => $profile_controller, 'action
 $router->add('exact', '/settings', ['controller' => $profile_controller, 'action' => 'updateSettings'], ['method' => 'POST']);
 $router->add('exact', '/settings/password', ['controller' => $profile_controller, 'action' => 'updatePassword'], ['method' => 'POST']);
 $router->add('exact', '/settings/avatar/remove', ['controller' => $profile_controller, 'action' => 'removeAvatar'], ['method' => 'POST']);
+$router->add('exact', '/settings/logout-devices', ['controller' => $profile_controller, 'action' => 'logoutAllDevices'], ['method' => 'POST']);
 $router->add('regex', '/^\/user\/([a-zA-Z0-9_]+)$/', ['controller' => $profile_controller, 'action' => 'show'], ['method' => 'GET', 'tokens' => ['username']]);
 $router->add('regex', '/^\/user\/([a-zA-Z0-9_]+)\/follow$/', ['controller' => $profile_controller, 'action' => 'follow'], ['method' => 'POST', 'tokens' => ['username']]);
 $router->add('regex', '/^\/user\/([a-zA-Z0-9_]+)\/unfollow$/', ['controller' => $profile_controller, 'action' => 'unfollow'], ['method' => 'POST', 'tokens' => ['username']]);

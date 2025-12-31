@@ -46,3 +46,9 @@ db.murmur.charset = utf8mb4
 ; storage.uploads.s3_bucket = your-bucket-name
 ; storage.uploads.s3_endpoint =
 ; storage.uploads.base_url = "https://your-bucket-name.s3.us-east-1.amazonaws.com"
+
+; ---------------------------------------------------------------------------
+; Session configuration
+; ---------------------------------------------------------------------------
+; session.lifetime = Maximum session lifetime in seconds (default: 604800 = 7 days)
+session.lifetime = 604800

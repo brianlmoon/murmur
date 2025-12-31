@@ -112,6 +112,20 @@ INSERT INTO settings (setting_name, setting_value) VALUES
 ON CONFLICT (setting_name) DO NOTHING;
 
 -- -----------------------------------------------------------------------------
+-- Sessions table
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS sessions (
+    session_id   VARCHAR(128) NOT NULL PRIMARY KEY,
+    user_id      BIGINT DEFAULT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    data         TEXT NOT NULL,
+    last_active  INTEGER NOT NULL,
+    created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_sessions_last_active ON sessions(last_active);
+CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
+
+-- -----------------------------------------------------------------------------
 -- Likes table
 -- -----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS likes (

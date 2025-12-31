@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Murmur\Controller;
 
 use Murmur\Repository\SettingMapper;
+use Murmur\Service\LinkPreviewService;
 use Murmur\Service\MediaService;
 use Murmur\Service\MessageService;
 use Murmur\Service\PostService;
 use Murmur\Service\ProfileService;
 use Murmur\Service\SessionService;
+use Murmur\Service\TranslationService;
 use Murmur\Service\UserFollowService;
 use Twig\Environment;
 
@@ -46,16 +48,28 @@ class ProfileController extends BaseController {
     protected MessageService $message_service;
 
     /**
+     * Translation service for i18n.
+     */
+    protected TranslationService $translation_service;
+
+    /**
+     * Link preview service for URL previews.
+     */
+    protected LinkPreviewService $link_preview_service;
+
+    /**
      * Creates a new ProfileController instance.
      *
-     * @param Environment       $twig                Twig environment for rendering.
-     * @param SessionService    $session             Session service.
-     * @param SettingMapper     $setting_mapper      Setting mapper.
-     * @param ProfileService    $profile_service     Profile service.
-     * @param PostService       $post_service        Post service.
-     * @param MediaService      $media_service       Media service for uploads.
-     * @param UserFollowService $user_follow_service User follow service.
-     * @param MessageService    $message_service     Message service.
+     * @param Environment        $twig                 Twig environment for rendering.
+     * @param SessionService     $session              Session service.
+     * @param SettingMapper      $setting_mapper       Setting mapper.
+     * @param ProfileService     $profile_service      Profile service.
+     * @param PostService        $post_service         Post service.
+     * @param MediaService       $media_service        Media service for uploads.
+     * @param UserFollowService  $user_follow_service  User follow service.
+     * @param MessageService     $message_service      Message service.
+     * @param TranslationService $translation_service  Translation service.
+     * @param LinkPreviewService $link_preview_service Link preview service.
      */
     public function __construct(
         Environment $twig,
@@ -65,14 +79,18 @@ class ProfileController extends BaseController {
         PostService $post_service,
         MediaService $media_service,
         UserFollowService $user_follow_service,
-        MessageService $message_service
+        MessageService $message_service,
+        TranslationService $translation_service,
+        LinkPreviewService $link_preview_service
     ) {
         parent::__construct($twig, $session, $setting_mapper);
-        $this->profile_service = $profile_service;
-        $this->post_service = $post_service;
-        $this->media_service = $media_service;
-        $this->user_follow_service = $user_follow_service;
-        $this->message_service = $message_service;
+        $this->profile_service      = $profile_service;
+        $this->post_service         = $post_service;
+        $this->media_service        = $media_service;
+        $this->user_follow_service  = $user_follow_service;
+        $this->message_service      = $message_service;
+        $this->translation_service  = $translation_service;
+        $this->link_preview_service = $link_preview_service;
     }
 
     /**
@@ -104,6 +122,17 @@ class ProfileController extends BaseController {
             $current_user = $this->session->getCurrentUser();
             $current_user_id = $current_user?->user_id;
             $posts = $this->post_service->getPostsByUser($user->user_id, 50, 0, $current_user_id);
+
+            // Fetch link previews for posts
+            $post_bodies = [];
+            foreach ($posts as $post_item) {
+                $post_bodies[$post_item['post']->post_id] = $post_item['post']->body;
+            }
+            $previews = $this->link_preview_service->getPreviewsForPosts($post_bodies);
+            foreach ($posts as $key => $post_item) {
+                $post_id = $post_item['post']->post_id;
+                $posts[$key]['preview'] = $previews[$post_id] ?? null;
+            }
 
             // Enrich posts with image URLs
             $posts = $this->media_service->enrichPostsWithUrls($posts);
@@ -396,5 +425,37 @@ class ProfileController extends BaseController {
         }
 
         $this->redirect('/user/' . $username);
+    }
+
+    /**
+     * Logs out the current user from all other devices.
+     *
+     * POST /settings/logout-devices
+     *
+     * @return void
+     */
+    public function logoutAllDevices(): void {
+        $this->requireAuth();
+
+        $translator = $this->translation_service->getTranslator();
+
+        if ($this->validateCsrf()) {
+            $current_user = $this->session->getCurrentUser();
+            $deleted      = $this->session->logoutOtherDevices($current_user->user_id);
+
+            if ($deleted > 0) {
+                $message_key = $deleted === 1 ? 'settings.logout_devices_success_one' : 'settings.logout_devices_success';
+                $this->session->addFlash(
+                    'success',
+                    $translator->trans($message_key, ['%count%' => $deleted])
+                );
+            } else {
+                $this->session->addFlash('info', $translator->trans('settings.logout_devices_none'));
+            }
+        } else {
+            $this->session->addFlash('error', $translator->trans('common.csrf_error'));
+        }
+
+        $this->redirect('/settings');
     }
 }

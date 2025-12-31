@@ -6,6 +6,7 @@ namespace Murmur\Tests\Unit\Twig;
 
 use Murmur\Twig\RelativeDateExtension;
 use PHPUnit\Framework\TestCase;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Unit tests for RelativeDateExtension.
@@ -13,9 +14,33 @@ use PHPUnit\Framework\TestCase;
 class RelativeDateExtensionTest extends TestCase {
 
     protected RelativeDateExtension $extension;
+    protected TranslatorInterface $translator;
 
     protected function setUp(): void {
-        $this->extension = new RelativeDateExtension();
+        // Create a mock translator that returns English translations
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator->method('trans')->willReturnCallback(function ($key, $params = []) {
+            $translations = [
+                'relative.just_now' => 'just now',
+                'relative.minutes_ago_one' => '1 minute ago',
+                'relative.minutes_ago' => '%count% minutes ago',
+                'relative.hours_ago_one' => '1 hour ago',
+                'relative.hours_ago' => '%count% hours ago',
+                'relative.days_ago_one' => '1 day ago',
+                'relative.days_ago' => '%count% days ago',
+            ];
+
+            $result = $translations[$key] ?? $key;
+
+            // Replace parameters
+            foreach ($params as $param_key => $param_value) {
+                $result = str_replace($param_key, (string) $param_value, $result);
+            }
+
+            return $result;
+        });
+
+        $this->extension = new RelativeDateExtension($this->translator);
     }
 
     /**

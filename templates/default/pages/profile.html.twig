@@ -3,6 +3,7 @@
 {% block title %}{{ profile_user.username }} - {{ site_name }}{% endblock %}
 
 {% block head %}
+{% include theme ~ '/components/post-styles.html.twig' %}
 <style>
     .profile-header {
         background-color: var(--color-surface);
@@ -292,8 +293,8 @@
         {% endif %}
 
         <div class="profile-stats">
-            <span class="profile-stat">{{ 'profile.followers'|trans({'count': follower_count}) }}</span>
-            <span class="profile-stat">{{ 'profile.following'|trans({'count': following_count}) }}</span>
+            <span class="profile-stat">{% if follower_count == 1 %}{{ 'profile.followers_one'|trans }}{% else %}{{ 'profile.followers'|trans({'%count%': follower_count}) }}{% endif %}</span>
+            <span class="profile-stat">{% if following_count == 1 %}{{ 'profile.following_one'|trans }}{% else %}{{ 'profile.following'|trans({'%count%': following_count}) }}{% endif %}</span>
         </div>
 
         <p class="profile-joined">{{ 'profile.joined'|trans({'%date%': profile_user.created_at|localized_date('month_year')}) }}</p>
@@ -342,7 +343,8 @@
                 'like_count': item.like_count,
                 'user_liked': item.user_liked,
                 'reply_count': item.reply_count,
-                'is_reply': item.post.parent_id is not null
+                'is_reply': item.post.parent_id is not null,
+                'preview': item.preview
             } %}
         {% endfor %}
     {% endif %}

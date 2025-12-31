@@ -91,6 +91,21 @@ INSERT INTO `settings` (`setting_name`, `setting_value`) VALUES
 ON DUPLICATE KEY UPDATE `setting_name` = `setting_name`;
 
 -- -----------------------------------------------------------------------------
+-- Sessions table
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `sessions` (
+    `session_id`   VARCHAR(128) NOT NULL,
+    `user_id`      BIGINT UNSIGNED DEFAULT NULL,
+    `data`         MEDIUMTEXT NOT NULL,
+    `last_active`  INT UNSIGNED NOT NULL,
+    `created_at`   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`session_id`),
+    KEY `idx_sessions_last_active` (`last_active`),
+    KEY `idx_sessions_user_id` (`user_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- -----------------------------------------------------------------------------
 -- Likes table
 -- -----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `likes` (
