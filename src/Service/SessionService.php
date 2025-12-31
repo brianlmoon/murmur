@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Murmur\Service;
 
 use Murmur\Entity\User;
+use Murmur\Repository\SessionMapper;
 use Murmur\Repository\UserMapper;
 
 /**
@@ -35,6 +36,11 @@ class SessionService {
     protected UserMapper $user_mapper;
 
     /**
+     * The session mapper for database operations.
+     */
+    protected ?SessionMapper $session_mapper;
+
+    /**
      * Whether the session has been started.
      */
     protected bool $session_started = false;
@@ -42,10 +48,12 @@ class SessionService {
     /**
      * Creates a new SessionService instance.
      *
-     * @param UserMapper $user_mapper The user mapper for database operations.
+     * @param UserMapper          $user_mapper    The user mapper for database operations.
+     * @param SessionMapper|null  $session_mapper The session mapper for database operations.
      */
-    public function __construct(UserMapper $user_mapper) {
-        $this->user_mapper = $user_mapper;
+    public function __construct(UserMapper $user_mapper, ?SessionMapper $session_mapper = null) {
+        $this->user_mapper    = $user_mapper;
+        $this->session_mapper = $session_mapper;
     }
 
     /**
@@ -71,6 +79,12 @@ class SessionService {
         $this->start();
         $this->regenerateId();
         $_SESSION[self::USER_ID_KEY] = $user->user_id;
+
+        // Update user_id in database session
+        if ($this->session_mapper !== null) {
+            $session_id = session_id();
+            $this->session_mapper->updateUserId($session_id, $user->user_id);
+        }
     }
 
     /**
@@ -80,6 +94,13 @@ class SessionService {
      */
     public function logout(): void {
         $this->start();
+
+        // Clear user_id in database session
+        if ($this->session_mapper !== null) {
+            $session_id = session_id();
+            $this->session_mapper->clearUserId($session_id);
+        }
+
         unset($_SESSION[self::USER_ID_KEY]);
         $this->regenerateId();
     }
@@ -248,6 +269,25 @@ class SessionService {
         if (isset($_SESSION[self::FLASH_KEY])) {
             $result = $_SESSION[self::FLASH_KEY];
             unset($_SESSION[self::FLASH_KEY]);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Logs out a user from all devices except the current session.
+     *
+     * @param int $user_id The user ID.
+     *
+     * @return int Number of sessions deleted.
+     */
+    public function logoutOtherDevices(int $user_id): int {
+        $result = 0;
+
+        if ($this->session_mapper !== null) {
+            $this->start();
+            $current_session_id = session_id();
+            $result = $this->session_mapper->deleteByUserIdExcept($user_id, $current_session_id);
         }
 
         return $result;

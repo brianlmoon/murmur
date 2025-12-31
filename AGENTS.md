@@ -42,7 +42,7 @@ See [docs/installation.md](docs/installation.md) for detailed setup instructions
 Controllers (thin) → Services (business logic) → Repositories (data mappers) → Entities (value objects)
 
 ### Key Libraries
-- **dealnews/db**: Data Mapper pattern for database access. Mappers extend `AbstractMapper` with TABLE, PRIMARY_KEY, VALUE_OBJECT, and MAPPING constants.
+- **dealnews/db**: Data Mapper pattern for database access. Mappers extend `AbstractMapper` with TABLE, PRIMARY_KEY, MAPPED_CLASS, and MAPPING constants.
 - **moonspot/value-objects**: Entities extend `ValueObject` with typed public properties.
 - **pagemill/router**: HTTP routing.
 - **twig/twig**: Server-rendered templates.

@@ -210,6 +210,24 @@
         </form>
     </div>
 
+    {# Session Management Section #}
+    <div class="settings-section">
+        <h2 class="settings-title">{{ 'settings.sessions'|trans }}</h2>
+        
+        <div class="form-group">
+            <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
+                {{ 'settings.logout_devices_help'|trans }}
+            </p>
+            
+            <form method="post" action="{{ base_url }}/settings/logout-devices">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="btn" style="background: var(--color-bg);" onclick="return confirm('{{ 'settings.logout_devices_confirm'|trans|e('js') }}');">
+                    {{ 'settings.logout_devices_button'|trans }}
+                </button>
+            </form>
+        </div>
+    </div>
+
     <script>
         const bio = document.getElementById('bio');
         const bioCount = document.getElementById('bio-count');
