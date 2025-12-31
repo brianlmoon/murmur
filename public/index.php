@@ -63,7 +63,6 @@ $twig = new Environment($twig_loader, [
     'auto_reload' => true,
     'autoescape' => 'html',
 ]);
-$twig->addExtension(new RelativeDateExtension());
 $twig->addExtension(new LinkifyExtension());
 
 // Initialize Mappers
@@ -97,6 +96,7 @@ $locale = $setting_mapper->getLocale();
 $translation_service = new TranslationService($locale, __DIR__ . '/../translations');
 $twig->addExtension(new TranslationExtension($translation_service->getTranslator()));
 $twig->addExtension(new LocalizedDateExtension($translation_service->getTranslator()));
+$twig->addExtension(new RelativeDateExtension($translation_service->getTranslator()));
 $twig->addGlobal('locale', $locale);
 
 // Initialize Storage
