@@ -144,7 +144,16 @@
     }
 
     // Handle form submission with progress
+    const submitBtn = form.querySelector('button[type="submit"]');
+    let isSubmitting = false;
+
     form.addEventListener('submit', function(e) {
+        // Debounce: prevent double submission
+        if (isSubmitting) {
+            e.preventDefault();
+            return;
+        }
+
         // Check if too many files selected
         if (fileInput && fileInput.files && fileInput.files.length > maxAttachments) {
             e.preventDefault();
@@ -158,6 +167,12 @@
 
         // Use AJAX upload with progress bar
         e.preventDefault();
+
+        // Disable button to prevent double-clicks
+        isSubmitting = true;
+        if (submitBtn) {
+            submitBtn.disabled = true;
+        }
 
         const xhr = new XMLHttpRequest();
         const formData = new FormData(form);
@@ -196,6 +211,11 @@
                         if (progressContainer) {
                             progressContainer.style.display = 'none';
                         }
+                        // Re-enable button on error
+                        isSubmitting = false;
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                        }
                     } else {
                         // Non-JSON response, likely a redirect - follow it
                         window.location.reload();
@@ -212,6 +232,11 @@
                 if (progressContainer) {
                     progressContainer.style.display = 'none';
                 }
+                // Re-enable button on error
+                isSubmitting = false;
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                }
             }
         });
 
@@ -222,6 +247,11 @@
             }
             if (progressContainer) {
                 progressContainer.style.display = 'none';
+            }
+            // Re-enable button on error
+            isSubmitting = false;
+            if (submitBtn) {
+                submitBtn.disabled = false;
             }
         });
 
