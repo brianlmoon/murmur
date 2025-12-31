@@ -97,8 +97,8 @@ post:
     delete_confirm: "Are you sure you want to delete this post?"
     
     # Counts
-    like_count: "(%count%)"
-    comment_count: "(%count%)"
+    
+    
     
     # Accessibility
     view_post: "View post from %date%"
