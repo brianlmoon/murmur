@@ -1,0 +1,296 @@
+# Murmur Translation File - Chinese Simplified (China)
+# Locale: zh-CN
+# 
+# This file contains all user-facing strings for the default theme.
+#
+# Pluralization uses ICU message format:
+#   {count, plural, =0 {no items} =1 {1 item} other {# items}}
+#
+# Variable substitution uses %variable% syntax:
+#   "Welcome, %name%"
+
+# =============================================================================
+# Common UI Elements
+# =============================================================================
+common:
+    save: "保存"
+    cancel: "取消"
+    delete: "删除"
+    edit: "编辑"
+    submit: "提交"
+    loading: "加载中..."
+    back: "返回"
+    close: "关闭"
+    confirm: "确认"
+    yes: "是"
+    no: "否"
+    or: "或"
+    and: "和"
+    csrf_error: "表单提交无效。请重试。"
+
+# =============================================================================
+# Navigation
+# =============================================================================
+nav:
+    feed: "动态"
+    topics: "话题"
+    messages: "消息"
+    admin: "管理"
+    log_in: "登录"
+    log_out: "退出"
+    sign_up: "注册"
+    user_menu: "用户菜单"
+    view_feed: "查看动态"
+    browse_topics: "浏览所有话题"
+
+# =============================================================================
+# Authentication
+# =============================================================================
+auth:
+    # Login page
+    login_title: "登录"
+    login_button: "登录"
+    email_label: "邮箱"
+    password_label: "密码"
+    no_account: "没有账号？"
+    
+    # Registration page
+    register_title: "创建账号"
+    register_button: "创建账号"
+    name_label: "姓名"
+    name_help: "请输入您希望显示的全名。"
+    username_label: "用户名"
+    username_help: "3-30个字符。仅限字母、数字和下划线。"
+    password_help: "至少8个字符。"
+    confirm_password_label: "确认密码"
+    has_account: "已有账号？"
+    registration_closed: "目前暂不开放注册。"
+
+# =============================================================================
+# Feed
+# =============================================================================
+feed:
+    title: "首页"
+    filter_all: "全部"
+    filter_following: "关注"
+    
+    # Empty states
+    no_posts: "暂无帖子"
+    no_posts_hint: "成为第一个分享内容的人吧。"
+    no_following_posts: "关注的话题暂无帖子"
+    no_following_hint: "关注话题以查看帖子，或者"
+    
+    # Pagination
+    newer: "← 更新"
+    older: "更早 →"
+
+# =============================================================================
+# Posts
+# =============================================================================
+post:
+    # Actions
+    like: "喜欢"
+    unlike: "取消喜欢"
+    comment: "评论"
+    delete: "删除"
+    delete_confirm: "确定要删除这条帖子吗？"
+    
+    # Counts
+    
+    
+    
+    # Accessibility
+    view_post: "查看%date%的帖子"
+    view_comment: "查看%date%的评论"
+    post_attachment: "帖子附件"
+    
+    # Topic follow
+    follow_topic: "关注话题"
+    unfollow_topic: "取消关注话题"
+    
+    # Post detail page
+    back_to_feed: "← 返回动态"
+    comments_title: "评论"
+    sort_label: "排序："
+    sort_oldest: "最早"
+    sort_newest: "最新"
+    no_comments: "暂无评论。成为第一个回复的人吧。"
+    
+    # Reply indicator on profile
+    commenting_on: "评论了一条帖子"
+    
+    # Video
+    video_not_supported: "您的浏览器不支持视频播放。"
+
+# =============================================================================
+# Compose Form
+# =============================================================================
+compose:
+    placeholder: "在想什么？"
+    reply_placeholder: "写条评论..."
+    post_button: "发布"
+    comment_button: "评论"
+    topic_select_optional: "选择话题（可选）"
+    topic_select_required: "选择话题"
+    add_images: "添加图片"
+    add_media: "添加图片或视频"
+    too_many_images: "太多了！"
+    image_limit_error: "最多只能选择%max%张图片。您已选择%count%张。"
+    uploading: "上传中..."
+
+# =============================================================================
+# Profile
+# =============================================================================
+profile:
+    # Header
+    joined: "加入于%date%"
+    edit_profile: "编辑资料"
+    
+    # Stats
+    followers: "%count%位关注者"
+    followers_one: "1位关注者"
+    following: "关注%count%人"
+    following_one: "关注1人"
+    
+    # Actions
+    follow: "关注"
+    unfollow: "取消关注"
+    message: "私信"
+    
+    # Posts section
+    posts_title: "帖子"
+    no_posts: "%username%还没有发布任何内容。"
+
+# =============================================================================
+# User Settings
+# =============================================================================
+settings:
+    title: "设置"
+    
+    # Profile section
+    profile_title: "资料"
+    avatar_label: "头像"
+    upload_avatar: "上传头像"
+    change_avatar: "更换头像"
+    remove_avatar: "移除头像"
+    bio_label: "个人简介"
+    bio_placeholder: "介绍一下自己..."
+    save_changes: "保存更改"
+    view_profile: "查看资料"
+    
+    # Password section
+    password_title: "更改密码"
+    current_password: "当前密码"
+    new_password: "新密码"
+    confirm_new_password: "确认新密码"
+    update_password: "更新密码"
+    
+    # Session management section
+    sessions: "活跃会话"
+    logout_devices_help: "如果您在其他设备或浏览器上登录过，可以一次性退出所有设备以确保安全。"
+    logout_devices_button: "退出所有其他设备"
+    logout_devices_confirm: "确定要退出所有其他设备吗？您将在此设备上保持登录状态。"
+    logout_devices_success: "已从%count%个其他设备退出。"
+    logout_devices_success_one: "已从1个其他设备退出。"
+    logout_devices_none: "未发现其他活跃会话。"
+
+# =============================================================================
+# Topics
+# =============================================================================
+topics:
+    title: "话题"
+    follow: "关注"
+    unfollow: "取消关注"
+    following_badge: "已关注"
+    
+    # Empty state
+    no_topics: "暂无话题"
+    no_topics_hint: "管理员创建话题后会在这里显示。"
+    
+    # Accessibility
+    view_topic: "查看%name%话题的帖子"
+    follow_topic: "关注%name%话题"
+    unfollow_topic: "取消关注%name%话题"
+
+# =============================================================================
+# Messages
+# =============================================================================
+messages:
+    title: "消息"
+    new_message: "新消息"
+    
+    # Inbox
+    no_conversations: "暂无对话。"
+    start_conversation: "开始对话"
+    you_prefix: "你："
+    
+    # Conversation view
+    back_to_messages: "返回消息"
+    delete_conversation: "删除"
+    delete_conversation_confirm: "删除此对话？此操作无法撤销。"
+    load_older: "加载更早的消息"
+    no_messages: "暂无消息。开始对话吧！"
+    write_placeholder: "输入消息..."
+    character_limit: "限%count%个字符"
+    send: "发送"
+    delete_message: "删除消息"
+    delete_message_confirm: "删除此消息？"
+    cannot_reply: "您无法回复此对话。"
+    
+    # Search
+    search_title: "新消息"
+    search_placeholder: "按用户名或姓名搜索..."
+    search_button: "搜索"
+    no_results: "未找到用户。"
+    search_hint: "搜索用户以开始对话。"
+    
+    # Pagination
+    newer: "← 更新"
+    older: "更早 →"
+
+# =============================================================================
+# Errors
+# =============================================================================
+errors:
+    not_found_title: "404"
+    not_found: "找不到您要访问的页面。"
+    go_home: "返回首页"
+    
+    forbidden_title: "403"
+    forbidden: "您没有权限访问此页面。"
+    
+    generic: "出了点问题。请重试。"
+
+# =============================================================================
+# Date Formats
+# PHP date() format strings - customize per locale
+# See: https://www.php.net/manual/en/datetime.format.php
+# =============================================================================
+dates:
+    # Short date: "12月27日"
+    format_short: "n月j日"
+    
+    # Long date: "2025年12月27日"
+    format_long: "Y年n月j日"
+    
+    # Time only: "13:39"
+    format_time: "H:i"
+    
+    # Date and time: "2025年12月27日 13:39"
+    format_datetime: "Y年n月j日 H:i"
+    
+    # Month and year: "2025年12月" (for "Joined" dates)
+    format_month_year: "Y年n月"
+
+# =============================================================================
+# Relative Dates
+# Used by the relative_date filter
+# =============================================================================
+relative:
+    just_now: "刚刚"
+    minutes_ago: "%count%分钟前"
+    minutes_ago_one: "1分钟前"
+    hours_ago: "%count%小时前"
+    hours_ago_one: "1小时前"
+    days_ago: "%count%天前"
+    days_ago_one: "1天前"

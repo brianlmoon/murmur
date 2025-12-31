@@ -1,0 +1,296 @@
+# Murmur Translation File - Korean (Korea)
+# Locale: ko-KR
+# 
+# This file contains all user-facing strings for the default theme.
+#
+# Pluralization uses ICU message format:
+#   {count, plural, =0 {no items} =1 {1 item} other {# items}}
+#
+# Variable substitution uses %variable% syntax:
+#   "Welcome, %name%"
+
+# =============================================================================
+# Common UI Elements
+# =============================================================================
+common:
+    save: "저장"
+    cancel: "취소"
+    delete: "삭제"
+    edit: "편집"
+    submit: "제출"
+    loading: "로딩 중..."
+    back: "뒤로"
+    close: "닫기"
+    confirm: "확인"
+    yes: "예"
+    no: "아니오"
+    or: "또는"
+    and: "그리고"
+    csrf_error: "잘못된 양식 제출입니다. 다시 시도해 주세요."
+
+# =============================================================================
+# Navigation
+# =============================================================================
+nav:
+    feed: "피드"
+    topics: "주제"
+    messages: "메시지"
+    admin: "관리"
+    log_in: "로그인"
+    log_out: "로그아웃"
+    sign_up: "가입하기"
+    user_menu: "사용자 메뉴"
+    view_feed: "피드 보기"
+    browse_topics: "모든 주제 보기"
+
+# =============================================================================
+# Authentication
+# =============================================================================
+auth:
+    # Login page
+    login_title: "로그인"
+    login_button: "로그인"
+    email_label: "이메일"
+    password_label: "비밀번호"
+    no_account: "계정이 없으신가요?"
+    
+    # Registration page
+    register_title: "계정 만들기"
+    register_button: "계정 만들기"
+    name_label: "이름"
+    name_help: "표시하고 싶은 전체 이름을 입력하세요."
+    username_label: "사용자 이름"
+    username_help: "3-30자. 영문, 숫자, 밑줄만 사용 가능합니다."
+    password_help: "최소 8자 이상."
+    confirm_password_label: "비밀번호 확인"
+    has_account: "이미 계정이 있으신가요?"
+    registration_closed: "현재 가입이 중단되었습니다."
+
+# =============================================================================
+# Feed
+# =============================================================================
+feed:
+    title: "홈"
+    filter_all: "전체"
+    filter_following: "팔로잉"
+    
+    # Empty states
+    no_posts: "아직 게시물이 없습니다"
+    no_posts_hint: "첫 번째로 무언가를 공유해 보세요."
+    no_following_posts: "팔로우한 주제의 게시물이 없습니다"
+    no_following_hint: "주제를 팔로우하여 게시물을 확인하거나,"
+    
+    # Pagination
+    newer: "← 최신"
+    older: "이전 →"
+
+# =============================================================================
+# Posts
+# =============================================================================
+post:
+    # Actions
+    like: "좋아요"
+    unlike: "좋아요 취소"
+    comment: "댓글"
+    delete: "삭제"
+    delete_confirm: "이 게시물을 삭제하시겠습니까?"
+    
+    # Counts
+    
+    
+    
+    # Accessibility
+    view_post: "%date% 게시물 보기"
+    view_comment: "%date% 댓글 보기"
+    post_attachment: "게시물 첨부파일"
+    
+    # Topic follow
+    follow_topic: "주제 팔로우"
+    unfollow_topic: "주제 팔로우 취소"
+    
+    # Post detail page
+    back_to_feed: "← 피드로 돌아가기"
+    comments_title: "댓글"
+    sort_label: "정렬:"
+    sort_oldest: "오래된 순"
+    sort_newest: "최신 순"
+    no_comments: "아직 댓글이 없습니다. 첫 번째로 답글을 남겨보세요."
+    
+    # Reply indicator on profile
+    commenting_on: "게시물에 댓글 중"
+    
+    # Video
+    video_not_supported: "브라우저가 동영상 재생을 지원하지 않습니다."
+
+# =============================================================================
+# Compose Form
+# =============================================================================
+compose:
+    placeholder: "무슨 생각을 하고 계신가요?"
+    reply_placeholder: "댓글 작성..."
+    post_button: "게시"
+    comment_button: "댓글"
+    topic_select_optional: "주제 선택 (선택사항)"
+    topic_select_required: "주제 선택"
+    add_images: "이미지 추가"
+    add_media: "이미지 또는 동영상 추가"
+    too_many_images: "너무 많습니다!"
+    image_limit_error: "최대 %max%개의 이미지만 선택할 수 있습니다. %count%개를 선택하셨습니다."
+    uploading: "업로드 중..."
+
+# =============================================================================
+# Profile
+# =============================================================================
+profile:
+    # Header
+    joined: "%date% 가입"
+    edit_profile: "프로필 편집"
+    
+    # Stats
+    followers: "팔로워 %count%명"
+    followers_one: "팔로워 1명"
+    following: "팔로잉 %count%명"
+    following_one: "팔로잉 1명"
+    
+    # Actions
+    follow: "팔로우"
+    unfollow: "팔로우 취소"
+    message: "메시지"
+    
+    # Posts section
+    posts_title: "게시물"
+    no_posts: "%username%님은 아직 게시한 내용이 없습니다."
+
+# =============================================================================
+# User Settings
+# =============================================================================
+settings:
+    title: "설정"
+    
+    # Profile section
+    profile_title: "프로필"
+    avatar_label: "아바타"
+    upload_avatar: "아바타 업로드"
+    change_avatar: "아바타 변경"
+    remove_avatar: "아바타 삭제"
+    bio_label: "소개"
+    bio_placeholder: "자기소개를 작성해 주세요..."
+    save_changes: "변경사항 저장"
+    view_profile: "프로필 보기"
+    
+    # Password section
+    password_title: "비밀번호 변경"
+    current_password: "현재 비밀번호"
+    new_password: "새 비밀번호"
+    confirm_new_password: "새 비밀번호 확인"
+    update_password: "비밀번호 업데이트"
+    
+    # Session management section
+    sessions: "활성 세션"
+    logout_devices_help: "다른 기기나 브라우저에서 로그인한 경우, 보안을 위해 모두 한 번에 로그아웃할 수 있습니다."
+    logout_devices_button: "다른 모든 기기에서 로그아웃"
+    logout_devices_confirm: "다른 모든 기기에서 로그아웃하시겠습니까? 이 기기에서는 로그인 상태가 유지됩니다."
+    logout_devices_success: "%count%개의 다른 기기에서 로그아웃되었습니다."
+    logout_devices_success_one: "1개의 다른 기기에서 로그아웃되었습니다."
+    logout_devices_none: "다른 활성 세션이 없습니다."
+
+# =============================================================================
+# Topics
+# =============================================================================
+topics:
+    title: "주제"
+    follow: "팔로우"
+    unfollow: "팔로우 취소"
+    following_badge: "팔로잉"
+    
+    # Empty state
+    no_topics: "이용 가능한 주제가 없습니다"
+    no_topics_hint: "관리자가 주제를 만들면 여기에 표시됩니다."
+    
+    # Accessibility
+    view_topic: "%name% 주제의 게시물 보기"
+    follow_topic: "%name% 주제 팔로우"
+    unfollow_topic: "%name% 주제 팔로우 취소"
+
+# =============================================================================
+# Messages
+# =============================================================================
+messages:
+    title: "메시지"
+    new_message: "새 메시지"
+    
+    # Inbox
+    no_conversations: "아직 대화가 없습니다."
+    start_conversation: "대화 시작"
+    you_prefix: "나:"
+    
+    # Conversation view
+    back_to_messages: "메시지로 돌아가기"
+    delete_conversation: "삭제"
+    delete_conversation_confirm: "이 대화를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+    load_older: "이전 메시지 불러오기"
+    no_messages: "아직 메시지가 없습니다. 대화를 시작해 보세요!"
+    write_placeholder: "메시지 입력..."
+    character_limit: "%count%자 제한"
+    send: "보내기"
+    delete_message: "메시지 삭제"
+    delete_message_confirm: "이 메시지를 삭제하시겠습니까?"
+    cannot_reply: "이 대화에 답장할 수 없습니다."
+    
+    # Search
+    search_title: "새 메시지"
+    search_placeholder: "사용자 이름 또는 이름으로 검색..."
+    search_button: "검색"
+    no_results: "사용자를 찾을 수 없습니다."
+    search_hint: "사용자를 검색하여 대화를 시작하세요."
+    
+    # Pagination
+    newer: "← 최신"
+    older: "이전 →"
+
+# =============================================================================
+# Errors
+# =============================================================================
+errors:
+    not_found_title: "404"
+    not_found: "찾으시는 페이지를 찾을 수 없습니다."
+    go_home: "홈으로"
+    
+    forbidden_title: "403"
+    forbidden: "이 페이지에 접근할 권한이 없습니다."
+    
+    generic: "문제가 발생했습니다. 다시 시도해 주세요."
+
+# =============================================================================
+# Date Formats
+# PHP date() format strings - customize per locale
+# See: https://www.php.net/manual/en/datetime.format.php
+# =============================================================================
+dates:
+    # Short date: "12월 27일"
+    format_short: "n월 j일"
+    
+    # Long date: "2025년 12월 27일"
+    format_long: "Y년 n월 j일"
+    
+    # Time only: "13:39"
+    format_time: "H:i"
+    
+    # Date and time: "2025년 12월 27일 13:39"
+    format_datetime: "Y년 n월 j일 H:i"
+    
+    # Month and year: "2025년 12월" (for "Joined" dates)
+    format_month_year: "Y년 n월"
+
+# =============================================================================
+# Relative Dates
+# Used by the relative_date filter
+# =============================================================================
+relative:
+    just_now: "방금 전"
+    minutes_ago: "%count%분 전"
+    minutes_ago_one: "1분 전"
+    hours_ago: "%count%시간 전"
+    hours_ago_one: "1시간 전"
+    days_ago: "%count%일 전"
+    days_ago_one: "1일 전"

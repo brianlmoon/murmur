@@ -1,0 +1,296 @@
+# Murmur Translation File - Dutch (Netherlands)
+# Locale: nl-NL
+# 
+# This file contains all user-facing strings for the default theme.
+#
+# Pluralization uses ICU message format:
+#   {count, plural, =0 {no items} =1 {1 item} other {# items}}
+#
+# Variable substitution uses %variable% syntax:
+#   "Welcome, %name%"
+
+# =============================================================================
+# Common UI Elements
+# =============================================================================
+common:
+    save: "Opslaan"
+    cancel: "Annuleren"
+    delete: "Verwijderen"
+    edit: "Bewerken"
+    submit: "Verzenden"
+    loading: "Laden..."
+    back: "Terug"
+    close: "Sluiten"
+    confirm: "Bevestigen"
+    yes: "Ja"
+    no: "Nee"
+    or: "of"
+    and: "en"
+    csrf_error: "Ongeldige formulierinzending. Probeer het opnieuw."
+
+# =============================================================================
+# Navigation
+# =============================================================================
+nav:
+    feed: "Feed"
+    topics: "Onderwerpen"
+    messages: "Berichten"
+    admin: "Admin"
+    log_in: "Inloggen"
+    log_out: "Uitloggen"
+    sign_up: "Registreren"
+    user_menu: "Gebruikersmenu"
+    view_feed: "Feed bekijken"
+    browse_topics: "Alle onderwerpen bekijken"
+
+# =============================================================================
+# Authentication
+# =============================================================================
+auth:
+    # Login page
+    login_title: "Inloggen"
+    login_button: "Inloggen"
+    email_label: "E-mail"
+    password_label: "Wachtwoord"
+    no_account: "Nog geen account?"
+    
+    # Registration page
+    register_title: "Account aanmaken"
+    register_button: "Account aanmaken"
+    name_label: "Naam"
+    name_help: "Je volledige naam zoals je wilt dat deze wordt weergegeven."
+    username_label: "Gebruikersnaam"
+    username_help: "3-30 tekens. Alleen letters, cijfers en underscores."
+    password_help: "Minimaal 8 tekens."
+    confirm_password_label: "Wachtwoord bevestigen"
+    has_account: "Heb je al een account?"
+    registration_closed: "Registratie is momenteel gesloten."
+
+# =============================================================================
+# Feed
+# =============================================================================
+feed:
+    title: "Home"
+    filter_all: "Alles"
+    filter_following: "Volgend"
+    
+    # Empty states
+    no_posts: "Nog geen berichten"
+    no_posts_hint: "Wees de eerste om iets te delen."
+    no_following_posts: "Geen berichten van gevolgde onderwerpen"
+    no_following_hint: "Volg onderwerpen om hier berichten te zien, of bekijk"
+    
+    # Pagination
+    newer: "← Nieuwer"
+    older: "Ouder →"
+
+# =============================================================================
+# Posts
+# =============================================================================
+post:
+    # Actions
+    like: "Vind ik leuk"
+    unlike: "Niet meer leuk"
+    comment: "Reageren"
+    delete: "Verwijderen"
+    delete_confirm: "Weet je zeker dat je dit bericht wilt verwijderen?"
+    
+    # Counts
+    
+    
+    
+    # Accessibility
+    view_post: "Bericht van %date% bekijken"
+    view_comment: "Reactie van %date% bekijken"
+    post_attachment: "Berichtbijlage"
+    
+    # Topic follow
+    follow_topic: "Onderwerp volgen"
+    unfollow_topic: "Onderwerp ontvolgen"
+    
+    # Post detail page
+    back_to_feed: "← Terug naar feed"
+    comments_title: "Reacties"
+    sort_label: "Sorteren:"
+    sort_oldest: "Oudste"
+    sort_newest: "Nieuwste"
+    no_comments: "Nog geen reacties. Wees de eerste om te reageren."
+    
+    # Reply indicator on profile
+    commenting_on: "Reageert op een bericht"
+    
+    # Video
+    video_not_supported: "Je browser ondersteunt geen video."
+
+# =============================================================================
+# Compose Form
+# =============================================================================
+compose:
+    placeholder: "Waar denk je aan?"
+    reply_placeholder: "Schrijf een reactie..."
+    post_button: "Plaatsen"
+    comment_button: "Reageren"
+    topic_select_optional: "Selecteer een onderwerp (optioneel)"
+    topic_select_required: "Selecteer een onderwerp"
+    add_images: "Afbeeldingen toevoegen"
+    add_media: "Afbeeldingen of video toevoegen"
+    too_many_images: "te veel!"
+    image_limit_error: "Selecteer maximaal %max% afbeeldingen. Je hebt %count% geselecteerd."
+    uploading: "Uploaden..."
+
+# =============================================================================
+# Profile
+# =============================================================================
+profile:
+    # Header
+    joined: "Lid sinds %date%"
+    edit_profile: "Profiel bewerken"
+    
+    # Stats
+    followers: "%count% volgers"
+    followers_one: "1 volger"
+    following: "%count% volgend"
+    following_one: "1 volgend"
+    
+    # Actions
+    follow: "Volgen"
+    unfollow: "Ontvolgen"
+    message: "Bericht"
+    
+    # Posts section
+    posts_title: "Berichten"
+    no_posts: "%username% heeft nog niets geplaatst."
+
+# =============================================================================
+# User Settings
+# =============================================================================
+settings:
+    title: "Instellingen"
+    
+    # Profile section
+    profile_title: "Profiel"
+    avatar_label: "Avatar"
+    upload_avatar: "Avatar uploaden"
+    change_avatar: "Avatar wijzigen"
+    remove_avatar: "Avatar verwijderen"
+    bio_label: "Biografie"
+    bio_placeholder: "Vertel ons over jezelf..."
+    save_changes: "Wijzigingen opslaan"
+    view_profile: "Profiel bekijken"
+    
+    # Password section
+    password_title: "Wachtwoord wijzigen"
+    current_password: "Huidig wachtwoord"
+    new_password: "Nieuw wachtwoord"
+    confirm_new_password: "Nieuw wachtwoord bevestigen"
+    update_password: "Wachtwoord bijwerken"
+    
+    # Session management section
+    sessions: "Actieve sessies"
+    logout_devices_help: "Als je bent ingelogd op andere apparaten of browsers, kun je voor de veiligheid overal tegelijk uitloggen."
+    logout_devices_button: "Uitloggen op alle andere apparaten"
+    logout_devices_confirm: "Weet je zeker dat je wilt uitloggen op alle andere apparaten? Je blijft ingelogd op dit apparaat."
+    logout_devices_success: "Uitgelogd op %count% andere apparaat/apparaten."
+    logout_devices_success_one: "Uitgelogd op 1 ander apparaat."
+    logout_devices_none: "Geen andere actieve sessies gevonden."
+
+# =============================================================================
+# Topics
+# =============================================================================
+topics:
+    title: "Onderwerpen"
+    follow: "Volgen"
+    unfollow: "Ontvolgen"
+    following_badge: "Volgend"
+    
+    # Empty state
+    no_topics: "Geen onderwerpen beschikbaar"
+    no_topics_hint: "Onderwerpen verschijnen hier zodra ze zijn aangemaakt door een beheerder."
+    
+    # Accessibility
+    view_topic: "Berichten in onderwerp %name% bekijken"
+    follow_topic: "Onderwerp %name% volgen"
+    unfollow_topic: "Onderwerp %name% ontvolgen"
+
+# =============================================================================
+# Messages
+# =============================================================================
+messages:
+    title: "Berichten"
+    new_message: "Nieuw bericht"
+    
+    # Inbox
+    no_conversations: "Nog geen gesprekken."
+    start_conversation: "Start een gesprek"
+    you_prefix: "Jij:"
+    
+    # Conversation view
+    back_to_messages: "Terug naar berichten"
+    delete_conversation: "Verwijderen"
+    delete_conversation_confirm: "Dit gesprek verwijderen? Dit kan niet ongedaan worden gemaakt."
+    load_older: "Oudere berichten laden"
+    no_messages: "Nog geen berichten. Start het gesprek!"
+    write_placeholder: "Schrijf een bericht..."
+    character_limit: "%count% tekens limiet"
+    send: "Verzenden"
+    delete_message: "Bericht verwijderen"
+    delete_message_confirm: "Dit bericht verwijderen?"
+    cannot_reply: "Je kunt niet reageren op dit gesprek."
+    
+    # Search
+    search_title: "Nieuw bericht"
+    search_placeholder: "Zoeken op gebruikersnaam of naam..."
+    search_button: "Zoeken"
+    no_results: "Geen gebruikers gevonden."
+    search_hint: "Zoek een gebruiker om een gesprek te starten."
+    
+    # Pagination
+    newer: "← Nieuwer"
+    older: "Ouder →"
+
+# =============================================================================
+# Errors
+# =============================================================================
+errors:
+    not_found_title: "404"
+    not_found: "De pagina die je zoekt kon niet worden gevonden."
+    go_home: "Naar home"
+    
+    forbidden_title: "403"
+    forbidden: "Je hebt geen toestemming om deze pagina te bekijken."
+    
+    generic: "Er is iets misgegaan. Probeer het opnieuw."
+
+# =============================================================================
+# Date Formats
+# PHP date() format strings - customize per locale
+# See: https://www.php.net/manual/en/datetime.format.php
+# =============================================================================
+dates:
+    # Short date: "27 dec"
+    format_short: "j M"
+    
+    # Long date: "27 december 2025"
+    format_long: "j F Y"
+    
+    # Time only: "13:39"
+    format_time: "H:i"
+    
+    # Date and time: "27 december 2025 13:39"
+    format_datetime: "j F Y H:i"
+    
+    # Month and year: "december 2025" (for "Joined" dates)
+    format_month_year: "F Y"
+
+# =============================================================================
+# Relative Dates
+# Used by the relative_date filter
+# =============================================================================
+relative:
+    just_now: "zojuist"
+    minutes_ago: "%count% minuten geleden"
+    minutes_ago_one: "1 minuut geleden"
+    hours_ago: "%count% uur geleden"
+    hours_ago_one: "1 uur geleden"
+    days_ago: "%count% dagen geleden"
+    days_ago_one: "1 dag geleden"

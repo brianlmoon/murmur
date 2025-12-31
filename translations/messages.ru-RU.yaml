@@ -1,0 +1,296 @@
+# Murmur Translation File - Russian (Russia)
+# Locale: ru-RU
+# 
+# This file contains all user-facing strings for the default theme.
+#
+# Pluralization uses ICU message format:
+#   {count, plural, =0 {no items} =1 {1 item} other {# items}}
+#
+# Variable substitution uses %variable% syntax:
+#   "Welcome, %name%"
+
+# =============================================================================
+# Common UI Elements
+# =============================================================================
+common:
+    save: "Сохранить"
+    cancel: "Отмена"
+    delete: "Удалить"
+    edit: "Редактировать"
+    submit: "Отправить"
+    loading: "Загрузка..."
+    back: "Назад"
+    close: "Закрыть"
+    confirm: "Подтвердить"
+    yes: "Да"
+    no: "Нет"
+    or: "или"
+    and: "и"
+    csrf_error: "Недействительная отправка формы. Пожалуйста, попробуйте снова."
+
+# =============================================================================
+# Navigation
+# =============================================================================
+nav:
+    feed: "Лента"
+    topics: "Темы"
+    messages: "Сообщения"
+    admin: "Админ"
+    log_in: "Войти"
+    log_out: "Выйти"
+    sign_up: "Регистрация"
+    user_menu: "Меню пользователя"
+    view_feed: "Просмотреть ленту"
+    browse_topics: "Просмотреть все темы"
+
+# =============================================================================
+# Authentication
+# =============================================================================
+auth:
+    # Login page
+    login_title: "Вход"
+    login_button: "Войти"
+    email_label: "Эл. почта"
+    password_label: "Пароль"
+    no_account: "Нет аккаунта?"
+    
+    # Registration page
+    register_title: "Создать аккаунт"
+    register_button: "Создать аккаунт"
+    name_label: "Имя"
+    name_help: "Ваше полное имя, как вы хотите, чтобы оно отображалось."
+    username_label: "Имя пользователя"
+    username_help: "3-30 символов. Только буквы, цифры и подчёркивания."
+    password_help: "Минимум 8 символов."
+    confirm_password_label: "Подтвердите пароль"
+    has_account: "Уже есть аккаунт?"
+    registration_closed: "Регистрация в данный момент закрыта."
+
+# =============================================================================
+# Feed
+# =============================================================================
+feed:
+    title: "Главная"
+    filter_all: "Все"
+    filter_following: "Подписки"
+    
+    # Empty states
+    no_posts: "Пока нет публикаций"
+    no_posts_hint: "Будьте первым, кто поделится чем-то."
+    no_following_posts: "Нет публикаций из отслеживаемых тем"
+    no_following_hint: "Подпишитесь на темы, чтобы видеть здесь публикации, или посмотрите"
+    
+    # Pagination
+    newer: "← Новее"
+    older: "Старее →"
+
+# =============================================================================
+# Posts
+# =============================================================================
+post:
+    # Actions
+    like: "Нравится"
+    unlike: "Не нравится"
+    comment: "Комментировать"
+    delete: "Удалить"
+    delete_confirm: "Вы уверены, что хотите удалить эту публикацию?"
+    
+    # Counts
+    
+    
+    
+    # Accessibility
+    view_post: "Просмотреть публикацию от %date%"
+    view_comment: "Просмотреть комментарий от %date%"
+    post_attachment: "Вложение публикации"
+    
+    # Topic follow
+    follow_topic: "Подписаться на тему"
+    unfollow_topic: "Отписаться от темы"
+    
+    # Post detail page
+    back_to_feed: "← Назад к ленте"
+    comments_title: "Комментарии"
+    sort_label: "Сортировка:"
+    sort_oldest: "Сначала старые"
+    sort_newest: "Сначала новые"
+    no_comments: "Пока нет комментариев. Будьте первым, кто ответит."
+    
+    # Reply indicator on profile
+    commenting_on: "Комментирует публикацию"
+    
+    # Video
+    video_not_supported: "Ваш браузер не поддерживает воспроизведение видео."
+
+# =============================================================================
+# Compose Form
+# =============================================================================
+compose:
+    placeholder: "О чём вы думаете?"
+    reply_placeholder: "Напишите комментарий..."
+    post_button: "Опубликовать"
+    comment_button: "Комментировать"
+    topic_select_optional: "Выберите тему (необязательно)"
+    topic_select_required: "Выберите тему"
+    add_images: "Добавить изображения"
+    add_media: "Добавить изображения или видео"
+    too_many_images: "слишком много!"
+    image_limit_error: "Пожалуйста, выберите не более %max% изображений. Вы выбрали %count%."
+    uploading: "Загрузка..."
+
+# =============================================================================
+# Profile
+# =============================================================================
+profile:
+    # Header
+    joined: "Присоединился %date%"
+    edit_profile: "Редактировать профиль"
+    
+    # Stats
+    followers: "%count% подписчиков"
+    followers_one: "1 подписчик"
+    following: "%count% подписок"
+    following_one: "1 подписка"
+    
+    # Actions
+    follow: "Подписаться"
+    unfollow: "Отписаться"
+    message: "Сообщение"
+    
+    # Posts section
+    posts_title: "Публикации"
+    no_posts: "%username% ещё ничего не опубликовал."
+
+# =============================================================================
+# User Settings
+# =============================================================================
+settings:
+    title: "Настройки"
+    
+    # Profile section
+    profile_title: "Профиль"
+    avatar_label: "Аватар"
+    upload_avatar: "Загрузить аватар"
+    change_avatar: "Изменить аватар"
+    remove_avatar: "Удалить аватар"
+    bio_label: "О себе"
+    bio_placeholder: "Расскажите о себе..."
+    save_changes: "Сохранить изменения"
+    view_profile: "Просмотреть профиль"
+    
+    # Password section
+    password_title: "Изменить пароль"
+    current_password: "Текущий пароль"
+    new_password: "Новый пароль"
+    confirm_new_password: "Подтвердите новый пароль"
+    update_password: "Обновить пароль"
+    
+    # Session management section
+    sessions: "Активные сеансы"
+    logout_devices_help: "Если вы вошли с других устройств или браузеров, вы можете выйти из всех сразу для безопасности."
+    logout_devices_button: "Выйти со всех других устройств"
+    logout_devices_confirm: "Вы уверены, что хотите выйти со всех других устройств? Вы останетесь в системе на этом устройстве."
+    logout_devices_success: "Выполнен выход с %count% других устройств."
+    logout_devices_success_one: "Выполнен выход с 1 другого устройства."
+    logout_devices_none: "Другие активные сеансы не найдены."
+
+# =============================================================================
+# Topics
+# =============================================================================
+topics:
+    title: "Темы"
+    follow: "Подписаться"
+    unfollow: "Отписаться"
+    following_badge: "Подписка"
+    
+    # Empty state
+    no_topics: "Нет доступных тем"
+    no_topics_hint: "Темы появятся здесь, когда будут созданы администратором."
+    
+    # Accessibility
+    view_topic: "Просмотреть публикации в теме %name%"
+    follow_topic: "Подписаться на тему %name%"
+    unfollow_topic: "Отписаться от темы %name%"
+
+# =============================================================================
+# Messages
+# =============================================================================
+messages:
+    title: "Сообщения"
+    new_message: "Новое сообщение"
+    
+    # Inbox
+    no_conversations: "Пока нет диалогов."
+    start_conversation: "Начать диалог"
+    you_prefix: "Вы:"
+    
+    # Conversation view
+    back_to_messages: "Назад к сообщениям"
+    delete_conversation: "Удалить"
+    delete_conversation_confirm: "Удалить этот диалог? Это действие нельзя отменить."
+    load_older: "Загрузить старые сообщения"
+    no_messages: "Пока нет сообщений. Начните диалог!"
+    write_placeholder: "Написать сообщение..."
+    character_limit: "Лимит %count% символов"
+    send: "Отправить"
+    delete_message: "Удалить сообщение"
+    delete_message_confirm: "Удалить это сообщение?"
+    cannot_reply: "Вы не можете ответить на этот диалог."
+    
+    # Search
+    search_title: "Новое сообщение"
+    search_placeholder: "Поиск по имени пользователя или имени..."
+    search_button: "Поиск"
+    no_results: "Пользователи не найдены."
+    search_hint: "Найдите пользователя, чтобы начать диалог."
+    
+    # Pagination
+    newer: "← Новее"
+    older: "Старее →"
+
+# =============================================================================
+# Errors
+# =============================================================================
+errors:
+    not_found_title: "404"
+    not_found: "Страница, которую вы ищете, не найдена."
+    go_home: "На главную"
+    
+    forbidden_title: "403"
+    forbidden: "У вас нет доступа к этой странице."
+    
+    generic: "Что-то пошло не так. Пожалуйста, попробуйте снова."
+
+# =============================================================================
+# Date Formats
+# PHP date() format strings - customize per locale
+# See: https://www.php.net/manual/en/datetime.format.php
+# =============================================================================
+dates:
+    # Short date: "27 дек"
+    format_short: "j M"
+    
+    # Long date: "27 декабря 2025"
+    format_long: "j F Y"
+    
+    # Time only: "13:39"
+    format_time: "H:i"
+    
+    # Date and time: "27 декабря 2025 13:39"
+    format_datetime: "j F Y H:i"
+    
+    # Month and year: "декабрь 2025" (for "Joined" dates)
+    format_month_year: "F Y"
+
+# =============================================================================
+# Relative Dates
+# Used by the relative_date filter
+# =============================================================================
+relative:
+    just_now: "только что"
+    minutes_ago: "%count% минут назад"
+    minutes_ago_one: "1 минуту назад"
+    hours_ago: "%count% часов назад"
+    hours_ago_one: "1 час назад"
+    days_ago: "%count% дней назад"
+    days_ago_one: "1 день назад"

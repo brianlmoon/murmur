@@ -1,0 +1,296 @@
+# Murmur Translation File - Japanese (Japan)
+# Locale: ja-JP
+# 
+# This file contains all user-facing strings for the default theme.
+#
+# Pluralization uses ICU message format:
+#   {count, plural, =0 {no items} =1 {1 item} other {# items}}
+#
+# Variable substitution uses %variable% syntax:
+#   "Welcome, %name%"
+
+# =============================================================================
+# Common UI Elements
+# =============================================================================
+common:
+    save: "保存"
+    cancel: "キャンセル"
+    delete: "削除"
+    edit: "編集"
+    submit: "送信"
+    loading: "読み込み中..."
+    back: "戻る"
+    close: "閉じる"
+    confirm: "確認"
+    yes: "はい"
+    no: "いいえ"
+    or: "または"
+    and: "と"
+    csrf_error: "フォームの送信が無効です。もう一度お試しください。"
+
+# =============================================================================
+# Navigation
+# =============================================================================
+nav:
+    feed: "フィード"
+    topics: "トピック"
+    messages: "メッセージ"
+    admin: "管理"
+    log_in: "ログイン"
+    log_out: "ログアウト"
+    sign_up: "新規登録"
+    user_menu: "ユーザーメニュー"
+    view_feed: "フィードを見る"
+    browse_topics: "すべてのトピックを見る"
+
+# =============================================================================
+# Authentication
+# =============================================================================
+auth:
+    # Login page
+    login_title: "ログイン"
+    login_button: "ログイン"
+    email_label: "メールアドレス"
+    password_label: "パスワード"
+    no_account: "アカウントをお持ちでないですか？"
+    
+    # Registration page
+    register_title: "アカウント作成"
+    register_button: "アカウント作成"
+    name_label: "名前"
+    name_help: "表示したいフルネームを入力してください。"
+    username_label: "ユーザー名"
+    username_help: "3〜30文字。英数字とアンダースコアのみ。"
+    password_help: "8文字以上。"
+    confirm_password_label: "パスワード確認"
+    has_account: "すでにアカウントをお持ちですか？"
+    registration_closed: "現在、新規登録は受け付けておりません。"
+
+# =============================================================================
+# Feed
+# =============================================================================
+feed:
+    title: "ホーム"
+    filter_all: "すべて"
+    filter_following: "フォロー中"
+    
+    # Empty states
+    no_posts: "まだ投稿がありません"
+    no_posts_hint: "最初に何かシェアしてみましょう。"
+    no_following_posts: "フォロー中のトピックからの投稿がありません"
+    no_following_hint: "トピックをフォローして投稿を見るか、"
+    
+    # Pagination
+    newer: "← 新しい投稿"
+    older: "古い投稿 →"
+
+# =============================================================================
+# Posts
+# =============================================================================
+post:
+    # Actions
+    like: "いいね"
+    unlike: "いいね解除"
+    comment: "コメント"
+    delete: "削除"
+    delete_confirm: "この投稿を削除してもよろしいですか？"
+    
+    # Counts
+    
+    
+    
+    # Accessibility
+    view_post: "%date%の投稿を見る"
+    view_comment: "%date%のコメントを見る"
+    post_attachment: "投稿の添付ファイル"
+    
+    # Topic follow
+    follow_topic: "トピックをフォロー"
+    unfollow_topic: "トピックのフォロー解除"
+    
+    # Post detail page
+    back_to_feed: "← フィードに戻る"
+    comments_title: "コメント"
+    sort_label: "並び替え："
+    sort_oldest: "古い順"
+    sort_newest: "新しい順"
+    no_comments: "まだコメントがありません。最初にコメントしてみましょう。"
+    
+    # Reply indicator on profile
+    commenting_on: "投稿にコメント中"
+    
+    # Video
+    video_not_supported: "お使いのブラウザは動画再生に対応していません。"
+
+# =============================================================================
+# Compose Form
+# =============================================================================
+compose:
+    placeholder: "いま何を考えていますか？"
+    reply_placeholder: "コメントを書く..."
+    post_button: "投稿"
+    comment_button: "コメント"
+    topic_select_optional: "トピックを選択（任意）"
+    topic_select_required: "トピックを選択"
+    add_images: "画像を追加"
+    add_media: "画像または動画を追加"
+    too_many_images: "多すぎます！"
+    image_limit_error: "画像は最大%max%枚までです。%count%枚選択されています。"
+    uploading: "アップロード中..."
+
+# =============================================================================
+# Profile
+# =============================================================================
+profile:
+    # Header
+    joined: "%date%に登録"
+    edit_profile: "プロフィール編集"
+    
+    # Stats
+    followers: "%count%人のフォロワー"
+    followers_one: "1人のフォロワー"
+    following: "%count%人をフォロー中"
+    following_one: "1人をフォロー中"
+    
+    # Actions
+    follow: "フォロー"
+    unfollow: "フォロー解除"
+    message: "メッセージ"
+    
+    # Posts section
+    posts_title: "投稿"
+    no_posts: "%username%さんはまだ投稿していません。"
+
+# =============================================================================
+# User Settings
+# =============================================================================
+settings:
+    title: "設定"
+    
+    # Profile section
+    profile_title: "プロフィール"
+    avatar_label: "アバター"
+    upload_avatar: "アバターをアップロード"
+    change_avatar: "アバターを変更"
+    remove_avatar: "アバターを削除"
+    bio_label: "自己紹介"
+    bio_placeholder: "自己紹介を書いてください..."
+    save_changes: "変更を保存"
+    view_profile: "プロフィールを見る"
+    
+    # Password section
+    password_title: "パスワード変更"
+    current_password: "現在のパスワード"
+    new_password: "新しいパスワード"
+    confirm_new_password: "新しいパスワード（確認）"
+    update_password: "パスワードを更新"
+    
+    # Session management section
+    sessions: "アクティブなセッション"
+    logout_devices_help: "他のデバイスやブラウザからログインしている場合、セキュリティのため一度にすべてからログアウトできます。"
+    logout_devices_button: "他のすべてのデバイスからログアウト"
+    logout_devices_confirm: "他のすべてのデバイスからログアウトしてもよろしいですか？このデバイスではログイン状態が維持されます。"
+    logout_devices_success: "%count%台の他のデバイスからログアウトしました。"
+    logout_devices_success_one: "1台の他のデバイスからログアウトしました。"
+    logout_devices_none: "他にアクティブなセッションはありません。"
+
+# =============================================================================
+# Topics
+# =============================================================================
+topics:
+    title: "トピック"
+    follow: "フォロー"
+    unfollow: "フォロー解除"
+    following_badge: "フォロー中"
+    
+    # Empty state
+    no_topics: "利用可能なトピックがありません"
+    no_topics_hint: "管理者がトピックを作成すると、ここに表示されます。"
+    
+    # Accessibility
+    view_topic: "%name%トピックの投稿を見る"
+    follow_topic: "%name%トピックをフォロー"
+    unfollow_topic: "%name%トピックのフォロー解除"
+
+# =============================================================================
+# Messages
+# =============================================================================
+messages:
+    title: "メッセージ"
+    new_message: "新しいメッセージ"
+    
+    # Inbox
+    no_conversations: "まだ会話がありません。"
+    start_conversation: "会話を始める"
+    you_prefix: "あなた："
+    
+    # Conversation view
+    back_to_messages: "メッセージ一覧に戻る"
+    delete_conversation: "削除"
+    delete_conversation_confirm: "この会話を削除しますか？この操作は取り消せません。"
+    load_older: "古いメッセージを読み込む"
+    no_messages: "まだメッセージがありません。会話を始めましょう！"
+    write_placeholder: "メッセージを入力..."
+    character_limit: "%count%文字まで"
+    send: "送信"
+    delete_message: "メッセージを削除"
+    delete_message_confirm: "このメッセージを削除しますか？"
+    cannot_reply: "この会話に返信することはできません。"
+    
+    # Search
+    search_title: "新しいメッセージ"
+    search_placeholder: "ユーザー名または名前で検索..."
+    search_button: "検索"
+    no_results: "ユーザーが見つかりません。"
+    search_hint: "ユーザーを検索して会話を始めましょう。"
+    
+    # Pagination
+    newer: "← 新しい"
+    older: "古い →"
+
+# =============================================================================
+# Errors
+# =============================================================================
+errors:
+    not_found_title: "404"
+    not_found: "お探しのページが見つかりませんでした。"
+    go_home: "ホームへ"
+    
+    forbidden_title: "403"
+    forbidden: "このページにアクセスする権限がありません。"
+    
+    generic: "問題が発生しました。もう一度お試しください。"
+
+# =============================================================================
+# Date Formats
+# PHP date() format strings - customize per locale
+# See: https://www.php.net/manual/en/datetime.format.php
+# =============================================================================
+dates:
+    # Short date: "12月27日"
+    format_short: "n月j日"
+    
+    # Long date: "2025年12月27日"
+    format_long: "Y年n月j日"
+    
+    # Time only: "13:39"
+    format_time: "H:i"
+    
+    # Date and time: "2025年12月27日 13:39"
+    format_datetime: "Y年n月j日 H:i"
+    
+    # Month and year: "2025年12月" (for "Joined" dates)
+    format_month_year: "Y年n月"
+
+# =============================================================================
+# Relative Dates
+# Used by the relative_date filter
+# =============================================================================
+relative:
+    just_now: "たった今"
+    minutes_ago: "%count%分前"
+    minutes_ago_one: "1分前"
+    hours_ago: "%count%時間前"
+    hours_ago_one: "1時間前"
+    days_ago: "%count%日前"
+    days_ago_one: "1日前"

@@ -1,0 +1,296 @@
+# Murmur Translation File - Polish (Poland)
+# Locale: pl-PL
+# 
+# This file contains all user-facing strings for the default theme.
+#
+# Pluralization uses ICU message format:
+#   {count, plural, =0 {no items} =1 {1 item} other {# items}}
+#
+# Variable substitution uses %variable% syntax:
+#   "Welcome, %name%"
+
+# =============================================================================
+# Common UI Elements
+# =============================================================================
+common:
+    save: "Zapisz"
+    cancel: "Anuluj"
+    delete: "Usuń"
+    edit: "Edytuj"
+    submit: "Wyślij"
+    loading: "Ładowanie..."
+    back: "Wstecz"
+    close: "Zamknij"
+    confirm: "Potwierdź"
+    yes: "Tak"
+    no: "Nie"
+    or: "lub"
+    and: "i"
+    csrf_error: "Nieprawidłowe przesłanie formularza. Spróbuj ponownie."
+
+# =============================================================================
+# Navigation
+# =============================================================================
+nav:
+    feed: "Aktualności"
+    topics: "Tematy"
+    messages: "Wiadomości"
+    admin: "Admin"
+    log_in: "Zaloguj się"
+    log_out: "Wyloguj się"
+    sign_up: "Zarejestruj się"
+    user_menu: "Menu użytkownika"
+    view_feed: "Zobacz aktualności"
+    browse_topics: "Przeglądaj wszystkie tematy"
+
+# =============================================================================
+# Authentication
+# =============================================================================
+auth:
+    # Login page
+    login_title: "Zaloguj się"
+    login_button: "Zaloguj się"
+    email_label: "E-mail"
+    password_label: "Hasło"
+    no_account: "Nie masz konta?"
+    
+    # Registration page
+    register_title: "Utwórz konto"
+    register_button: "Utwórz konto"
+    name_label: "Imię i nazwisko"
+    name_help: "Twoje pełne imię i nazwisko, jak ma być wyświetlane."
+    username_label: "Nazwa użytkownika"
+    username_help: "3-30 znaków. Tylko litery, cyfry i podkreślenia."
+    password_help: "Minimum 8 znaków."
+    confirm_password_label: "Potwierdź hasło"
+    has_account: "Masz już konto?"
+    registration_closed: "Rejestracja jest obecnie zamknięta."
+
+# =============================================================================
+# Feed
+# =============================================================================
+feed:
+    title: "Strona główna"
+    filter_all: "Wszystko"
+    filter_following: "Obserwowane"
+    
+    # Empty states
+    no_posts: "Brak postów"
+    no_posts_hint: "Bądź pierwszy, który coś udostępni."
+    no_following_posts: "Brak postów z obserwowanych tematów"
+    no_following_hint: "Obserwuj tematy, aby zobaczyć tutaj posty, lub zobacz"
+    
+    # Pagination
+    newer: "← Nowsze"
+    older: "Starsze →"
+
+# =============================================================================
+# Posts
+# =============================================================================
+post:
+    # Actions
+    like: "Lubię to"
+    unlike: "Nie lubię"
+    comment: "Skomentuj"
+    delete: "Usuń"
+    delete_confirm: "Czy na pewno chcesz usunąć ten post?"
+    
+    # Counts
+    
+    
+    
+    # Accessibility
+    view_post: "Zobacz post z %date%"
+    view_comment: "Zobacz komentarz z %date%"
+    post_attachment: "Załącznik posta"
+    
+    # Topic follow
+    follow_topic: "Obserwuj temat"
+    unfollow_topic: "Przestań obserwować temat"
+    
+    # Post detail page
+    back_to_feed: "← Powrót do aktualności"
+    comments_title: "Komentarze"
+    sort_label: "Sortuj:"
+    sort_oldest: "Najstarsze"
+    sort_newest: "Najnowsze"
+    no_comments: "Brak komentarzy. Bądź pierwszy, który odpowie."
+    
+    # Reply indicator on profile
+    commenting_on: "Komentuje post"
+    
+    # Video
+    video_not_supported: "Twoja przeglądarka nie obsługuje odtwarzania wideo."
+
+# =============================================================================
+# Compose Form
+# =============================================================================
+compose:
+    placeholder: "O czym myślisz?"
+    reply_placeholder: "Napisz komentarz..."
+    post_button: "Opublikuj"
+    comment_button: "Skomentuj"
+    topic_select_optional: "Wybierz temat (opcjonalnie)"
+    topic_select_required: "Wybierz temat"
+    add_images: "Dodaj zdjęcia"
+    add_media: "Dodaj zdjęcia lub wideo"
+    too_many_images: "za dużo!"
+    image_limit_error: "Wybierz maksymalnie %max% zdjęć. Wybrałeś %count%."
+    uploading: "Przesyłanie..."
+
+# =============================================================================
+# Profile
+# =============================================================================
+profile:
+    # Header
+    joined: "Dołączył %date%"
+    edit_profile: "Edytuj profil"
+    
+    # Stats
+    followers: "%count% obserwujących"
+    followers_one: "1 obserwujący"
+    following: "%count% obserwowanych"
+    following_one: "1 obserwowany"
+    
+    # Actions
+    follow: "Obserwuj"
+    unfollow: "Przestań obserwować"
+    message: "Wiadomość"
+    
+    # Posts section
+    posts_title: "Posty"
+    no_posts: "%username% jeszcze nic nie opublikował."
+
+# =============================================================================
+# User Settings
+# =============================================================================
+settings:
+    title: "Ustawienia"
+    
+    # Profile section
+    profile_title: "Profil"
+    avatar_label: "Avatar"
+    upload_avatar: "Prześlij avatar"
+    change_avatar: "Zmień avatar"
+    remove_avatar: "Usuń avatar"
+    bio_label: "Bio"
+    bio_placeholder: "Opowiedz nam o sobie..."
+    save_changes: "Zapisz zmiany"
+    view_profile: "Zobacz profil"
+    
+    # Password section
+    password_title: "Zmień hasło"
+    current_password: "Aktualne hasło"
+    new_password: "Nowe hasło"
+    confirm_new_password: "Potwierdź nowe hasło"
+    update_password: "Zaktualizuj hasło"
+    
+    # Session management section
+    sessions: "Aktywne sesje"
+    logout_devices_help: "Jeśli zalogowałeś się z innych urządzeń lub przeglądarek, możesz wylogować się ze wszystkich naraz dla bezpieczeństwa."
+    logout_devices_button: "Wyloguj ze wszystkich innych urządzeń"
+    logout_devices_confirm: "Czy na pewno chcesz wylogować się ze wszystkich innych urządzeń? Pozostaniesz zalogowany na tym urządzeniu."
+    logout_devices_success: "Wylogowano z %count% innych urządzeń."
+    logout_devices_success_one: "Wylogowano z 1 innego urządzenia."
+    logout_devices_none: "Nie znaleziono innych aktywnych sesji."
+
+# =============================================================================
+# Topics
+# =============================================================================
+topics:
+    title: "Tematy"
+    follow: "Obserwuj"
+    unfollow: "Przestań obserwować"
+    following_badge: "Obserwujesz"
+    
+    # Empty state
+    no_topics: "Brak dostępnych tematów"
+    no_topics_hint: "Tematy pojawią się tutaj, gdy zostaną utworzone przez administratora."
+    
+    # Accessibility
+    view_topic: "Zobacz posty w temacie %name%"
+    follow_topic: "Obserwuj temat %name%"
+    unfollow_topic: "Przestań obserwować temat %name%"
+
+# =============================================================================
+# Messages
+# =============================================================================
+messages:
+    title: "Wiadomości"
+    new_message: "Nowa wiadomość"
+    
+    # Inbox
+    no_conversations: "Brak konwersacji."
+    start_conversation: "Rozpocznij konwersację"
+    you_prefix: "Ty:"
+    
+    # Conversation view
+    back_to_messages: "Powrót do wiadomości"
+    delete_conversation: "Usuń"
+    delete_conversation_confirm: "Usunąć tę konwersację? Tej operacji nie można cofnąć."
+    load_older: "Załaduj starsze wiadomości"
+    no_messages: "Brak wiadomości. Rozpocznij konwersację!"
+    write_placeholder: "Napisz wiadomość..."
+    character_limit: "Limit %count% znaków"
+    send: "Wyślij"
+    delete_message: "Usuń wiadomość"
+    delete_message_confirm: "Usunąć tę wiadomość?"
+    cannot_reply: "Nie możesz odpowiedzieć na tę konwersację."
+    
+    # Search
+    search_title: "Nowa wiadomość"
+    search_placeholder: "Szukaj po nazwie użytkownika lub imieniu..."
+    search_button: "Szukaj"
+    no_results: "Nie znaleziono użytkowników."
+    search_hint: "Wyszukaj użytkownika, aby rozpocząć konwersację."
+    
+    # Pagination
+    newer: "← Nowsze"
+    older: "Starsze →"
+
+# =============================================================================
+# Errors
+# =============================================================================
+errors:
+    not_found_title: "404"
+    not_found: "Strona, której szukasz, nie została znaleziona."
+    go_home: "Strona główna"
+    
+    forbidden_title: "403"
+    forbidden: "Nie masz uprawnień do wyświetlenia tej strony."
+    
+    generic: "Coś poszło nie tak. Spróbuj ponownie."
+
+# =============================================================================
+# Date Formats
+# PHP date() format strings - customize per locale
+# See: https://www.php.net/manual/en/datetime.format.php
+# =============================================================================
+dates:
+    # Short date: "27 gru"
+    format_short: "j M"
+    
+    # Long date: "27 grudnia 2025"
+    format_long: "j F Y"
+    
+    # Time only: "13:39"
+    format_time: "H:i"
+    
+    # Date and time: "27 grudnia 2025 13:39"
+    format_datetime: "j F Y H:i"
+    
+    # Month and year: "grudzień 2025" (for "Joined" dates)
+    format_month_year: "F Y"
+
+# =============================================================================
+# Relative Dates
+# Used by the relative_date filter
+# =============================================================================
+relative:
+    just_now: "przed chwilą"
+    minutes_ago: "%count% minut temu"
+    minutes_ago_one: "1 minutę temu"
+    hours_ago: "%count% godzin temu"
+    hours_ago_one: "1 godzinę temu"
+    days_ago: "%count% dni temu"
+    days_ago_one: "1 dzień temu"

@@ -1,0 +1,296 @@
+# Murmur Translation File - Italian (Italy)
+# Locale: it-IT
+# 
+# This file contains all user-facing strings for the default theme.
+#
+# Pluralization uses ICU message format:
+#   {count, plural, =0 {no items} =1 {1 item} other {# items}}
+#
+# Variable substitution uses %variable% syntax:
+#   "Welcome, %name%"
+
+# =============================================================================
+# Common UI Elements
+# =============================================================================
+common:
+    save: "Salva"
+    cancel: "Annulla"
+    delete: "Elimina"
+    edit: "Modifica"
+    submit: "Invia"
+    loading: "Caricamento..."
+    back: "Indietro"
+    close: "Chiudi"
+    confirm: "Conferma"
+    yes: "Sì"
+    no: "No"
+    or: "o"
+    and: "e"
+    csrf_error: "Invio del modulo non valido. Riprova."
+
+# =============================================================================
+# Navigation
+# =============================================================================
+nav:
+    feed: "Feed"
+    topics: "Argomenti"
+    messages: "Messaggi"
+    admin: "Admin"
+    log_in: "Accedi"
+    log_out: "Esci"
+    sign_up: "Registrati"
+    user_menu: "Menu utente"
+    view_feed: "Visualizza feed"
+    browse_topics: "Sfoglia tutti gli argomenti"
+
+# =============================================================================
+# Authentication
+# =============================================================================
+auth:
+    # Login page
+    login_title: "Accedi"
+    login_button: "Accedi"
+    email_label: "E-mail"
+    password_label: "Password"
+    no_account: "Non hai un account?"
+    
+    # Registration page
+    register_title: "Crea un account"
+    register_button: "Crea account"
+    name_label: "Nome"
+    name_help: "Il tuo nome completo come vorresti che fosse visualizzato."
+    username_label: "Nome utente"
+    username_help: "3-30 caratteri. Solo lettere, numeri e underscore."
+    password_help: "Almeno 8 caratteri."
+    confirm_password_label: "Conferma password"
+    has_account: "Hai già un account?"
+    registration_closed: "Le registrazioni sono attualmente chiuse."
+
+# =============================================================================
+# Feed
+# =============================================================================
+feed:
+    title: "Home"
+    filter_all: "Tutti"
+    filter_following: "Seguiti"
+    
+    # Empty states
+    no_posts: "Nessun post ancora"
+    no_posts_hint: "Sii il primo a condividere qualcosa."
+    no_following_posts: "Nessun post dagli argomenti seguiti"
+    no_following_hint: "Segui degli argomenti per vedere i post qui, o visualizza"
+    
+    # Pagination
+    newer: "← Più recenti"
+    older: "Più vecchi →"
+
+# =============================================================================
+# Posts
+# =============================================================================
+post:
+    # Actions
+    like: "Mi piace"
+    unlike: "Non mi piace più"
+    comment: "Commenta"
+    delete: "Elimina"
+    delete_confirm: "Sei sicuro di voler eliminare questo post?"
+    
+    # Counts
+    
+    
+    
+    # Accessibility
+    view_post: "Visualizza post del %date%"
+    view_comment: "Visualizza commento del %date%"
+    post_attachment: "Allegato del post"
+    
+    # Topic follow
+    follow_topic: "Segui argomento"
+    unfollow_topic: "Non seguire più argomento"
+    
+    # Post detail page
+    back_to_feed: "← Torna al feed"
+    comments_title: "Commenti"
+    sort_label: "Ordina:"
+    sort_oldest: "Più vecchi"
+    sort_newest: "Più recenti"
+    no_comments: "Nessun commento ancora. Sii il primo a rispondere."
+    
+    # Reply indicator on profile
+    commenting_on: "Commento a un post"
+    
+    # Video
+    video_not_supported: "Il tuo browser non supporta la riproduzione video."
+
+# =============================================================================
+# Compose Form
+# =============================================================================
+compose:
+    placeholder: "A cosa stai pensando?"
+    reply_placeholder: "Scrivi un commento..."
+    post_button: "Pubblica"
+    comment_button: "Commenta"
+    topic_select_optional: "Seleziona un argomento (opzionale)"
+    topic_select_required: "Seleziona un argomento"
+    add_images: "Aggiungi immagini"
+    add_media: "Aggiungi immagini o video"
+    too_many_images: "troppe!"
+    image_limit_error: "Seleziona al massimo %max% immagini. Ne hai selezionate %count%."
+    uploading: "Caricamento..."
+
+# =============================================================================
+# Profile
+# =============================================================================
+profile:
+    # Header
+    joined: "Iscritto da %date%"
+    edit_profile: "Modifica profilo"
+    
+    # Stats
+    followers: "%count% follower"
+    followers_one: "1 follower"
+    following: "%count% seguiti"
+    following_one: "1 seguito"
+    
+    # Actions
+    follow: "Segui"
+    unfollow: "Non seguire più"
+    message: "Messaggio"
+    
+    # Posts section
+    posts_title: "Post"
+    no_posts: "%username% non ha ancora pubblicato nulla."
+
+# =============================================================================
+# User Settings
+# =============================================================================
+settings:
+    title: "Impostazioni"
+    
+    # Profile section
+    profile_title: "Profilo"
+    avatar_label: "Avatar"
+    upload_avatar: "Carica avatar"
+    change_avatar: "Cambia avatar"
+    remove_avatar: "Rimuovi avatar"
+    bio_label: "Biografia"
+    bio_placeholder: "Raccontaci di te..."
+    save_changes: "Salva modifiche"
+    view_profile: "Visualizza profilo"
+    
+    # Password section
+    password_title: "Cambia password"
+    current_password: "Password attuale"
+    new_password: "Nuova password"
+    confirm_new_password: "Conferma nuova password"
+    update_password: "Aggiorna password"
+    
+    # Session management section
+    sessions: "Sessioni attive"
+    logout_devices_help: "Se hai effettuato l'accesso da altri dispositivi o browser, puoi disconnetterti da tutti contemporaneamente per sicurezza."
+    logout_devices_button: "Disconnetti tutti gli altri dispositivi"
+    logout_devices_confirm: "Sei sicuro di volerti disconnettere da tutti gli altri dispositivi? Rimarrai connesso su questo dispositivo."
+    logout_devices_success: "Disconnesso da %count% altro/i dispositivo/i."
+    logout_devices_success_one: "Disconnesso da 1 altro dispositivo."
+    logout_devices_none: "Nessun'altra sessione attiva trovata."
+
+# =============================================================================
+# Topics
+# =============================================================================
+topics:
+    title: "Argomenti"
+    follow: "Segui"
+    unfollow: "Non seguire più"
+    following_badge: "Seguito"
+    
+    # Empty state
+    no_topics: "Nessun argomento disponibile"
+    no_topics_hint: "Gli argomenti appariranno qui una volta creati da un amministratore."
+    
+    # Accessibility
+    view_topic: "Visualizza post nell'argomento %name%"
+    follow_topic: "Segui argomento %name%"
+    unfollow_topic: "Non seguire più argomento %name%"
+
+# =============================================================================
+# Messages
+# =============================================================================
+messages:
+    title: "Messaggi"
+    new_message: "Nuovo messaggio"
+    
+    # Inbox
+    no_conversations: "Nessuna conversazione ancora."
+    start_conversation: "Inizia una conversazione"
+    you_prefix: "Tu:"
+    
+    # Conversation view
+    back_to_messages: "Torna ai messaggi"
+    delete_conversation: "Elimina"
+    delete_conversation_confirm: "Eliminare questa conversazione? Non può essere annullato."
+    load_older: "Carica messaggi più vecchi"
+    no_messages: "Nessun messaggio ancora. Inizia la conversazione!"
+    write_placeholder: "Scrivi un messaggio..."
+    character_limit: "Limite di %count% caratteri"
+    send: "Invia"
+    delete_message: "Elimina messaggio"
+    delete_message_confirm: "Eliminare questo messaggio?"
+    cannot_reply: "Non puoi rispondere a questa conversazione."
+    
+    # Search
+    search_title: "Nuovo messaggio"
+    search_placeholder: "Cerca per nome utente o nome..."
+    search_button: "Cerca"
+    no_results: "Nessun utente trovato."
+    search_hint: "Cerca un utente per iniziare una conversazione."
+    
+    # Pagination
+    newer: "← Più recenti"
+    older: "Più vecchi →"
+
+# =============================================================================
+# Errors
+# =============================================================================
+errors:
+    not_found_title: "404"
+    not_found: "La pagina che stai cercando non è stata trovata."
+    go_home: "Vai alla home"
+    
+    forbidden_title: "403"
+    forbidden: "Non hai il permesso di accedere a questa pagina."
+    
+    generic: "Qualcosa è andato storto. Riprova."
+
+# =============================================================================
+# Date Formats
+# PHP date() format strings - customize per locale
+# See: https://www.php.net/manual/en/datetime.format.php
+# =============================================================================
+dates:
+    # Short date: "27 dic"
+    format_short: "j M"
+    
+    # Long date: "27 dicembre 2025"
+    format_long: "j F Y"
+    
+    # Time only: "13:39"
+    format_time: "H:i"
+    
+    # Date and time: "27 dicembre 2025 13:39"
+    format_datetime: "j F Y H:i"
+    
+    # Month and year: "dicembre 2025" (for "Joined" dates)
+    format_month_year: "F Y"
+
+# =============================================================================
+# Relative Dates
+# Used by the relative_date filter
+# =============================================================================
+relative:
+    just_now: "proprio ora"
+    minutes_ago: "%count% minuti fa"
+    minutes_ago_one: "1 minuto fa"
+    hours_ago: "%count% ore fa"
+    hours_ago_one: "1 ora fa"
+    days_ago: "%count% giorni fa"
+    days_ago_one: "1 giorno fa"

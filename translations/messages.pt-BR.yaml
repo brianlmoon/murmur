@@ -1,0 +1,296 @@
+# Murmur Translation File - Portuguese (Brazil)
+# Locale: pt-BR
+# 
+# This file contains all user-facing strings for the default theme.
+#
+# Pluralization uses ICU message format:
+#   {count, plural, =0 {no items} =1 {1 item} other {# items}}
+#
+# Variable substitution uses %variable% syntax:
+#   "Welcome, %name%"
+
+# =============================================================================
+# Common UI Elements
+# =============================================================================
+common:
+    save: "Salvar"
+    cancel: "Cancelar"
+    delete: "Excluir"
+    edit: "Editar"
+    submit: "Enviar"
+    loading: "Carregando..."
+    back: "Voltar"
+    close: "Fechar"
+    confirm: "Confirmar"
+    yes: "Sim"
+    no: "Não"
+    or: "ou"
+    and: "e"
+    csrf_error: "Envio de formulário inválido. Por favor, tente novamente."
+
+# =============================================================================
+# Navigation
+# =============================================================================
+nav:
+    feed: "Início"
+    topics: "Tópicos"
+    messages: "Mensagens"
+    admin: "Admin"
+    log_in: "Entrar"
+    log_out: "Sair"
+    sign_up: "Cadastrar"
+    user_menu: "Menu do usuário"
+    view_feed: "Ver início"
+    browse_topics: "Explorar todos os tópicos"
+
+# =============================================================================
+# Authentication
+# =============================================================================
+auth:
+    # Login page
+    login_title: "Entrar"
+    login_button: "Entrar"
+    email_label: "E-mail"
+    password_label: "Senha"
+    no_account: "Não tem uma conta?"
+    
+    # Registration page
+    register_title: "Criar uma conta"
+    register_button: "Criar conta"
+    name_label: "Nome"
+    name_help: "Seu nome completo como você gostaria que fosse exibido."
+    username_label: "Nome de usuário"
+    username_help: "3-30 caracteres. Apenas letras, números e underscores."
+    password_help: "No mínimo 8 caracteres."
+    confirm_password_label: "Confirmar senha"
+    has_account: "Já tem uma conta?"
+    registration_closed: "O cadastro está fechado no momento."
+
+# =============================================================================
+# Feed
+# =============================================================================
+feed:
+    title: "Início"
+    filter_all: "Todos"
+    filter_following: "Seguindo"
+    
+    # Empty states
+    no_posts: "Nenhuma publicação ainda"
+    no_posts_hint: "Seja o primeiro a compartilhar algo."
+    no_following_posts: "Nenhuma publicação dos tópicos seguidos"
+    no_following_hint: "Siga tópicos para ver publicações aqui, ou veja"
+    
+    # Pagination
+    newer: "← Mais recentes"
+    older: "Mais antigas →"
+
+# =============================================================================
+# Posts
+# =============================================================================
+post:
+    # Actions
+    like: "Curtir"
+    unlike: "Descurtir"
+    comment: "Comentar"
+    delete: "Excluir"
+    delete_confirm: "Tem certeza de que deseja excluir esta publicação?"
+    
+    # Counts
+    
+    
+    
+    # Accessibility
+    view_post: "Ver publicação de %date%"
+    view_comment: "Ver comentário de %date%"
+    post_attachment: "Anexo da publicação"
+    
+    # Topic follow
+    follow_topic: "Seguir tópico"
+    unfollow_topic: "Deixar de seguir tópico"
+    
+    # Post detail page
+    back_to_feed: "← Voltar ao início"
+    comments_title: "Comentários"
+    sort_label: "Ordenar:"
+    sort_oldest: "Mais antigos"
+    sort_newest: "Mais recentes"
+    no_comments: "Nenhum comentário ainda. Seja o primeiro a responder."
+    
+    # Reply indicator on profile
+    commenting_on: "Comentando em uma publicação"
+    
+    # Video
+    video_not_supported: "Seu navegador não suporta reprodução de vídeo."
+
+# =============================================================================
+# Compose Form
+# =============================================================================
+compose:
+    placeholder: "No que você está pensando?"
+    reply_placeholder: "Escreva um comentário..."
+    post_button: "Publicar"
+    comment_button: "Comentar"
+    topic_select_optional: "Selecionar um tópico (opcional)"
+    topic_select_required: "Selecionar um tópico"
+    add_images: "Adicionar imagens"
+    add_media: "Adicionar imagens ou vídeo"
+    too_many_images: "muitas!"
+    image_limit_error: "Por favor, selecione no máximo %max% imagens. Você selecionou %count%."
+    uploading: "Enviando..."
+
+# =============================================================================
+# Profile
+# =============================================================================
+profile:
+    # Header
+    joined: "Entrou em %date%"
+    edit_profile: "Editar perfil"
+    
+    # Stats
+    followers: "%count% seguidores"
+    followers_one: "1 seguidor"
+    following: "%count% seguindo"
+    following_one: "1 seguindo"
+    
+    # Actions
+    follow: "Seguir"
+    unfollow: "Deixar de seguir"
+    message: "Mensagem"
+    
+    # Posts section
+    posts_title: "Publicações"
+    no_posts: "%username% ainda não publicou nada."
+
+# =============================================================================
+# User Settings
+# =============================================================================
+settings:
+    title: "Configurações"
+    
+    # Profile section
+    profile_title: "Perfil"
+    avatar_label: "Avatar"
+    upload_avatar: "Enviar avatar"
+    change_avatar: "Alterar avatar"
+    remove_avatar: "Remover avatar"
+    bio_label: "Biografia"
+    bio_placeholder: "Conte-nos sobre você..."
+    save_changes: "Salvar alterações"
+    view_profile: "Ver perfil"
+    
+    # Password section
+    password_title: "Alterar senha"
+    current_password: "Senha atual"
+    new_password: "Nova senha"
+    confirm_new_password: "Confirmar nova senha"
+    update_password: "Atualizar senha"
+    
+    # Session management section
+    sessions: "Sessões ativas"
+    logout_devices_help: "Se você fez login em outros dispositivos ou navegadores, pode sair de todos de uma vez por segurança."
+    logout_devices_button: "Sair de todos os outros dispositivos"
+    logout_devices_confirm: "Tem certeza de que deseja sair de todos os outros dispositivos? Você permanecerá conectado neste dispositivo."
+    logout_devices_success: "Desconectado de %count% outro(s) dispositivo(s)."
+    logout_devices_success_one: "Desconectado de 1 outro dispositivo."
+    logout_devices_none: "Nenhuma outra sessão ativa encontrada."
+
+# =============================================================================
+# Topics
+# =============================================================================
+topics:
+    title: "Tópicos"
+    follow: "Seguir"
+    unfollow: "Deixar de seguir"
+    following_badge: "Seguindo"
+    
+    # Empty state
+    no_topics: "Nenhum tópico disponível"
+    no_topics_hint: "Os tópicos aparecerão aqui assim que forem criados por um administrador."
+    
+    # Accessibility
+    view_topic: "Ver publicações no tópico %name%"
+    follow_topic: "Seguir tópico %name%"
+    unfollow_topic: "Deixar de seguir tópico %name%"
+
+# =============================================================================
+# Messages
+# =============================================================================
+messages:
+    title: "Mensagens"
+    new_message: "Nova mensagem"
+    
+    # Inbox
+    no_conversations: "Nenhuma conversa ainda."
+    start_conversation: "Iniciar uma conversa"
+    you_prefix: "Você:"
+    
+    # Conversation view
+    back_to_messages: "Voltar às mensagens"
+    delete_conversation: "Excluir"
+    delete_conversation_confirm: "Excluir esta conversa? Isso não pode ser desfeito."
+    load_older: "Carregar mensagens mais antigas"
+    no_messages: "Nenhuma mensagem ainda. Inicie a conversa!"
+    write_placeholder: "Escreva uma mensagem..."
+    character_limit: "Limite de %count% caracteres"
+    send: "Enviar"
+    delete_message: "Excluir mensagem"
+    delete_message_confirm: "Excluir esta mensagem?"
+    cannot_reply: "Você não pode responder a esta conversa."
+    
+    # Search
+    search_title: "Nova mensagem"
+    search_placeholder: "Buscar por nome de usuário ou nome..."
+    search_button: "Buscar"
+    no_results: "Nenhum usuário encontrado."
+    search_hint: "Busque um usuário para iniciar uma conversa."
+    
+    # Pagination
+    newer: "← Mais recentes"
+    older: "Mais antigas →"
+
+# =============================================================================
+# Errors
+# =============================================================================
+errors:
+    not_found_title: "404"
+    not_found: "A página que você procura não foi encontrada."
+    go_home: "Ir para o início"
+    
+    forbidden_title: "403"
+    forbidden: "Você não tem permissão para acessar esta página."
+    
+    generic: "Algo deu errado. Por favor, tente novamente."
+
+# =============================================================================
+# Date Formats
+# PHP date() format strings - customize per locale
+# See: https://www.php.net/manual/en/datetime.format.php
+# =============================================================================
+dates:
+    # Short date: "27 dez"
+    format_short: "j M"
+    
+    # Long date: "27 de dezembro de 2025"
+    format_long: "j \\d\\e F \\d\\e Y"
+    
+    # Time only: "13:39"
+    format_time: "H:i"
+    
+    # Date and time: "27 de dezembro de 2025 13:39"
+    format_datetime: "j \\d\\e F \\d\\e Y H:i"
+    
+    # Month and year: "dezembro de 2025" (for "Joined" dates)
+    format_month_year: "F \\d\\e Y"
+
+# =============================================================================
+# Relative Dates
+# Used by the relative_date filter
+# =============================================================================
+relative:
+    just_now: "agora mesmo"
+    minutes_ago: "há %count% minutos"
+    minutes_ago_one: "há 1 minuto"
+    hours_ago: "há %count% horas"
+    hours_ago_one: "há 1 hora"
+    days_ago: "há %count% dias"
+    days_ago_one: "há 1 dia"
