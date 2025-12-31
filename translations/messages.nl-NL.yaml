@@ -1,6 +1,6 @@
 # Murmur Translation File - Dutch (Netherlands)
 # Locale: nl-NL
-# 
+#
 # This file contains all user-facing strings for the default theme.
 #
 # Pluralization uses ICU message format:
@@ -53,7 +53,7 @@ auth:
     email_label: "E-mail"
     password_label: "Wachtwoord"
     no_account: "Nog geen account?"
-    
+
     # Registration page
     register_title: "Account aanmaken"
     register_button: "Account aanmaken"
@@ -73,13 +73,13 @@ feed:
     title: "Home"
     filter_all: "Alles"
     filter_following: "Volgend"
-    
+
     # Empty states
     no_posts: "Nog geen berichten"
     no_posts_hint: "Wees de eerste om iets te delen."
     no_following_posts: "Geen berichten van gevolgde onderwerpen"
     no_following_hint: "Volg onderwerpen om hier berichten te zien, of bekijk"
-    
+
     # Pagination
     newer: "← Nieuwer"
     older: "Ouder →"
@@ -94,20 +94,20 @@ post:
     comment: "Reageren"
     delete: "Verwijderen"
     delete_confirm: "Weet je zeker dat je dit bericht wilt verwijderen?"
-    
+
     # Counts
-    
-    
-    
+
+
+
     # Accessibility
     view_post: "Bericht van %date% bekijken"
     view_comment: "Reactie van %date% bekijken"
     post_attachment: "Berichtbijlage"
-    
+
     # Topic follow
     follow_topic: "Onderwerp volgen"
     unfollow_topic: "Onderwerp ontvolgen"
-    
+
     # Post detail page
     back_to_feed: "← Terug naar feed"
     comments_title: "Reacties"
@@ -115,10 +115,10 @@ post:
     sort_oldest: "Oudste"
     sort_newest: "Nieuwste"
     no_comments: "Nog geen reacties. Wees de eerste om te reageren."
-    
+
     # Reply indicator on profile
     commenting_on: "Reageert op een bericht"
-    
+
     # Video
     video_not_supported: "Je browser ondersteunt geen video."
 
@@ -135,7 +135,7 @@ compose:
     add_images: "Afbeeldingen toevoegen"
     add_media: "Afbeeldingen of video toevoegen"
     too_many_images: "te veel!"
-    image_limit_error: "Selecteer maximaal %max% afbeeldingen. Je hebt %count% geselecteerd."
+    image_limit_error: "Selecteer maximaal %max% afbeeldingen. Je hebt er %count% geselecteerd."
     uploading: "Uploaden..."
 
 # =============================================================================
@@ -145,18 +145,18 @@ profile:
     # Header
     joined: "Lid sinds %date%"
     edit_profile: "Profiel bewerken"
-    
+
     # Stats
     followers: "%count% volgers"
     followers_one: "1 volger"
     following: "%count% volgend"
     following_one: "1 volgend"
-    
+
     # Actions
     follow: "Volgen"
     unfollow: "Ontvolgen"
     message: "Bericht"
-    
+
     # Posts section
     posts_title: "Berichten"
     no_posts: "%username% heeft nog niets geplaatst."
@@ -166,7 +166,7 @@ profile:
 # =============================================================================
 settings:
     title: "Instellingen"
-    
+
     # Profile section
     profile_title: "Profiel"
     avatar_label: "Avatar"
@@ -177,14 +177,14 @@ settings:
     bio_placeholder: "Vertel ons over jezelf..."
     save_changes: "Wijzigingen opslaan"
     view_profile: "Profiel bekijken"
-    
+
     # Password section
     password_title: "Wachtwoord wijzigen"
     current_password: "Huidig wachtwoord"
     new_password: "Nieuw wachtwoord"
     confirm_new_password: "Nieuw wachtwoord bevestigen"
     update_password: "Wachtwoord bijwerken"
-    
+
     # Session management section
     sessions: "Actieve sessies"
     logout_devices_help: "Als je bent ingelogd op andere apparaten of browsers, kun je voor de veiligheid overal tegelijk uitloggen."
@@ -202,11 +202,11 @@ topics:
     follow: "Volgen"
     unfollow: "Ontvolgen"
     following_badge: "Volgend"
-    
+
     # Empty state
     no_topics: "Geen onderwerpen beschikbaar"
     no_topics_hint: "Onderwerpen verschijnen hier zodra ze zijn aangemaakt door een beheerder."
-    
+
     # Accessibility
     view_topic: "Berichten in onderwerp %name% bekijken"
     follow_topic: "Onderwerp %name% volgen"
@@ -218,12 +218,12 @@ topics:
 messages:
     title: "Berichten"
     new_message: "Nieuw bericht"
-    
+
     # Inbox
     no_conversations: "Nog geen gesprekken."
     start_conversation: "Start een gesprek"
     you_prefix: "Jij:"
-    
+
     # Conversation view
     back_to_messages: "Terug naar berichten"
     delete_conversation: "Verwijderen"
@@ -236,14 +236,14 @@ messages:
     delete_message: "Bericht verwijderen"
     delete_message_confirm: "Dit bericht verwijderen?"
     cannot_reply: "Je kunt niet reageren op dit gesprek."
-    
+
     # Search
     search_title: "Nieuw bericht"
     search_placeholder: "Zoeken op gebruikersnaam of naam..."
     search_button: "Zoeken"
     no_results: "Geen gebruikers gevonden."
     search_hint: "Zoek een gebruiker om een gesprek te starten."
-    
+
     # Pagination
     newer: "← Nieuwer"
     older: "Ouder →"
@@ -255,10 +255,10 @@ errors:
     not_found_title: "404"
     not_found: "De pagina die je zoekt kon niet worden gevonden."
     go_home: "Naar home"
-    
+
     forbidden_title: "403"
     forbidden: "Je hebt geen toestemming om deze pagina te bekijken."
-    
+
     generic: "Er is iets misgegaan. Probeer het opnieuw."
 
 # =============================================================================
@@ -269,16 +269,16 @@ errors:
 dates:
     # Short date: "27 dec"
     format_short: "j M"
-    
+
     # Long date: "27 december 2025"
     format_long: "j F Y"
-    
+
     # Time only: "13:39"
     format_time: "H:i"
-    
+
     # Date and time: "27 december 2025 13:39"
     format_datetime: "j F Y H:i"
-    
+
     # Month and year: "december 2025" (for "Joined" dates)
     format_month_year: "F Y"
 
