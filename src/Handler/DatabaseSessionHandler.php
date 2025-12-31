@@ -88,8 +88,8 @@ class DatabaseSessionHandler implements SessionHandlerInterface {
      * Writes session data to the database.
      *
      * Note: Uses read-then-write pattern. For high-concurrency deployments,
-     * consider database-native UPSERT (ON DUPLICATE KEY UPDATE / ON CONFLICT).
-     * See Section 9 "Performance Considerations" in DB_SESSIONS.md for details.
+     * consider database-native UPSERT (ON DUPLICATE KEY UPDATE / ON CONFLICT)
+     * and other performance optimizations described in the project documentation.
      *
      * @param string $id   The session ID.
      * @param string $data The serialized session data.
