@@ -66,6 +66,36 @@ auth:
     has_account: "Já tem uma conta?"
     registration_closed: "O cadastro está fechado no momento."
 
+
+# =============================================================================
+# OAuth
+# =============================================================================
+oauth:
+    # OAuth button labels
+    or_sign_in_with: "Ou entre com"
+    sign_in_google: "Entrar com Google"
+    sign_in_facebook: "Entrar com Facebook"
+    sign_in_apple: "Entrar com Apple"
+    or_sign_up_with: "Ou cadastre-se com"
+    sign_up_google: "Cadastrar com Google"
+    sign_up_facebook: "Cadastrar com Facebook"
+    sign_up_apple: "Cadastrar com Apple"
+    complete_profile: "Complete seu perfil"
+    choose_username_help: "Escolha um nome de usuário para completar sua conta %provider%"
+    complete_registration: "Concluir cadastro"
+    connected_accounts: "Contas conectadas"
+    connected_accounts_help: "Gerencie provedores OAuth vinculados à sua conta. Você pode entrar com qualquer provedor vinculado."
+    manage_connected_accounts: "Vincular ou desvincular provedores OAuth como Google, Facebook e Apple."
+    linked: "Vinculado"
+    not_linked: "Não vinculado"
+    link: "Vincular"
+    unlink: "Desvincular"
+    unlink_confirm: "Tem certeza de que deseja desvincular sua conta %provider%?"
+    cannot_unlink: "Não é possível desvincular"
+    disabled: "Desativado"
+    no_password_warning: "Sua conta tem apenas métodos de login OAuth. Considere definir uma senha para segurança adicional."
+
+
 # =============================================================================
 # Feed
 # =============================================================================
@@ -193,6 +223,10 @@ settings:
     logout_devices_success: "Desconectado de %count% outro(s) dispositivo(s)."
     logout_devices_success_one: "Desconectado de 1 outro dispositivo."
     logout_devices_none: "Nenhuma outra sessão ativa encontrada."
+    
+    # Connected accounts section
+    connected_accounts: "Contas conectadas"
+    manage_connections: "Gerenciar conexões"
 
 # =============================================================================
 # Topics

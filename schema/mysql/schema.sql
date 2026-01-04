@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS `users` (
     `username`      VARCHAR(50) NOT NULL,
     `name`          VARCHAR(100) DEFAULT NULL,
     `email`         VARCHAR(255) NOT NULL,
-    `password_hash` VARCHAR(255) NOT NULL,
+    `password_hash` VARCHAR(255) DEFAULT NULL,
     `bio`           TEXT DEFAULT NULL,
     `avatar_path`   VARCHAR(255) DEFAULT NULL,
     `is_admin`      TINYINT(1) NOT NULL DEFAULT 0,
@@ -87,7 +87,10 @@ INSERT INTO `settings` (`setting_name`, `setting_value`) VALUES
     ('site_name', 'Murmur'),
     ('registration_open', '1'),
     ('videos_allowed', '1'),
-    ('max_video_size_mb', '100')
+    ('max_video_size_mb', '100'),
+    ('oauth_google_enabled', '0'),
+    ('oauth_facebook_enabled', '0'),
+    ('oauth_apple_enabled', '0')
 ON DUPLICATE KEY UPDATE `setting_name` = `setting_name`;
 
 -- -----------------------------------------------------------------------------
@@ -215,4 +218,23 @@ CREATE TABLE IF NOT EXISTS `user_blocks` (
     KEY `idx_blocked` (`blocked_id`),
     FOREIGN KEY (`blocker_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE,
     FOREIGN KEY (`blocked_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- -----------------------------------------------------------------------------
+-- User OAuth Providers table
+-- Tracks OAuth provider connections for user accounts.
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `user_oauth_providers` (
+    `oauth_id`         BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `user_id`          BIGINT UNSIGNED NOT NULL,
+    `provider`         VARCHAR(20) NOT NULL,
+    `provider_user_id` VARCHAR(255) NOT NULL,
+    `email`            VARCHAR(255) DEFAULT NULL,
+    `name`             VARCHAR(255) DEFAULT NULL,
+    `created_at`       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`oauth_id`),
+    UNIQUE KEY `uk_provider_user` (`provider`, `provider_user_id`),
+    KEY `idx_user_id` (`user_id`),
+    CONSTRAINT `fk_oauth_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

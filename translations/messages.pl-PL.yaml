@@ -66,6 +66,36 @@ auth:
     has_account: "Masz już konto?"
     registration_closed: "Rejestracja jest obecnie zamknięta."
 
+
+# =============================================================================
+# OAuth
+# =============================================================================
+oauth:
+    # OAuth button labels
+    or_sign_in_with: "Lub zaloguj się przez"
+    sign_in_google: "Zaloguj się przez Google"
+    sign_in_facebook: "Zaloguj się przez Facebook"
+    sign_in_apple: "Zaloguj się przez Apple"
+    or_sign_up_with: "Lub zarejestruj się przez"
+    sign_up_google: "Zarejestruj się przez Google"
+    sign_up_facebook: "Zarejestruj się przez Facebook"
+    sign_up_apple: "Zarejestruj się przez Apple"
+    complete_profile: "Uzupełnij swój profil"
+    choose_username_help: "Wybierz nazwę użytkownika, aby ukończyć konto %provider%"
+    complete_registration: "Zakończ rejestrację"
+    connected_accounts: "Połączone konta"
+    connected_accounts_help: "Zarządzaj dostawcami OAuth połączonymi z Twoim kontem. Możesz zalogować się za pomocą dowolnego połączonego dostawcy."
+    manage_connected_accounts: "Połącz lub odłącz dostawców OAuth, takich jak Google, Facebook i Apple."
+    linked: "Połączony"
+    not_linked: "Niepołączony"
+    link: "Połącz"
+    unlink: "Odłącz"
+    unlink_confirm: "Czy na pewno chcesz odłączyć konto %provider%?"
+    cannot_unlink: "Nie można odłączyć"
+    disabled: "Wyłączony"
+    no_password_warning: "Twoje konto ma tylko metody logowania OAuth. Rozważ ustawienie hasła dla dodatkowego bezpieczeństwa."
+
+
 # =============================================================================
 # Feed
 # =============================================================================
@@ -193,6 +223,10 @@ settings:
     logout_devices_success: "Wylogowano z %count% innych urządzeń."
     logout_devices_success_one: "Wylogowano z 1 innego urządzenia."
     logout_devices_none: "Nie znaleziono innych aktywnych sesji."
+    
+    # Connected accounts section
+    connected_accounts: "Połączone konta"
+    manage_connections: "Zarządzaj połączeniami"
 
 # =============================================================================
 # Topics

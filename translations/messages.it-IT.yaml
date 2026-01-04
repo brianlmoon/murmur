@@ -66,6 +66,36 @@ auth:
     has_account: "Hai già un account?"
     registration_closed: "Le registrazioni sono attualmente chiuse."
 
+
+# =============================================================================
+# OAuth
+# =============================================================================
+oauth:
+    # OAuth button labels
+    or_sign_in_with: "Oppure accedi con"
+    sign_in_google: "Accedi con Google"
+    sign_in_facebook: "Accedi con Facebook"
+    sign_in_apple: "Accedi con Apple"
+    or_sign_up_with: "Oppure registrati con"
+    sign_up_google: "Registrati con Google"
+    sign_up_facebook: "Registrati con Facebook"
+    sign_up_apple: "Registrati con Apple"
+    complete_profile: "Completa il tuo profilo"
+    choose_username_help: "Scegli un nome utente per completare il tuo account %provider%"
+    complete_registration: "Completa registrazione"
+    connected_accounts: "Account collegati"
+    connected_accounts_help: "Gestisci i provider OAuth collegati al tuo account. Puoi accedere con qualsiasi provider collegato."
+    manage_connected_accounts: "Collega o scollega provider OAuth come Google, Facebook e Apple."
+    linked: "Collegato"
+    not_linked: "Non collegato"
+    link: "Collega"
+    unlink: "Scollega"
+    unlink_confirm: "Sei sicuro di voler scollegare il tuo account %provider%?"
+    cannot_unlink: "Impossibile scollegare"
+    disabled: "Disabilitato"
+    no_password_warning: "Il tuo account ha solo metodi di accesso OAuth. Considera di impostare una password per maggiore sicurezza."
+
+
 # =============================================================================
 # Feed
 # =============================================================================
@@ -193,6 +223,10 @@ settings:
     logout_devices_success: "Disconnesso da %count% altro/i dispositivo/i."
     logout_devices_success_one: "Disconnesso da 1 altro dispositivo."
     logout_devices_none: "Nessun'altra sessione attiva trovata."
+    
+    # Connected accounts section
+    connected_accounts: "Account collegati"
+    manage_connections: "Gestisci connessioni"
 
 # =============================================================================
 # Topics

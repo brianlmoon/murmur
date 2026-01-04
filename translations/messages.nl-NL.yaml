@@ -66,6 +66,36 @@ auth:
     has_account: "Heb je al een account?"
     registration_closed: "Registratie is momenteel gesloten."
 
+
+# =============================================================================
+# OAuth
+# =============================================================================
+oauth:
+    # OAuth button labels
+    or_sign_in_with: "Of log in met"
+    sign_in_google: "Inloggen met Google"
+    sign_in_facebook: "Inloggen met Facebook"
+    sign_in_apple: "Inloggen met Apple"
+    or_sign_up_with: "Of registreer met"
+    sign_up_google: "Registreren met Google"
+    sign_up_facebook: "Registreren met Facebook"
+    sign_up_apple: "Registreren met Apple"
+    complete_profile: "Voltooi je profiel"
+    choose_username_help: "Kies een gebruikersnaam om je %provider%-account te voltooien"
+    complete_registration: "Registratie voltooien"
+    connected_accounts: "Gekoppelde accounts"
+    connected_accounts_help: "Beheer OAuth-providers die aan je account zijn gekoppeld. Je kunt inloggen met elke gekoppelde provider."
+    manage_connected_accounts: "Koppel OAuth-providers zoals Google, Facebook en Apple of ontkoppel deze."
+    linked: "Gekoppeld"
+    not_linked: "Niet gekoppeld"
+    link: "Koppelen"
+    unlink: "Ontkoppelen"
+    unlink_confirm: "Weet je zeker dat je je %provider%-account wilt ontkoppelen?"
+    cannot_unlink: "Kan niet ontkoppelen"
+    disabled: "Uitgeschakeld"
+    no_password_warning: "Je account heeft alleen OAuth-inlogmethoden. Overweeg een wachtwoord in te stellen voor extra beveiliging."
+
+
 # =============================================================================
 # Feed
 # =============================================================================
@@ -193,6 +223,10 @@ settings:
     logout_devices_success: "Uitgelogd op %count% andere apparaat/apparaten."
     logout_devices_success_one: "Uitgelogd op 1 ander apparaat."
     logout_devices_none: "Geen andere actieve sessies gevonden."
+    
+    # Connected accounts section
+    connected_accounts: "Gekoppelde accounts"
+    manage_connections: "Koppelingen beheren"
 
 # =============================================================================
 # Topics

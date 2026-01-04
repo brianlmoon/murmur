@@ -19,6 +19,7 @@ Modern social platforms optimize for engagement, not connection. Murmur takes a 
 - **Topics** — Organize conversations by category; follow topics that interest you
 - **User Follows** — Build your own feed by following people you care about
 - **Private Messaging** — One-to-one conversations between mutual follows
+- **OAuth Authentication** — Sign in with Google, Facebook, or Apple
 - **Multi-Language** — Full internationalization support with YAML translation files
 - **Flexible Storage** — Local filesystem or S3-compatible cloud storage (Amazon S3, DigitalOcean Spaces, MinIO, Cloudflare R2)
 - **Theming** — Customizable themes with CSS-only styling
@@ -52,6 +53,7 @@ Visit `http://localhost:8000` and complete the setup wizard to create your admin
 | [Installation](docs/installation.md) | Complete setup instructions for all databases |
 | [Configuration](docs/configuration.md) | Database, settings, and environment options |
 | [Administration](docs/administration.md) | Managing users, topics, and site settings |
+| [OAuth Authentication](docs/oauth.md) | Set up Google, Facebook, or Apple sign-in |
 | [Translations](docs/translations.md) | Adding new languages and customizing text |
 
 ## Requirements

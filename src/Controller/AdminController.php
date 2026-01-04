@@ -222,23 +222,24 @@ class AdminController extends BaseController {
         $topics = $this->topic_service->getAllTopics();
 
         return $this->render('admin/settings.html.twig', [
-            'site_name'         => $this->admin_service->getSiteName(),
-            'registration_open' => $this->admin_service->isRegistrationOpen(),
-            'images_allowed'    => $this->admin_service->areImagesAllowed(),
-            'theme'             => $this->admin_service->getTheme(),
-            'logo_url'          => $this->admin_service->getLogoUrl(),
-            'require_approval'  => $this->admin_service->isApprovalRequired(),
-            'public_feed'       => $this->admin_service->isPublicFeed(),
-            'require_topic'     => $this->admin_service->isTopicRequired(),
-            'messaging_enabled' => $this->admin_service->isMessagingEnabled(),
-            'max_post_length'   => $this->admin_service->getMaxPostLength(),
-            'max_attachments'   => $this->admin_service->getMaxAttachments(),
-            'locale'            => $this->admin_service->getLocale(),
-            'videos_allowed'    => $this->admin_service->areVideosAllowed(),
-            'max_video_size_mb' => $this->admin_service->getMaxVideoSizeMb(),
-            'available_themes'  => $this->admin_service->getAvailableThemes($templates_path),
-            'available_locales' => $this->translation_service->getAvailableLocalesWithNames(),
-            'topics'            => $topics,
+            'site_name'           => $this->admin_service->getSiteName(),
+            'registration_open'   => $this->admin_service->isRegistrationOpen(),
+            'images_allowed'      => $this->admin_service->areImagesAllowed(),
+            'theme'               => $this->admin_service->getTheme(),
+            'logo_url'            => $this->admin_service->getLogoUrl(),
+            'require_approval'    => $this->admin_service->isApprovalRequired(),
+            'public_feed'         => $this->admin_service->isPublicFeed(),
+            'require_topic'       => $this->admin_service->isTopicRequired(),
+            'messaging_enabled'   => $this->admin_service->isMessagingEnabled(),
+            'max_post_length'     => $this->admin_service->getMaxPostLength(),
+            'max_attachments'     => $this->admin_service->getMaxAttachments(),
+            'locale'              => $this->admin_service->getLocale(),
+            'videos_allowed'      => $this->admin_service->areVideosAllowed(),
+            'max_video_size_mb'   => $this->admin_service->getMaxVideoSizeMb(),
+            'available_themes'    => $this->admin_service->getAvailableThemes($templates_path),
+            'available_locales'   => $this->translation_service->getAvailableLocalesWithNames(),
+            'topics'              => $topics,
+            'oauth_providers'     => $this->admin_service->getOAuthProviderStatus(),
         ]);
     }
 
@@ -274,11 +275,32 @@ class AdminController extends BaseController {
         $locale = (string) $this->getPost('locale', 'en-US');
         $videos_allowed = $this->getPost('videos_allowed') === '1';
         $max_video_size_mb = (int) ($this->getPost('max_video_size_mb') ?? 100);
+        $oauth_google_enabled = $this->getPost('oauth_google_enabled') === '1';
+        $oauth_facebook_enabled = $this->getPost('oauth_facebook_enabled') === '1';
+        $oauth_apple_enabled = $this->getPost('oauth_apple_enabled') === '1';
 
         $templates_path = dirname(__DIR__, 2) . '/templates';
         $topics = $this->topic_service->getAllTopics();
 
-        $update_result = $this->admin_service->updateSettings($site_name, $registration_open, $images_allowed, $theme, $logo_url, $require_approval, $public_feed, $require_topic, $messaging_enabled, $max_post_length, $max_attachments, $locale, $videos_allowed, $max_video_size_mb);
+        $update_result = $this->admin_service->updateSettings(
+            $site_name,
+            $registration_open,
+            $images_allowed,
+            $theme,
+            $logo_url,
+            $require_approval,
+            $public_feed,
+            $require_topic,
+            $messaging_enabled,
+            $max_post_length,
+            $max_attachments,
+            $locale,
+            $videos_allowed,
+            $max_video_size_mb,
+            $oauth_google_enabled,
+            $oauth_facebook_enabled,
+            $oauth_apple_enabled
+        );
 
         if ($update_result['success']) {
             $this->session->addFlash('success', 'Settings saved.');
@@ -295,14 +317,18 @@ class AdminController extends BaseController {
                 'require_topic'     => $require_topic,
                 'messaging_enabled' => $messaging_enabled,
                 'max_post_length'   => $max_post_length,
-                'max_attachments'   => $max_attachments,
-                'locale'            => $locale,
-                'videos_allowed'    => $videos_allowed,
-                'max_video_size_mb' => $max_video_size_mb,
-                'available_themes'  => $this->admin_service->getAvailableThemes($templates_path),
-                'available_locales' => $this->translation_service->getAvailableLocalesWithNames(),
-                'topics'            => $topics,
-                'error'             => $update_result['error'],
+                'max_attachments'         => $max_attachments,
+                'locale'                  => $locale,
+                'videos_allowed'          => $videos_allowed,
+                'max_video_size_mb'       => $max_video_size_mb,
+                'oauth_google_enabled'    => $oauth_google_enabled,
+                'oauth_facebook_enabled'  => $oauth_facebook_enabled,
+                'oauth_apple_enabled'     => $oauth_apple_enabled,
+                'available_themes'        => $this->admin_service->getAvailableThemes($templates_path),
+                'available_locales'       => $this->translation_service->getAvailableLocalesWithNames(),
+                'topics'                  => $topics,
+                'oauth_providers'         => $this->admin_service->getOAuthProviderStatus(),
+                'error'                   => $update_result['error'],
             ]);
         }
 

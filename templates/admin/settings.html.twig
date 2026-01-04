@@ -184,6 +184,27 @@
                 </p>
             </div>
 
+            <h2 style="margin-top: 2rem; margin-bottom: 1rem; font-size: 1.25rem;">OAuth Providers</h2>
+            <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
+                Enable OAuth sign-in providers. Configuration credentials must be set in <code>etc/config.ini</code>.
+            </p>
+
+            {% for provider_name, status in oauth_providers %}
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox" name="oauth_{{ provider_name }}_enabled" value="1"
+                               {% if status.enabled %}checked{% endif %}
+                               {% if not status.configured %}disabled{% endif %}>
+                        <span>{{ provider_name|capitalize }}</span>
+                        {% if not status.configured %}
+                            <span style="color: var(--color-error); font-size: 0.875rem;">(Not Configured)</span>
+                        {% else %}
+                            <span style="color: var(--color-success); font-size: 0.875rem;">(Configured)</span>
+                        {% endif %}
+                    </label>
+                </div>
+            {% endfor %}
+
             <button type="submit" class="btn btn-primary">Save Settings</button>
         </form>
     </div>

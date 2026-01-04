@@ -226,6 +226,17 @@
                 </button>
             </form>
         </div>
+
+        <h2 class="settings-title">{{ 'settings.connected_accounts'|trans }}</h2>
+        
+        <div class="form-group">
+            <p style="color: var(--color-text-muted); margin-bottom: 1rem;">
+                {{ 'oauth.manage_connected_accounts'|trans }}
+            </p>
+            <a href="{{ base_url }}/settings/connected-accounts" class="btn" style="background: var(--color-bg);">
+                {{ 'settings.manage_connections'|trans }}
+            </a>
+        </div>
     </div>
 
     <script>

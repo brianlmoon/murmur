@@ -66,6 +66,36 @@ auth:
     has_account: "すでにアカウントをお持ちですか？"
     registration_closed: "現在、新規登録は受け付けておりません。"
 
+
+# =============================================================================
+# OAuth
+# =============================================================================
+oauth:
+    # OAuth button labels
+    or_sign_in_with: "または次でログイン"
+    sign_in_google: "Googleでログイン"
+    sign_in_facebook: "Facebookでログイン"
+    sign_in_apple: "Appleでログイン"
+    or_sign_up_with: "または次で登録"
+    sign_up_google: "Googleで登録"
+    sign_up_facebook: "Facebookで登録"
+    sign_up_apple: "Appleで登録"
+    complete_profile: "プロフィールを完成させる"
+    choose_username_help: "%provider%アカウントを完成させるためにユーザー名を選択してください"
+    complete_registration: "登録を完了"
+    connected_accounts: "接続されたアカウント"
+    connected_accounts_help: "アカウントにリンクされているOAuthプロバイダーを管理します。リンクされているプロバイダーでログインできます。"
+    manage_connected_accounts: "Google、Facebook、Appleなどのeスサービスプロバイダーをリンクまたはリンク解除します。"
+    linked: "リンク済み"
+    not_linked: "未リンク"
+    link: "リンク"
+    unlink: "リンク解除"
+    unlink_confirm: "%provider%アカウントのリンクを解除してもよろしいですか？"
+    cannot_unlink: "リンク解除できません"
+    disabled: "無効"
+    no_password_warning: "アカウントにはOAuthログイン方法のみがあります。セキュリティ強化のためパスワードの設定を検討してください。"
+
+
 # =============================================================================
 # Feed
 # =============================================================================
@@ -193,6 +223,10 @@ settings:
     logout_devices_success: "%count%台の他のデバイスからログアウトしました。"
     logout_devices_success_one: "1台の他のデバイスからログアウトしました。"
     logout_devices_none: "他にアクティブなセッションはありません。"
+    
+    # Connected accounts section
+    connected_accounts: "接続されたアカウント"
+    manage_connections: "接続を管理"
 
 # =============================================================================
 # Topics

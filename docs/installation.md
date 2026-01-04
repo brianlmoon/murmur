@@ -226,3 +226,4 @@ Check your PHP error log. Common causes:
 
 - [Configuration](configuration.md) — Customize your instance
 - [Administration](administration.md) — Manage users and settings
+- [OAuth Authentication](oauth.md) — Set up Google, Facebook, or Apple sign-in

@@ -66,6 +66,36 @@ auth:
     has_account: "이미 계정이 있으신가요?"
     registration_closed: "현재 가입이 중단되었습니다."
 
+
+# =============================================================================
+# OAuth
+# =============================================================================
+oauth:
+    # OAuth button labels
+    or_sign_in_with: "또는 다음으로 로그인"
+    sign_in_google: "Google로 로그인"
+    sign_in_facebook: "Facebook으로 로그인"
+    sign_in_apple: "Apple로 로그인"
+    or_sign_up_with: "또는 다음으로 가입"
+    sign_up_google: "Google로 가입"
+    sign_up_facebook: "Facebook으로 가입"
+    sign_up_apple: "Apple로 가입"
+    complete_profile: "프로필 완성하기"
+    choose_username_help: "%provider% 계정을 완성하려면 사용자 이름을 선택하세요"
+    complete_registration: "등록 완료"
+    connected_accounts: "연결된 계정"
+    connected_accounts_help: "계정에 연결된 OAuth 제공업체를 관리합니다. 연결된 제공업체로 로그인할 수 있습니다."
+    manage_connected_accounts: "Google, Facebook, Apple과 같은 OAuth 제공업체를 연결하거나 연결 해제합니다."
+    linked: "연결됨"
+    not_linked: "연결 안 됨"
+    link: "연결"
+    unlink: "연결 해제"
+    unlink_confirm: "%provider% 계정 연결을 해제하시겠습니까?"
+    cannot_unlink: "연결 해제할 수 없음"
+    disabled: "비활성화됨"
+    no_password_warning: "계정에 OAuth 로그인 방법만 있습니다. 추가 보안을 위해 비밀번호 설정을 고려하세요."
+
+
 # =============================================================================
 # Feed
 # =============================================================================
@@ -193,6 +223,10 @@ settings:
     logout_devices_success: "%count%개의 다른 기기에서 로그아웃되었습니다."
     logout_devices_success_one: "1개의 다른 기기에서 로그아웃되었습니다."
     logout_devices_none: "다른 활성 세션이 없습니다."
+    
+    # Connected accounts section
+    connected_accounts: "연결된 계정"
+    manage_connections: "연결 관리"
 
 # =============================================================================
 # Topics

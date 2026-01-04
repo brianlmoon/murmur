@@ -66,6 +66,36 @@ auth:
     has_account: "已有账号？"
     registration_closed: "目前暂不开放注册。"
 
+
+# =============================================================================
+# OAuth
+# =============================================================================
+oauth:
+    # OAuth button labels
+    or_sign_in_with: "或使用以下方式登录"
+    sign_in_google: "使用 Google 登录"
+    sign_in_facebook: "使用 Facebook 登录"
+    sign_in_apple: "使用 Apple 登录"
+    or_sign_up_with: "或使用以下方式注册"
+    sign_up_google: "使用 Google 注册"
+    sign_up_facebook: "使用 Facebook 注册"
+    sign_up_apple: "使用 Apple 注册"
+    complete_profile: "完善您的资料"
+    choose_username_help: "选择用户名以完成您的 %provider% 账户"
+    complete_registration: "完成注册"
+    connected_accounts: "已连接的账户"
+    connected_accounts_help: "管理与您账户关联的 OAuth 提供商。您可以使用任何已关联的提供商登录。"
+    manage_connected_accounts: "关联或取消关联 Google、Facebook 和 Apple 等 OAuth 提供商。"
+    linked: "已关联"
+    not_linked: "未关联"
+    link: "关联"
+    unlink: "取消关联"
+    unlink_confirm: "您确定要取消关联您的 %provider% 账户吗？"
+    cannot_unlink: "无法取消关联"
+    disabled: "已禁用"
+    no_password_warning: "您的账户仅有 OAuth 登录方式。请考虑设置密码以增强安全性。"
+
+
 # =============================================================================
 # Feed
 # =============================================================================
@@ -193,6 +223,10 @@ settings:
     logout_devices_success: "已从%count%个其他设备退出。"
     logout_devices_success_one: "已从1个其他设备退出。"
     logout_devices_none: "未发现其他活跃会话。"
+    
+    # Connected accounts section
+    connected_accounts: "已连接的账户"
+    manage_connections: "管理连接"
 
 # =============================================================================
 # Topics

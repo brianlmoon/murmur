@@ -13,6 +13,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Murmur\Controller\AdminController;
 use Murmur\Controller\AuthController;
 use Murmur\Controller\MessageController;
+use Murmur\Controller\OAuthController;
 use Murmur\Controller\PostController;
 use Murmur\Controller\ProfileController;
 use Murmur\Controller\SetupController;
@@ -30,12 +31,15 @@ use Murmur\Repository\TopicMapper;
 use Murmur\Repository\UserBlockMapper;
 use Murmur\Repository\UserFollowMapper;
 use Murmur\Repository\UserMapper;
+use Murmur\Repository\UserOAuthProviderMapper;
 use Murmur\Service\AdminService;
 use Murmur\Service\AuthService;
 use Murmur\Service\MediaService;
 use Murmur\Service\LikeService;
 use Murmur\Service\LinkPreviewService;
 use Murmur\Service\MessageService;
+use Murmur\Service\OAuthConfigService;
+use Murmur\Service\OAuthService;
 use Murmur\Service\PostService;
 use Murmur\Service\ProfileService;
 use Murmur\Service\SessionService;
@@ -78,6 +82,7 @@ $user_follow_mapper = new UserFollowMapper();
 $conversation_mapper = new ConversationMapper();
 $message_mapper = new MessageMapper();
 $user_block_mapper = new UserBlockMapper();
+$user_oauth_mapper = new UserOAuthProviderMapper();
 
 // Add global template variables
 $base_url = $setting_mapper->getBaseUrl();
@@ -138,7 +143,14 @@ $session_service = new SessionService($user_mapper, $session_mapper);
 $auth_service = new AuthService($user_mapper, $setting_mapper);
 $post_service = new PostService($post_mapper, $user_mapper, $like_mapper, $topic_mapper, $setting_mapper, $post_attachment_mapper);
 $profile_service = new ProfileService($user_mapper);
-$admin_service = new AdminService($user_mapper, $post_mapper, $setting_mapper);
+
+// Build full OAuth callback URL (protocol + domain + base path)
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$oauth_base_url = $protocol . '://' . $host . $base_url;
+
+$oauth_config_service = new OAuthConfigService($config, $oauth_base_url);
+$admin_service = new AdminService($user_mapper, $post_mapper, $setting_mapper, $oauth_config_service);
 $max_video_size = $setting_mapper->getMaxVideoSizeMb() * 1024 * 1024;
 $media_service = new MediaService($storage, $max_video_size);
 $like_service = new LikeService($like_mapper);
@@ -146,6 +158,7 @@ $topic_service = new TopicService($topic_mapper, $topic_follow_mapper);
 $link_preview_service = new LinkPreviewService($link_preview_mapper);
 $user_follow_service = new UserFollowService($user_follow_mapper, $user_mapper);
 $user_block_service = new UserBlockService($user_block_mapper, $user_mapper);
+$oauth_service = new OAuthService($oauth_config_service, $user_mapper, $user_oauth_mapper, $setting_mapper);
 $message_service = new MessageService(
     $conversation_mapper,
     $message_mapper,
@@ -156,9 +169,10 @@ $message_service = new MessageService(
 );
 
 // Initialize Controllers
-$auth_controller = new AuthController($twig, $session_service, $setting_mapper, $auth_service);
+$auth_controller = new AuthController($twig, $session_service, $setting_mapper, $auth_service, $oauth_service);
+$oauth_controller = new OAuthController($twig, $session_service, $setting_mapper, $oauth_service);
 $post_controller = new PostController($twig, $session_service, $setting_mapper, $post_service, $media_service, $like_service, $topic_service, $link_preview_service);
-$profile_controller = new ProfileController($twig, $session_service, $setting_mapper, $profile_service, $post_service, $media_service, $user_follow_service, $message_service, $translation_service, $link_preview_service);
+$profile_controller = new ProfileController($twig, $session_service, $setting_mapper, $profile_service, $post_service, $media_service, $user_follow_service, $message_service, $translation_service, $link_preview_service, $oauth_service);
 $admin_controller = new AdminController($twig, $session_service, $setting_mapper, $admin_service, $topic_service, $translation_service);
 $setup_controller = new SetupController($twig, $session_service, $setting_mapper, $auth_service);
 $message_controller = new MessageController($twig, $session_service, $setting_mapper, $message_service, $user_block_service, $user_mapper, $media_service);
@@ -228,6 +242,13 @@ $router->add('exact', '/login', ['controller' => $auth_controller, 'action' => '
 $router->add('exact', '/login', ['controller' => $auth_controller, 'action' => 'login'], ['method' => 'POST']);
 $router->add('exact', '/logout', ['controller' => $auth_controller, 'action' => 'logout'], ['method' => 'POST']);
 
+// OAuth routes
+$router->add('regex', '/^\/oauth\/(google|facebook|apple)$/', ['controller' => $oauth_controller, 'action' => 'authorize'], ['method' => 'GET', 'tokens' => ['provider']]);
+$router->add('regex', '/^\/oauth\/(google|facebook|apple)\/callback$/', ['controller' => $oauth_controller, 'action' => 'callback'], ['method' => 'GET', 'tokens' => ['provider']]);
+$router->add('exact', '/oauth/complete', ['controller' => $oauth_controller, 'action' => 'complete'], ['method' => 'POST']);
+$router->add('regex', '/^\/oauth\/(google|facebook|apple)\/unlink$/', ['controller' => $oauth_controller, 'action' => 'unlink'], ['method' => 'POST', 'tokens' => ['provider']]);
+
+
 // Post routes
 $router->add('exact', '/', ['controller' => $post_controller, 'action' => 'feed'], ['method' => 'GET']);
 $router->add('exact', '/post', ['controller' => $post_controller, 'action' => 'create'], ['method' => 'POST']);
@@ -248,6 +269,8 @@ $router->add('exact', '/settings', ['controller' => $profile_controller, 'action
 $router->add('exact', '/settings/password', ['controller' => $profile_controller, 'action' => 'updatePassword'], ['method' => 'POST']);
 $router->add('exact', '/settings/avatar/remove', ['controller' => $profile_controller, 'action' => 'removeAvatar'], ['method' => 'POST']);
 $router->add('exact', '/settings/logout-devices', ['controller' => $profile_controller, 'action' => 'logoutAllDevices'], ['method' => 'POST']);
+$router->add('exact', '/settings/connected-accounts', ['controller' => $profile_controller, 'action' => 'showConnectedAccounts'], ['method' => 'GET']);
+
 $router->add('regex', '/^\/user\/([a-zA-Z0-9_]+)$/', ['controller' => $profile_controller, 'action' => 'show'], ['method' => 'GET', 'tokens' => ['username']]);
 $router->add('regex', '/^\/user\/([a-zA-Z0-9_]+)\/follow$/', ['controller' => $profile_controller, 'action' => 'follow'], ['method' => 'POST', 'tokens' => ['username']]);
 $router->add('regex', '/^\/user\/([a-zA-Z0-9_]+)\/unfollow$/', ['controller' => $profile_controller, 'action' => 'unfollow'], ['method' => 'POST', 'tokens' => ['username']]);

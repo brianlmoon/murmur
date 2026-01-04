@@ -9,6 +9,7 @@ use Murmur\Repository\PostMapper;
 use Murmur\Repository\SettingMapper;
 use Murmur\Repository\UserMapper;
 use Murmur\Service\AdminService;
+use Murmur\Service\OAuthConfigService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -25,14 +26,18 @@ class AdminServiceTest extends TestCase {
 
     protected MockObject $setting_mapper;
 
+    protected MockObject $oauth_config;
+
     protected function setUp(): void {
         $this->user_mapper = $this->createMock(UserMapper::class);
         $this->post_mapper = $this->createMock(PostMapper::class);
         $this->setting_mapper = $this->createMock(SettingMapper::class);
+        $this->oauth_config = $this->createMock(OAuthConfigService::class);
         $this->admin_service = new AdminService(
             $this->user_mapper,
             $this->post_mapper,
-            $this->setting_mapper
+            $this->setting_mapper,
+            $this->oauth_config
         );
     }
 
@@ -191,16 +196,16 @@ class AdminServiceTest extends TestCase {
 
     public function testUpdateSettingsSuccess(): void {
         $this->setting_mapper
-            ->expects($this->exactly(14))
+            ->expects($this->exactly(17))
             ->method('saveSetting');
 
-        $result = $this->admin_service->updateSettings('My Site', true, true, 'default', 'https://example.com/logo.png', false, true, false, true, 500, 10, 'en-US', true, 100);
+        $result = $this->admin_service->updateSettings('My Site', true, true, 'default', 'https://example.com/logo.png', false, true, false, true, 500, 10, 'en-US', true, 100, true, false, true);
 
         $this->assertTrue($result['success']);
     }
 
     public function testUpdateSettingsEmptySiteName(): void {
-        $result = $this->admin_service->updateSettings('', true, true, 'default', '');
+        $result = $this->admin_service->updateSettings('', true, true, 'default', '', false, true, false, true, 500, 10, 'en-US', true, 100, false, false, false);
 
         $this->assertFalse($result['success']);
         $this->assertEquals('Site name cannot be empty.', $result['error']);
@@ -209,7 +214,7 @@ class AdminServiceTest extends TestCase {
     public function testUpdateSettingsSiteNameTooLong(): void {
         $long_name = str_repeat('a', 51);
 
-        $result = $this->admin_service->updateSettings($long_name, true, true, 'default', '');
+        $result = $this->admin_service->updateSettings($long_name, true, true, 'default', '', false, true, false, true, 500, 10, 'en-US', true, 100, false, false, false);
 
         $this->assertFalse($result['success']);
         $this->assertEquals('Site name cannot exceed 50 characters.', $result['error']);

@@ -68,6 +68,38 @@ auth:
     registration_closed: "Registration is currently closed."
 
 # =============================================================================
+# OAuth
+# =============================================================================
+oauth:
+    # OAuth button labels
+    or_sign_in_with: "Or sign in with"
+    sign_in_google: "Sign in with Google"
+    sign_in_facebook: "Sign in with Facebook"
+    sign_in_apple: "Sign in with Apple"
+    or_sign_up_with: "Or sign up with"
+    sign_up_google: "Sign up with Google"
+    sign_up_facebook: "Sign up with Facebook"
+    sign_up_apple: "Sign up with Apple"
+    
+    # OAuth completion page
+    complete_profile: "Complete Your Profile"
+    choose_username_help: "Choose a username to complete your %provider% account"
+    complete_registration: "Complete Registration"
+    
+    # Connected accounts page
+    connected_accounts: "Connected Accounts"
+    connected_accounts_help: "Manage OAuth providers linked to your account. You can sign in with any linked provider."
+    manage_connected_accounts: "Link or unlink OAuth providers like Google, Facebook, and Apple."
+    linked: "Linked"
+    not_linked: "Not linked"
+    link: "Link"
+    unlink: "Unlink"
+    unlink_confirm: "Are you sure you want to unlink your %provider% account?"
+    cannot_unlink: "Cannot unlink"
+    disabled: "Disabled"
+    no_password_warning: "Your account only has OAuth sign-in methods. Consider setting a password for additional security."
+
+# =============================================================================
 # Feed
 # =============================================================================
 feed:
@@ -194,6 +226,10 @@ settings:
     logout_devices_success: "Logged out from %count% other device(s)."
     logout_devices_success_one: "Logged out from 1 other device."
     logout_devices_none: "No other active sessions found."
+    
+    # Connected accounts section
+    connected_accounts: "Connected Accounts"
+    manage_connections: "Manage Connections"
 
 # =============================================================================
 # Topics

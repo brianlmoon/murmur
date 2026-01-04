@@ -66,6 +66,36 @@ auth:
     has_account: "Bereits ein Konto?"
     registration_closed: "Die Registrierung ist derzeit geschlossen."
 
+
+# =============================================================================
+# OAuth
+# =============================================================================
+oauth:
+    # OAuth button labels
+    or_sign_in_with: "Oder anmelden mit"
+    sign_in_google: "Mit Google anmelden"
+    sign_in_facebook: "Mit Facebook anmelden"
+    sign_in_apple: "Mit Apple anmelden"
+    or_sign_up_with: "Oder registrieren mit"
+    sign_up_google: "Mit Google registrieren"
+    sign_up_facebook: "Mit Facebook registrieren"
+    sign_up_apple: "Mit Apple registrieren"
+    complete_profile: "Profil vervollständigen"
+    choose_username_help: "Wählen Sie einen Benutzernamen, um Ihr %provider%-Konto abzuschließen"
+    complete_registration: "Registrierung abschließen"
+    connected_accounts: "Verbundene Konten"
+    connected_accounts_help: "Verwalten Sie OAuth-Anbieter, die mit Ihrem Konto verknüpft sind. Sie können sich mit jedem verknüpften Anbieter anmelden."
+    manage_connected_accounts: "OAuth-Anbieter wie Google, Facebook und Apple verknüpfen oder trennen."
+    linked: "Verknüpft"
+    not_linked: "Nicht verknüpft"
+    link: "Verknüpfen"
+    unlink: "Trennen"
+    unlink_confirm: "Möchten Sie Ihr %provider%-Konto wirklich trennen?"
+    cannot_unlink: "Kann nicht getrennt werden"
+    disabled: "Deaktiviert"
+    no_password_warning: "Ihr Konto verfügt nur über OAuth-Anmeldemethoden. Erwägen Sie, ein Passwort für zusätzliche Sicherheit festzulegen."
+
+
 # =============================================================================
 # Feed
 # =============================================================================
@@ -193,6 +223,10 @@ settings:
     logout_devices_success: "Von %count% anderen Gerät(en) abgemeldet."
     logout_devices_success_one: "Von 1 anderen Gerät abgemeldet."
     logout_devices_none: "Keine anderen aktiven Sitzungen gefunden."
+    
+    # Connected accounts section
+    connected_accounts: "Verbundene Konten"
+    manage_connections: "Verbindungen verwalten"
 
 # =============================================================================
 # Topics

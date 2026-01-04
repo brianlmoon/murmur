@@ -8,6 +8,7 @@ use Murmur\Entity\User;
 use Murmur\Repository\PostMapper;
 use Murmur\Repository\SettingMapper;
 use Murmur\Repository\UserMapper;
+use Murmur\Service\OAuthConfigService;
 
 /**
  * Service for admin operations.
@@ -32,20 +33,28 @@ class AdminService {
     protected SettingMapper $setting_mapper;
 
     /**
+     * OAuth configuration service.
+     */
+    protected OAuthConfigService $oauth_config;
+
+    /**
      * Creates a new AdminService instance.
      *
-     * @param UserMapper    $user_mapper    The user mapper.
-     * @param PostMapper    $post_mapper    The post mapper.
-     * @param SettingMapper $setting_mapper The setting mapper.
+     * @param UserMapper         $user_mapper    The user mapper.
+     * @param PostMapper         $post_mapper    The post mapper.
+     * @param SettingMapper      $setting_mapper The setting mapper.
+     * @param OAuthConfigService $oauth_config   OAuth configuration service.
      */
     public function __construct(
         UserMapper $user_mapper,
         PostMapper $post_mapper,
-        SettingMapper $setting_mapper
+        SettingMapper $setting_mapper,
+        OAuthConfigService $oauth_config
     ) {
         $this->user_mapper = $user_mapper;
         $this->post_mapper = $post_mapper;
         $this->setting_mapper = $setting_mapper;
+        $this->oauth_config = $oauth_config;
     }
 
     /**
@@ -262,24 +271,45 @@ class AdminService {
     /**
      * Updates instance settings.
      *
-     * @param string $site_name         The site name.
-     * @param bool   $registration_open Whether registration is open.
-     * @param bool   $images_allowed    Whether image uploads are allowed.
-     * @param string $theme             The theme name.
-     * @param string $logo_url          Optional logo URL.
-     * @param bool   $require_approval  Whether admin approval is required for new accounts.
-     * @param bool   $public_feed       Whether non-logged-in users can view posts.
-     * @param bool   $require_topic     Whether a topic must be selected when creating posts.
-     * @param bool   $messaging_enabled Whether private messaging is enabled.
-     * @param int    $max_post_length   Maximum characters allowed per post.
-     * @param int    $max_attachments   Maximum media attachments allowed per post.
-     * @param string $locale            The locale code (e.g., 'en-US').
-     * @param bool   $videos_allowed    Whether video uploads are allowed.
-     * @param int    $max_video_size_mb Maximum video file size in megabytes.
+     * @param string $site_name           The site name.
+     * @param bool   $registration_open   Whether registration is open.
+     * @param bool   $images_allowed      Whether image uploads are allowed.
+     * @param string $theme               The theme name.
+     * @param string $logo_url            Optional logo URL.
+     * @param bool   $require_approval    Whether admin approval is required for new accounts.
+     * @param bool   $public_feed         Whether non-logged-in users can view posts.
+     * @param bool   $require_topic       Whether a topic must be selected when creating posts.
+     * @param bool   $messaging_enabled   Whether private messaging is enabled.
+     * @param int    $max_post_length     Maximum characters allowed per post.
+     * @param int    $max_attachments     Maximum media attachments allowed per post.
+     * @param string $locale              The locale code (e.g., 'en-US').
+     * @param bool   $videos_allowed      Whether video uploads are allowed.
+     * @param int    $max_video_size_mb   Maximum video file size in megabytes.
+     * @param bool   $oauth_google_enabled Whether Google OAuth is enabled.
+     * @param bool   $oauth_facebook_enabled Whether Facebook OAuth is enabled.
+     * @param bool   $oauth_apple_enabled Whether Apple OAuth is enabled.
      *
      * @return array{success: bool, error?: string}
      */
-    public function updateSettings(string $site_name, bool $registration_open, bool $images_allowed, string $theme, string $logo_url = '', bool $require_approval = false, bool $public_feed = true, bool $require_topic = false, bool $messaging_enabled = true, int $max_post_length = 500, int $max_attachments = 10, string $locale = 'en-US', bool $videos_allowed = true, int $max_video_size_mb = 100): array {
+    public function updateSettings(
+        string $site_name,
+        bool $registration_open,
+        bool $images_allowed,
+        string $theme,
+        string $logo_url = '',
+        bool $require_approval = false,
+        bool $public_feed = true,
+        bool $require_topic = false,
+        bool $messaging_enabled = true,
+        int $max_post_length = 500,
+        int $max_attachments = 10,
+        string $locale = 'en-US',
+        bool $videos_allowed = true,
+        int $max_video_size_mb = 100,
+        bool $oauth_google_enabled = false,
+        bool $oauth_facebook_enabled = false,
+        bool $oauth_apple_enabled = false
+    ): array {
         $result = ['success' => false];
 
         $site_name = trim($site_name);
@@ -320,6 +350,9 @@ class AdminService {
             $this->setting_mapper->saveSetting('locale', $locale);
             $this->setting_mapper->saveSetting('videos_allowed', $videos_allowed ? '1' : '0');
             $this->setting_mapper->saveSetting('max_video_size_mb', (string) $max_video_size_mb);
+            $this->setting_mapper->saveSetting('oauth_google_enabled', $oauth_google_enabled ? '1' : '0');
+            $this->setting_mapper->saveSetting('oauth_facebook_enabled', $oauth_facebook_enabled ? '1' : '0');
+            $this->setting_mapper->saveSetting('oauth_apple_enabled', $oauth_apple_enabled ? '1' : '0');
             $result['success'] = true;
         }
 
@@ -469,6 +502,24 @@ class AdminService {
         } else {
             $this->user_mapper->delete($user_id);
             $result['success'] = true;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Gets OAuth provider configuration status.
+     *
+     * @return array<string, array{configured: bool, enabled: bool}>
+     */
+    public function getOAuthProviderStatus(): array {
+        $result = [];
+
+        foreach (OAuthConfigService::PROVIDERS as $provider) {
+            $result[$provider] = [
+                'configured' => $this->oauth_config->isConfigured($provider),
+                'enabled'    => $this->setting_mapper->getSetting("oauth_{$provider}_enabled", '0') === '1',
+            ];
         }
 
         return $result;

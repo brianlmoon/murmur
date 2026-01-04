@@ -1,0 +1,55 @@
+{% extends theme ~ '/layouts/base.html.twig' %}
+
+{% block title %}{{ 'oauth.complete_profile'|trans }} - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 400px; margin: 0 auto;">
+    <h1 class="card-title text-center">{{ 'oauth.complete_profile'|trans }}</h1>
+
+    <p class="text-muted text-center" style="margin-bottom: 1.5rem;">
+        {{ 'oauth.choose_username_help'|trans({'%provider%': provider|capitalize}) }}
+    </p>
+
+    {% if error is defined and error %}
+        <div class="flash flash-error">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <form method="post" action="{{ base_url }}/oauth/complete">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+        {% if name is defined and name %}
+            <div class="form-group">
+                <label class="form-label">{{ 'auth.name_label'|trans }}</label>
+                <input type="text" class="form-input" value="{{ name }}" disabled>
+            </div>
+        {% endif %}
+
+        {% if email is defined and email %}
+            <div class="form-group">
+                <label class="form-label">{{ 'auth.email_label'|trans }}</label>
+                <input type="email" class="form-input" value="{{ email }}" disabled>
+            </div>
+        {% endif %}
+
+        <div class="form-group">
+            <label for="username" class="form-label">{{ 'auth.username_label'|trans }}</label>
+            <input type="text" id="username" name="username" class="form-input"
+                   value="{{ username | default(suggested_username) }}"
+                   pattern="[a-zA-Z0-9_]+"
+                   minlength="3" maxlength="30"
+                   required autofocus>
+            <p class="text-muted" style="font-size: 0.75rem; margin-top: 0.25rem;">
+                {{ 'auth.username_help'|trans }}
+            </p>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">
+                {{ 'oauth.complete_registration'|trans }}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
