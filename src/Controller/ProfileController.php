@@ -8,6 +8,7 @@ use Murmur\Repository\SettingMapper;
 use Murmur\Service\LinkPreviewService;
 use Murmur\Service\MediaService;
 use Murmur\Service\MessageService;
+use Murmur\Service\OAuthService;
 use Murmur\Service\PostService;
 use Murmur\Service\ProfileService;
 use Murmur\Service\SessionService;
@@ -58,6 +59,11 @@ class ProfileController extends BaseController {
     protected LinkPreviewService $link_preview_service;
 
     /**
+     * OAuth service for provider management.
+     */
+    protected OAuthService $oauth_service;
+
+    /**
      * Creates a new ProfileController instance.
      *
      * @param Environment        $twig                 Twig environment for rendering.
@@ -70,6 +76,7 @@ class ProfileController extends BaseController {
      * @param MessageService     $message_service      Message service.
      * @param TranslationService $translation_service  Translation service.
      * @param LinkPreviewService $link_preview_service Link preview service.
+     * @param OAuthService       $oauth_service        OAuth service.
      */
     public function __construct(
         Environment $twig,
@@ -81,7 +88,8 @@ class ProfileController extends BaseController {
         UserFollowService $user_follow_service,
         MessageService $message_service,
         TranslationService $translation_service,
-        LinkPreviewService $link_preview_service
+        LinkPreviewService $link_preview_service,
+        OAuthService $oauth_service
     ) {
         parent::__construct($twig, $session, $setting_mapper);
         $this->profile_service      = $profile_service;
@@ -91,6 +99,7 @@ class ProfileController extends BaseController {
         $this->message_service      = $message_service;
         $this->translation_service  = $translation_service;
         $this->link_preview_service = $link_preview_service;
+        $this->oauth_service        = $oauth_service;
     }
 
     /**
@@ -457,5 +466,53 @@ class ProfileController extends BaseController {
         }
 
         $this->redirect('/settings');
+    }
+
+    /**
+     * Displays connected OAuth accounts.
+     *
+     * GET /settings/connected-accounts
+     *
+     * @return string The rendered HTML.
+     */
+    public function showConnectedAccounts(): string {
+        $this->requireAuth();
+
+        $user = $this->session->getCurrentUser();
+        $oauth_mapper = new \Murmur\Repository\UserOAuthProviderMapper();
+        $linked_providers = $oauth_mapper->findByUser($user->user_id);
+
+        $providers = [];
+
+        foreach (\Murmur\Service\OAuthConfigService::PROVIDERS as $provider) {
+            $is_linked = false;
+            $provider_email = null;
+
+            foreach ($linked_providers as $linked) {
+                if ($linked->provider === $provider) {
+                    $is_linked = true;
+                    $provider_email = $linked->email;
+                    break;
+                }
+            }
+
+            $can_unlink_result = $this->oauth_service->canUnlinkProvider(
+                $user->user_id,
+                $provider
+            );
+
+            $providers[] = [
+                'name'        => $provider,
+                'is_linked'   => $is_linked,
+                'email'       => $provider_email,
+                'can_unlink'  => $can_unlink_result['can_unlink'],
+                'is_enabled'  => $this->oauth_service->isProviderEnabled($provider),
+            ];
+        }
+
+        return $this->renderThemed('pages/settings_connected_accounts.html.twig', [
+            'providers'      => $providers,
+            'has_password'   => $user->password_hash !== null,
+        ]);
     }
 }

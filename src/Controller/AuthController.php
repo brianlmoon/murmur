@@ -6,6 +6,7 @@ namespace Murmur\Controller;
 
 use Murmur\Repository\SettingMapper;
 use Murmur\Service\AuthService;
+use Murmur\Service\OAuthService;
 use Murmur\Service\SessionService;
 use Twig\Environment;
 
@@ -22,16 +23,52 @@ class AuthController extends BaseController {
     protected AuthService $auth;
 
     /**
+     * OAuth service.
+     */
+    protected OAuthService $oauth_service;
+
+    /**
      * Creates a new AuthController instance.
      *
      * @param Environment    $twig           Twig environment for rendering.
      * @param SessionService $session        Session service.
      * @param SettingMapper  $setting_mapper Setting mapper.
      * @param AuthService    $auth           Authentication service.
+     * @param OAuthService   $oauth_service  OAuth service.
      */
-    public function __construct(Environment $twig, SessionService $session, SettingMapper $setting_mapper, AuthService $auth) {
+    public function __construct(
+        Environment $twig,
+        SessionService $session,
+        SettingMapper $setting_mapper,
+        AuthService $auth,
+        OAuthService $oauth_service
+    ) {
         parent::__construct($twig, $session, $setting_mapper);
         $this->auth = $auth;
+        $this->oauth_service = $oauth_service;
+    }
+
+    /**
+     * Gets available OAuth providers for login/register.
+     *
+     * Returns only providers that are both enabled in admin settings
+     * and have credentials configured in config.ini.
+     *
+     * @return string[] Array of provider names that are enabled and configured.
+     */
+    protected function getAvailableOAuthProviders(): array {
+        $result = [];
+
+        foreach (\Murmur\Service\OAuthConfigService::PROVIDERS as $provider) {
+            if (
+                $this->oauth_service->isProviderEnabled($provider) &&
+                $this->oauth_service->isProviderConfigured($provider)
+            ) {
+                $result[] = $provider;
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -44,7 +81,9 @@ class AuthController extends BaseController {
     public function showRegisterForm(): string {
         $this->requireGuest();
 
-        return $this->renderThemed('pages/register.html.twig');
+        return $this->renderThemed('pages/register.html.twig', [
+            'oauth_providers' => $this->getAvailableOAuthProviders(),
+        ]);
     }
 
     /**
@@ -61,7 +100,9 @@ class AuthController extends BaseController {
 
         if (!$this->validateCsrf()) {
             $this->session->addFlash('error', 'Invalid form submission. Please try again.');
-            $result = $this->renderThemed('pages/register.html.twig');
+            $result = $this->renderThemed('pages/register.html.twig', [
+                'oauth_providers' => $this->getAvailableOAuthProviders(),
+            ]);
         } else {
             $name = trim((string) $this->getPost('name', ''));
             $username = trim((string) $this->getPost('username', ''));
@@ -71,10 +112,11 @@ class AuthController extends BaseController {
 
             if ($password !== $password_confirm) {
                 $result = $this->renderThemed('pages/register.html.twig', [
-                    'error' => 'Passwords do not match.',
-                    'name' => $name,
-                    'username' => $username,
-                    'email' => $email,
+                    'error'           => 'Passwords do not match.',
+                    'name'            => $name,
+                    'username'        => $username,
+                    'email'           => $email,
+                    'oauth_providers' => $this->getAvailableOAuthProviders(),
                 ]);
             } else {
                 $auth_result = $this->auth->register($username, $email, $password, false, $name);
@@ -90,10 +132,11 @@ class AuthController extends BaseController {
                     }
                 } else {
                     $result = $this->renderThemed('pages/register.html.twig', [
-                        'error' => $auth_result['error'],
-                        'name' => $name,
-                        'username' => $username,
-                        'email' => $email,
+                        'error'           => $auth_result['error'],
+                        'name'            => $name,
+                        'username'        => $username,
+                        'email'           => $email,
+                        'oauth_providers' => $this->getAvailableOAuthProviders(),
                     ]);
                 }
             }
@@ -112,7 +155,9 @@ class AuthController extends BaseController {
     public function showLoginForm(): string {
         $this->requireGuest();
 
-        return $this->renderThemed('pages/login.html.twig');
+        return $this->renderThemed('pages/login.html.twig', [
+            'oauth_providers' => $this->getAvailableOAuthProviders(),
+        ]);
     }
 
     /**
@@ -129,7 +174,9 @@ class AuthController extends BaseController {
 
         if (!$this->validateCsrf()) {
             $this->session->addFlash('error', 'Invalid form submission. Please try again.');
-            $result = $this->renderThemed('pages/login.html.twig');
+            $result = $this->renderThemed('pages/login.html.twig', [
+                'oauth_providers' => $this->getAvailableOAuthProviders(),
+            ]);
         } else {
             $email = trim((string) $this->getPost('email', ''));
             $password = (string) $this->getPost('password', '');
@@ -146,8 +193,9 @@ class AuthController extends BaseController {
                 $this->redirect('/');
             } else {
                 $result = $this->renderThemed('pages/login.html.twig', [
-                    'error' => $auth_result['error'],
-                    'email' => $email,
+                    'error'           => $auth_result['error'],
+                    'email'           => $email,
+                    'oauth_providers' => $this->getAvailableOAuthProviders(),
                 ]);
             }
         }

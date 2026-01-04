@@ -223,6 +223,76 @@
             text-decoration: underline;
         }
 
+        /* OAuth Styles */
+        .oauth-divider {
+            margin: 1.5rem 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .oauth-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: var(--color-border);
+        }
+
+        .oauth-divider span {
+            position: relative;
+            background-color: var(--color-surface);
+            padding: 0 1rem;
+            color: var(--color-text-muted);
+            font-size: 0.875rem;
+        }
+
+        .oauth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn-oauth {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1rem;
+            border: 1px solid var(--color-border);
+            background-color: var(--color-surface);
+            color: var(--color-text);
+            font-weight: 500;
+            border-radius: var(--radius);
+            transition: background-color 0.15s, border-color 0.15s;
+        }
+
+        .btn-oauth:hover {
+            background-color: var(--color-bg);
+            border-color: var(--color-text-muted);
+            text-decoration: none;
+        }
+
+        .btn-oauth.btn-google:hover { border-color: #4285f4; }
+        .btn-oauth.btn-facebook:hover { border-color: #1877f2; }
+        .btn-oauth.btn-apple:hover { border-color: #000000; }
+
+        .oauth-provider-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .oauth-icon-google { background-color: #4285f4; }
+        .oauth-icon-facebook { background-color: #1877f2; }
+        .oauth-icon-apple { background-color: #000000; }
+
         .badge {
             display: inline-block;
             background-color: var(--color-error);

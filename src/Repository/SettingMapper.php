@@ -233,4 +233,31 @@ class SettingMapper extends AbstractMapper {
 
         return (int) ($value ?? 100);
     }
+
+    /**
+     * Checks if Google OAuth is enabled.
+     *
+     * @return bool True if Google OAuth is enabled.
+     */
+    public function isGoogleOAuthEnabled(): bool {
+        return $this->getSetting('oauth_google_enabled', '0') === '1';
+    }
+
+    /**
+     * Checks if Facebook OAuth is enabled.
+     *
+     * @return bool True if Facebook OAuth is enabled.
+     */
+    public function isFacebookOAuthEnabled(): bool {
+        return $this->getSetting('oauth_facebook_enabled', '0') === '1';
+    }
+
+    /**
+     * Checks if Apple OAuth is enabled.
+     *
+     * @return bool True if Apple OAuth is enabled.
+     */
+    public function isAppleOAuthEnabled(): bool {
+        return $this->getSetting('oauth_apple_enabled', '0') === '1';
+    }
 }

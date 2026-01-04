@@ -35,8 +35,9 @@ class User extends ValueObject {
 
     /**
      * Hashed password (Bcrypt or Argon2).
+     * Null for OAuth-only accounts.
      */
-    public string $password_hash = '';
+    public ?string $password_hash = null;
 
     /**
      * Optional profile bio/description.

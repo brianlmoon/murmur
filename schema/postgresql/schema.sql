@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS users (
     username      VARCHAR(50) NOT NULL,
     name          VARCHAR(100) DEFAULT NULL,
     email         VARCHAR(255) NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
+    password_hash VARCHAR(255) DEFAULT NULL,
     bio           TEXT DEFAULT NULL,
     avatar_path   VARCHAR(255) DEFAULT NULL,
     is_admin      BOOLEAN NOT NULL DEFAULT FALSE,
@@ -108,7 +108,10 @@ INSERT INTO settings (setting_name, setting_value) VALUES
     ('site_name', 'Murmur'),
     ('registration_open', '1'),
     ('videos_allowed', '1'),
-    ('max_video_size_mb', '100')
+    ('max_video_size_mb', '100'),
+    ('oauth_google_enabled', '0'),
+    ('oauth_facebook_enabled', '0'),
+    ('oauth_apple_enabled', '0')
 ON CONFLICT (setting_name) DO NOTHING;
 
 -- -----------------------------------------------------------------------------
@@ -231,3 +234,27 @@ CREATE TABLE IF NOT EXISTS user_blocks (
 );
 
 CREATE INDEX IF NOT EXISTS idx_user_blocks_blocked ON user_blocks(blocked_id);
+
+-- -----------------------------------------------------------------------------
+-- User OAuth Providers table
+-- Tracks OAuth provider connections for user accounts.
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS user_oauth_providers (
+    oauth_id         BIGSERIAL PRIMARY KEY,
+    user_id          BIGINT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    provider         VARCHAR(20) NOT NULL,
+    provider_user_id VARCHAR(255) NOT NULL,
+    email            VARCHAR(255) DEFAULT NULL,
+    name             VARCHAR(255) DEFAULT NULL,
+    created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (provider, provider_user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_oauth_user_id ON user_oauth_providers(user_id);
+
+DROP TRIGGER IF EXISTS trg_user_oauth_providers_updated_at ON user_oauth_providers;
+CREATE TRIGGER trg_user_oauth_providers_updated_at
+    BEFORE UPDATE ON user_oauth_providers
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();

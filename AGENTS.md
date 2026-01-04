@@ -851,6 +851,7 @@ Keys are organized hierarchically by feature:
 | `settings` | User settings |
 | `messages` | Private messaging |
 | `topics` | Topics |
+| `oauth` | OAuth authentication |
 | `errors` | Error pages |
 | `dates` | Date format strings |
 | `relative` | Relative date strings |
@@ -869,3 +870,75 @@ Keys are organized hierarchically by feature:
 3. New language appears automatically in admin settings
 
 See [docs/translations.md](docs/translations.md) for complete documentation.
+
+## OAuth Authentication
+
+Murmur supports OAuth authentication with Google, Facebook, and Apple. Users can sign in using OAuth providers and link multiple providers to one account.
+
+### OAuth Entities &amp; Mappers
+- `UserOAuthProvider` entity with `oauth_id`, `user_id`, `provider`, `provider_user_id`, `created_at`
+- `UserOAuthProviderMapper` with `findByUserAndProvider()`, `findByProviderUserId()`, `findByUser()`, `unlinkProvider()`
+
+### OAuthConfigService Methods
+Reads and validates OAuth credentials from `etc/config.ini`:
+- `getClientId(string $provider): ?string`
+- `getClientSecret(string $provider): ?string`
+- `isConfigured(string $provider): bool`
+- `getAppleTeamId(): ?string`, `getAppleKeyId(): ?string`, `getApplePrivateKeyPath(): ?string`
+
+### OAuthService Methods
+Core OAuth business logic:
+- `getProvider(string $provider): AbstractProvider` - Factory for League OAuth providers
+- `getAuthorizationUrl(string $provider): array` - Returns `['url' => string, 'state' => string]`
+- `handleCallback(string $provider, string $code, string $state): array` - Returns `['success' => bool, 'user' => ?User, 'pending_oauth' => ?array, 'error' => ?string]`
+- `findOrCreateUser(array $oauth_data): array` - Auto-links by email or returns pending data
+- `createUserFromOAuth(array $pending_data, string $username): array` - Creates user after username selection
+- `getLinkedProviders(int $user_id): array` - Returns array of linked provider names
+- `canUnlinkProvider(int $user_id, string $provider): array` - Validates unlinking (requires password or other providers)
+- `unlinkProvider(int $user_id, string $provider): array`
+- `generateUsername(string $base_name): string` - Creates unique username with collision handling
+
+### OAuth Flow
+1. **Authorization**: User clicks OAuth button → `OAuthController::authorize()` → redirect to provider
+2. **Callback**: Provider returns code → `OAuthController::callback()` → exchange for access token → fetch user info
+3. **Auto-linking**: If email matches existing user → link provider and login
+4. **Username Selection**: New users → redirect to `/oauth/complete` → collect username
+5. **Completion**: `OAuthController::complete()` → create account → link provider → login
+
+### OAuth Configuration
+Add to `etc/config.ini`:
+```ini
+oauth.google.client_id = "your-client-id"
+oauth.google.client_secret = "your-secret"
+oauth.facebook.client_id = "your-app-id"
+oauth.facebook.client_secret = "your-secret"
+oauth.apple.client_id = "com.your.serviceid"
+oauth.apple.team_id = "YOUR_TEAM_ID"
+oauth.apple.key_id = "YOUR_KEY_ID"
+oauth.apple.private_key_path = "/path/to/key.p8"
+```
+
+Enable/disable per provider in admin settings: `oauth_google_enabled`, `oauth_facebook_enabled`, `oauth_apple_enabled`
+
+### OAuth Routes
+- `GET /oauth/{provider}` - Initiate OAuth flow
+- `GET /oauth/{provider}/callback` - Handle OAuth callback
+- `GET /oauth/complete` - Username selection form
+- `POST /oauth/complete` - Process username submission
+- `POST /oauth/{provider}/unlink` - Unlink OAuth provider
+- `GET /settings/connected-accounts` - Manage linked accounts
+
+### OAuth Templates
+- `pages/oauth_complete.html.twig` - Username selection for new OAuth users
+- `pages/settings_connected_accounts.html.twig` - Manage linked OAuth accounts
+- Login/register pages include OAuth buttons when providers are enabled
+
+### Key OAuth Behaviors
+- **Auto-linking**: OAuth accounts with matching emails automatically link to existing users
+- **Password optional**: OAuth-only accounts don't need passwords (nullable `password_hash`)
+- **Multiple providers**: Users can link Google, Facebook, and Apple to one account
+- **Unlink protection**: Cannot unlink last provider unless password is set
+- **Username required**: New OAuth users must choose a username on first login
+- **Admin control**: Per-provider toggles in admin settings (requires credentials in config.ini)
+
+See [docs/oauth.md](docs/oauth.md) for complete OAuth setup guide.

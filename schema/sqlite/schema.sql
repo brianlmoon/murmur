@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS users (
     username      TEXT NOT NULL,
     name          VARCHAR(100) DEFAULT NULL,
     email         TEXT NOT NULL,
-    password_hash TEXT NOT NULL,
+    password_hash TEXT DEFAULT NULL,
     bio           TEXT DEFAULT NULL,
     avatar_path   TEXT DEFAULT NULL,
     is_admin      INTEGER NOT NULL DEFAULT 0,
@@ -101,7 +101,10 @@ INSERT OR IGNORE INTO settings (setting_name, setting_value) VALUES
     ('site_name', 'Murmur'),
     ('registration_open', '1'),
     ('videos_allowed', '1'),
-    ('max_video_size_mb', '100');
+    ('max_video_size_mb', '100'),
+    ('oauth_google_enabled', '0'),
+    ('oauth_facebook_enabled', '0'),
+    ('oauth_apple_enabled', '0');
 
 -- -----------------------------------------------------------------------------
 -- Sessions table
@@ -222,3 +225,29 @@ CREATE TABLE IF NOT EXISTS user_blocks (
 );
 
 CREATE INDEX IF NOT EXISTS idx_user_blocks_blocked ON user_blocks(blocked_id);
+
+-- -----------------------------------------------------------------------------
+-- User OAuth Providers table
+-- Tracks OAuth provider connections for user accounts.
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS user_oauth_providers (
+    oauth_id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id          INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    provider         TEXT NOT NULL,
+    provider_user_id TEXT NOT NULL,
+    email            TEXT DEFAULT NULL,
+    name             TEXT DEFAULT NULL,
+    created_at       TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at       TEXT NOT NULL DEFAULT (datetime('now')),
+    UNIQUE (provider, provider_user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_oauth_user_id ON user_oauth_providers(user_id);
+
+-- Trigger to auto-update updated_at on row modification
+CREATE TRIGGER IF NOT EXISTS trg_user_oauth_providers_updated_at
+    AFTER UPDATE ON user_oauth_providers
+    FOR EACH ROW
+BEGIN
+    UPDATE user_oauth_providers SET updated_at = datetime('now') WHERE oauth_id = OLD.oauth_id;
+END;

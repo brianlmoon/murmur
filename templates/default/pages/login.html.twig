@@ -31,6 +31,21 @@
         </div>
     </form>
 
+    {% if oauth_providers is defined and oauth_providers|length > 0 %}
+        <div class="oauth-divider">
+            <span>{{ 'oauth.or_sign_in_with'|trans }}</span>
+        </div>
+
+        <div class="oauth-buttons">
+            {% for provider in oauth_providers %}
+                <a href="{{ base_url }}/oauth/{{ provider }}" class="btn btn-oauth btn-{{ provider }}">
+                    <span class="oauth-provider-icon oauth-icon-{{ provider }}">{{ provider|slice(0, 1)|upper }}</span>
+                    {{ ('oauth.sign_in_' ~ provider)|trans }}
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <p class="text-center text-muted mt-2">
         {{ 'auth.no_account'|trans }} <a href="{{ base_url }}/register">{{ 'nav.sign_up'|trans }}</a>
     </p>

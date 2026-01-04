@@ -52,3 +52,29 @@ db.murmur.charset = utf8mb4
 ; ---------------------------------------------------------------------------
 ; session.lifetime = Maximum session lifetime in seconds (default: 604800 = 7 days)
 session.lifetime = 604800
+
+; ---------------------------------------------------------------------------
+; OAuth Configuration
+; ---------------------------------------------------------------------------
+; OAuth providers require client credentials from their developer consoles.
+; See docs/oauth.md for setup instructions.
+;
+; Enable/disable individual providers in the admin settings panel.
+; Leave credentials empty to disable a provider entirely.
+
+; Google OAuth
+; Get credentials from: https://console.cloud.google.com/apis/credentials
+oauth.google.client_id = ""
+oauth.google.client_secret = ""
+
+; Facebook OAuth
+; Get credentials from: https://developers.facebook.com/apps
+oauth.facebook.client_id = ""
+oauth.facebook.client_secret = ""
+
+; Apple Sign In
+; Get credentials from: https://developer.apple.com/account/resources/identifiers/list/serviceId
+oauth.apple.client_id = ""
+oauth.apple.team_id = ""
+oauth.apple.key_id = ""
+oauth.apple.private_key_path = ""

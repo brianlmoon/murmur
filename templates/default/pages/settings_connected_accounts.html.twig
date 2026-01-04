@@ -1,0 +1,80 @@
+{% extends theme ~ '/layouts/base.html.twig' %}
+
+{% block title %}{{ 'settings.connected_accounts'|trans }} - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px;">
+    <h1>{{ 'settings.connected_accounts'|trans }}</h1>
+
+    <p class="text-muted">
+        {{ 'oauth.connected_accounts_help'|trans }}
+    </p>
+
+    <div class="card">
+        {% for provider_info in providers %}
+            <div class="oauth-provider-item" style="padding: 1rem; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div class="oauth-provider-icon oauth-icon-{{ provider_info.name }}" style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white;">
+                        {{ provider_info.name|slice(0, 1)|upper }}
+                    </div>
+                    <div>
+                        <div style="font-weight: 600;">{{ provider_info.name|capitalize }}</div>
+                        {% if provider_info.is_linked %}
+                            <div class="text-muted" style="font-size: 0.875rem;">
+                                {{ 'oauth.linked'|trans }}
+                                {% if provider_info.email %}
+                                    ({{ provider_info.email }})
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="text-muted" style="font-size: 0.875rem;">
+                                {{ 'oauth.not_linked'|trans }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div>
+                    {% if provider_info.is_linked %}
+                        {% if provider_info.can_unlink %}
+                            <form method="post" action="{{ base_url }}/oauth/{{ provider_info.name }}/unlink" style="display: inline;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                                <button type="submit" class="btn btn-small btn-secondary"
+                                        onclick="return confirm('{{ 'oauth.unlink_confirm'|trans({'%provider%': provider_info.name|capitalize}) }}');">
+                                    {{ 'oauth.unlink'|trans }}
+                                </button>
+                            </form>
+                        {% else %}
+                            <span class="text-muted" style="font-size: 0.875rem;">
+                                {{ 'oauth.cannot_unlink'|trans }}
+                            </span>
+                        {% endif %}
+                    {% else %}
+                        {% if provider_info.is_enabled %}
+                            <a href="{{ base_url }}/oauth/{{ provider_info.name }}" class="btn btn-small btn-primary">
+                                {{ 'oauth.link'|trans }}
+                            </a>
+                        {% else %}
+                            <span class="text-muted" style="font-size: 0.875rem;">
+                                {{ 'oauth.disabled'|trans }}
+                            </span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if not has_password %}
+        <div class="flash flash-warning" style="margin-top: 1.5rem;">
+            {{ 'oauth.no_password_warning'|trans }}
+        </div>
+    {% endif %}
+
+    <div style="margin-top: 1.5rem;">
+        <a href="{{ base_url }}/settings" class="btn btn-secondary">
+            {{ 'common.back'|trans }}
+        </a>
+    </div>
+</div>
+{% endblock %}
