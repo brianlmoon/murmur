@@ -72,32 +72,29 @@ auth:
 # =============================================================================
 oauth:
     # OAuth button labels
-    or_sign_in_with: "Or sign in with"
-    sign_in_google: "Sign in with Google"
-    sign_in_facebook: "Sign in with Facebook"
-    sign_in_apple: "Sign in with Apple"
-    or_sign_up_with: "Or sign up with"
-    sign_up_google: "Sign up with Google"
-    sign_up_facebook: "Sign up with Facebook"
-    sign_up_apple: "Sign up with Apple"
-    
-    # OAuth completion page
-    complete_profile: "Complete Your Profile"
-    choose_username_help: "Choose a username to complete your %provider% account"
-    complete_registration: "Complete Registration"
-    
-    # Connected accounts page
-    connected_accounts: "Connected Accounts"
-    connected_accounts_help: "Manage OAuth providers linked to your account. You can sign in with any linked provider."
-    manage_connected_accounts: "Link or unlink OAuth providers like Google, Facebook, and Apple."
-    linked: "Linked"
-    not_linked: "Not linked"
-    link: "Link"
-    unlink: "Unlink"
-    unlink_confirm: "Are you sure you want to unlink your %provider% account?"
-    cannot_unlink: "Cannot unlink"
-    disabled: "Disabled"
-    no_password_warning: "Your account only has OAuth sign-in methods. Consider setting a password for additional security."
+    or_sign_in_with: "或使用以下方式登录"
+    sign_in_google: "使用 Google 登录"
+    sign_in_facebook: "使用 Facebook 登录"
+    sign_in_apple: "使用 Apple 登录"
+    or_sign_up_with: "或使用以下方式注册"
+    sign_up_google: "使用 Google 注册"
+    sign_up_facebook: "使用 Facebook 注册"
+    sign_up_apple: "使用 Apple 注册"
+    complete_profile: "完善您的资料"
+    choose_username_help: "选择用户名以完成您的 %provider% 账户"
+    complete_registration: "完成注册"
+    connected_accounts: "已连接的账户"
+    connected_accounts_help: "管理与您账户关联的 OAuth 提供商。您可以使用任何已关联的提供商登录。"
+    manage_connected_accounts: "关联或取消关联 Google、Facebook 和 Apple 等 OAuth 提供商。"
+    linked: "已关联"
+    not_linked: "未关联"
+    link: "关联"
+    unlink: "取消关联"
+    unlink_confirm: "您确定要取消关联您的 %provider% 账户吗？"
+    cannot_unlink: "无法取消关联"
+    disabled: "已禁用"
+    no_password_warning: "您的账户仅有 OAuth 登录方式。请考虑设置密码以增强安全性。"
+
 
 # =============================================================================
 # Feed

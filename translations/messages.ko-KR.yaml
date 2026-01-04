@@ -72,32 +72,29 @@ auth:
 # =============================================================================
 oauth:
     # OAuth button labels
-    or_sign_in_with: "Or sign in with"
-    sign_in_google: "Sign in with Google"
-    sign_in_facebook: "Sign in with Facebook"
-    sign_in_apple: "Sign in with Apple"
-    or_sign_up_with: "Or sign up with"
-    sign_up_google: "Sign up with Google"
-    sign_up_facebook: "Sign up with Facebook"
-    sign_up_apple: "Sign up with Apple"
-    
-    # OAuth completion page
-    complete_profile: "Complete Your Profile"
-    choose_username_help: "Choose a username to complete your %provider% account"
-    complete_registration: "Complete Registration"
-    
-    # Connected accounts page
-    connected_accounts: "Connected Accounts"
-    connected_accounts_help: "Manage OAuth providers linked to your account. You can sign in with any linked provider."
-    manage_connected_accounts: "Link or unlink OAuth providers like Google, Facebook, and Apple."
-    linked: "Linked"
-    not_linked: "Not linked"
-    link: "Link"
-    unlink: "Unlink"
-    unlink_confirm: "Are you sure you want to unlink your %provider% account?"
-    cannot_unlink: "Cannot unlink"
-    disabled: "Disabled"
-    no_password_warning: "Your account only has OAuth sign-in methods. Consider setting a password for additional security."
+    or_sign_in_with: "또는 다음으로 로그인"
+    sign_in_google: "Google로 로그인"
+    sign_in_facebook: "Facebook으로 로그인"
+    sign_in_apple: "Apple로 로그인"
+    or_sign_up_with: "또는 다음으로 가입"
+    sign_up_google: "Google로 가입"
+    sign_up_facebook: "Facebook으로 가입"
+    sign_up_apple: "Apple로 가입"
+    complete_profile: "프로필 완성하기"
+    choose_username_help: "%provider% 계정을 완성하려면 사용자 이름을 선택하세요"
+    complete_registration: "등록 완료"
+    connected_accounts: "연결된 계정"
+    connected_accounts_help: "계정에 연결된 OAuth 제공업체를 관리합니다. 연결된 제공업체로 로그인할 수 있습니다."
+    manage_connected_accounts: "Google, Facebook, Apple과 같은 OAuth 제공업체를 연결하거나 연결 해제합니다."
+    linked: "연결됨"
+    not_linked: "연결 안 됨"
+    link: "연결"
+    unlink: "연결 해제"
+    unlink_confirm: "%provider% 계정 연결을 해제하시겠습니까?"
+    cannot_unlink: "연결 해제할 수 없음"
+    disabled: "비활성화됨"
+    no_password_warning: "계정에 OAuth 로그인 방법만 있습니다. 추가 보안을 위해 비밀번호 설정을 고려하세요."
+
 
 # =============================================================================
 # Feed

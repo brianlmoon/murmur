@@ -72,32 +72,29 @@ auth:
 # =============================================================================
 oauth:
     # OAuth button labels
-    or_sign_in_with: "Or sign in with"
-    sign_in_google: "Sign in with Google"
-    sign_in_facebook: "Sign in with Facebook"
-    sign_in_apple: "Sign in with Apple"
-    or_sign_up_with: "Or sign up with"
-    sign_up_google: "Sign up with Google"
-    sign_up_facebook: "Sign up with Facebook"
-    sign_up_apple: "Sign up with Apple"
-    
-    # OAuth completion page
-    complete_profile: "Complete Your Profile"
-    choose_username_help: "Choose a username to complete your %provider% account"
-    complete_registration: "Complete Registration"
-    
-    # Connected accounts page
-    connected_accounts: "Connected Accounts"
-    connected_accounts_help: "Manage OAuth providers linked to your account. You can sign in with any linked provider."
-    manage_connected_accounts: "Link or unlink OAuth providers like Google, Facebook, and Apple."
-    linked: "Linked"
-    not_linked: "Not linked"
-    link: "Link"
-    unlink: "Unlink"
-    unlink_confirm: "Are you sure you want to unlink your %provider% account?"
-    cannot_unlink: "Cannot unlink"
-    disabled: "Disabled"
-    no_password_warning: "Your account only has OAuth sign-in methods. Consider setting a password for additional security."
+    or_sign_in_with: "Oder anmelden mit"
+    sign_in_google: "Mit Google anmelden"
+    sign_in_facebook: "Mit Facebook anmelden"
+    sign_in_apple: "Mit Apple anmelden"
+    or_sign_up_with: "Oder registrieren mit"
+    sign_up_google: "Mit Google registrieren"
+    sign_up_facebook: "Mit Facebook registrieren"
+    sign_up_apple: "Mit Apple registrieren"
+    complete_profile: "Profil vervollständigen"
+    choose_username_help: "Wählen Sie einen Benutzernamen, um Ihr %provider%-Konto abzuschließen"
+    complete_registration: "Registrierung abschließen"
+    connected_accounts: "Verbundene Konten"
+    connected_accounts_help: "Verwalten Sie OAuth-Anbieter, die mit Ihrem Konto verknüpft sind. Sie können sich mit jedem verknüpften Anbieter anmelden."
+    manage_connected_accounts: "OAuth-Anbieter wie Google, Facebook und Apple verknüpfen oder trennen."
+    linked: "Verknüpft"
+    not_linked: "Nicht verknüpft"
+    link: "Verknüpfen"
+    unlink: "Trennen"
+    unlink_confirm: "Möchten Sie Ihr %provider%-Konto wirklich trennen?"
+    cannot_unlink: "Kann nicht getrennt werden"
+    disabled: "Deaktiviert"
+    no_password_warning: "Ihr Konto verfügt nur über OAuth-Anmeldemethoden. Erwägen Sie, ein Passwort für zusätzliche Sicherheit festzulegen."
+
 
 # =============================================================================
 # Feed

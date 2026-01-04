@@ -72,32 +72,29 @@ auth:
 # =============================================================================
 oauth:
     # OAuth button labels
-    or_sign_in_with: "Or sign in with"
-    sign_in_google: "Sign in with Google"
-    sign_in_facebook: "Sign in with Facebook"
-    sign_in_apple: "Sign in with Apple"
-    or_sign_up_with: "Or sign up with"
-    sign_up_google: "Sign up with Google"
-    sign_up_facebook: "Sign up with Facebook"
-    sign_up_apple: "Sign up with Apple"
-    
-    # OAuth completion page
-    complete_profile: "Complete Your Profile"
-    choose_username_help: "Choose a username to complete your %provider% account"
-    complete_registration: "Complete Registration"
-    
-    # Connected accounts page
-    connected_accounts: "Connected Accounts"
-    connected_accounts_help: "Manage OAuth providers linked to your account. You can sign in with any linked provider."
-    manage_connected_accounts: "Link or unlink OAuth providers like Google, Facebook, and Apple."
-    linked: "Linked"
-    not_linked: "Not linked"
-    link: "Link"
-    unlink: "Unlink"
-    unlink_confirm: "Are you sure you want to unlink your %provider% account?"
-    cannot_unlink: "Cannot unlink"
-    disabled: "Disabled"
-    no_password_warning: "Your account only has OAuth sign-in methods. Consider setting a password for additional security."
+    or_sign_in_with: "Of log in met"
+    sign_in_google: "Inloggen met Google"
+    sign_in_facebook: "Inloggen met Facebook"
+    sign_in_apple: "Inloggen met Apple"
+    or_sign_up_with: "Of registreer met"
+    sign_up_google: "Registreren met Google"
+    sign_up_facebook: "Registreren met Facebook"
+    sign_up_apple: "Registreren met Apple"
+    complete_profile: "Voltooi je profiel"
+    choose_username_help: "Kies een gebruikersnaam om je %provider%-account te voltooien"
+    complete_registration: "Registratie voltooien"
+    connected_accounts: "Gekoppelde accounts"
+    connected_accounts_help: "Beheer OAuth-providers die aan je account zijn gekoppeld. Je kunt inloggen met elke gekoppelde provider."
+    manage_connected_accounts: "Koppel OAuth-providers zoals Google, Facebook en Apple of ontkoppel deze."
+    linked: "Gekoppeld"
+    not_linked: "Niet gekoppeld"
+    link: "Koppelen"
+    unlink: "Ontkoppelen"
+    unlink_confirm: "Weet je zeker dat je je %provider%-account wilt ontkoppelen?"
+    cannot_unlink: "Kan niet ontkoppelen"
+    disabled: "Uitgeschakeld"
+    no_password_warning: "Je account heeft alleen OAuth-inlogmethoden. Overweeg een wachtwoord in te stellen voor extra beveiliging."
+
 
 # =============================================================================
 # Feed

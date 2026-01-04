@@ -72,32 +72,29 @@ auth:
 # =============================================================================
 oauth:
     # OAuth button labels
-    or_sign_in_with: "Or sign in with"
-    sign_in_google: "Sign in with Google"
-    sign_in_facebook: "Sign in with Facebook"
-    sign_in_apple: "Sign in with Apple"
-    or_sign_up_with: "Or sign up with"
-    sign_up_google: "Sign up with Google"
-    sign_up_facebook: "Sign up with Facebook"
-    sign_up_apple: "Sign up with Apple"
-    
-    # OAuth completion page
-    complete_profile: "Complete Your Profile"
-    choose_username_help: "Choose a username to complete your %provider% account"
-    complete_registration: "Complete Registration"
-    
-    # Connected accounts page
-    connected_accounts: "Connected Accounts"
-    connected_accounts_help: "Manage OAuth providers linked to your account. You can sign in with any linked provider."
-    manage_connected_accounts: "Link or unlink OAuth providers like Google, Facebook, and Apple."
-    linked: "Linked"
-    not_linked: "Not linked"
-    link: "Link"
-    unlink: "Unlink"
-    unlink_confirm: "Are you sure you want to unlink your %provider% account?"
-    cannot_unlink: "Cannot unlink"
-    disabled: "Disabled"
-    no_password_warning: "Your account only has OAuth sign-in methods. Consider setting a password for additional security."
+    or_sign_in_with: "Или войдите через"
+    sign_in_google: "Войти через Google"
+    sign_in_facebook: "Войти через Facebook"
+    sign_in_apple: "Войти через Apple"
+    or_sign_up_with: "Или зарегистрируйтесь через"
+    sign_up_google: "Зарегистрироваться через Google"
+    sign_up_facebook: "Зарегистрироваться через Facebook"
+    sign_up_apple: "Зарегистрироваться через Apple"
+    complete_profile: "Завершите свой профиль"
+    choose_username_help: "Выберите имя пользователя для завершения регистрации через %provider%"
+    complete_registration: "Завершить регистрацию"
+    connected_accounts: "Связанные аккаунты"
+    connected_accounts_help: "Управляйте провайдерами OAuth, связанными с вашей учетной записью. Вы можете войти с помощью любого связанного провайдера."
+    manage_connected_accounts: "Связать или отвязать провайдеров OAuth, таких как Google, Facebook и Apple."
+    linked: "Связан"
+    not_linked: "Не связан"
+    link: "Связать"
+    unlink: "Отвязать"
+    unlink_confirm: "Вы уверены, что хотите отвязать учетную запись %provider%?"
+    cannot_unlink: "Невозможно отвязать"
+    disabled: "Отключено"
+    no_password_warning: "В вашей учетной записи есть только методы входа OAuth. Рассмотрите возможность установки пароля для дополнительной безопасности."
+
 
 # =============================================================================
 # Feed

@@ -72,32 +72,29 @@ auth:
 # =============================================================================
 oauth:
     # OAuth button labels
-    or_sign_in_with: "Or sign in with"
-    sign_in_google: "Sign in with Google"
-    sign_in_facebook: "Sign in with Facebook"
-    sign_in_apple: "Sign in with Apple"
-    or_sign_up_with: "Or sign up with"
-    sign_up_google: "Sign up with Google"
-    sign_up_facebook: "Sign up with Facebook"
-    sign_up_apple: "Sign up with Apple"
-    
-    # OAuth completion page
-    complete_profile: "Complete Your Profile"
-    choose_username_help: "Choose a username to complete your %provider% account"
-    complete_registration: "Complete Registration"
-    
-    # Connected accounts page
-    connected_accounts: "Connected Accounts"
-    connected_accounts_help: "Manage OAuth providers linked to your account. You can sign in with any linked provider."
-    manage_connected_accounts: "Link or unlink OAuth providers like Google, Facebook, and Apple."
-    linked: "Linked"
-    not_linked: "Not linked"
-    link: "Link"
-    unlink: "Unlink"
-    unlink_confirm: "Are you sure you want to unlink your %provider% account?"
-    cannot_unlink: "Cannot unlink"
-    disabled: "Disabled"
-    no_password_warning: "Your account only has OAuth sign-in methods. Consider setting a password for additional security."
+    or_sign_in_with: "O inicia sesión con"
+    sign_in_google: "Iniciar sesión con Google"
+    sign_in_facebook: "Iniciar sesión con Facebook"
+    sign_in_apple: "Iniciar sesión con Apple"
+    or_sign_up_with: "O regístrate con"
+    sign_up_google: "Registrarse con Google"
+    sign_up_facebook: "Registrarse con Facebook"
+    sign_up_apple: "Registrarse con Apple"
+    complete_profile: "Completa tu perfil"
+    choose_username_help: "Elige un nombre de usuario para completar tu cuenta de %provider%"
+    complete_registration: "Completar registro"
+    connected_accounts: "Cuentas conectadas"
+    connected_accounts_help: "Gestiona los proveedores OAuth vinculados a tu cuenta. Puedes iniciar sesión con cualquier proveedor vinculado."
+    manage_connected_accounts: "Vincular o desvincular proveedores OAuth como Google, Facebook y Apple."
+    linked: "Vinculado"
+    not_linked: "No vinculado"
+    link: "Vincular"
+    unlink: "Desvincular"
+    unlink_confirm: "¿Estás seguro de que quieres desvincular tu cuenta de %provider%?"
+    cannot_unlink: "No se puede desvincular"
+    disabled: "Desactivado"
+    no_password_warning: "Tu cuenta solo tiene métodos de inicio de sesión OAuth. Considera establecer una contraseña para mayor seguridad."
+
 
 # =============================================================================
 # Feed

@@ -72,32 +72,29 @@ auth:
 # =============================================================================
 oauth:
     # OAuth button labels
-    or_sign_in_with: "Or sign in with"
-    sign_in_google: "Sign in with Google"
-    sign_in_facebook: "Sign in with Facebook"
-    sign_in_apple: "Sign in with Apple"
-    or_sign_up_with: "Or sign up with"
-    sign_up_google: "Sign up with Google"
-    sign_up_facebook: "Sign up with Facebook"
-    sign_up_apple: "Sign up with Apple"
-    
-    # OAuth completion page
-    complete_profile: "Complete Your Profile"
-    choose_username_help: "Choose a username to complete your %provider% account"
-    complete_registration: "Complete Registration"
-    
-    # Connected accounts page
-    connected_accounts: "Connected Accounts"
-    connected_accounts_help: "Manage OAuth providers linked to your account. You can sign in with any linked provider."
-    manage_connected_accounts: "Link or unlink OAuth providers like Google, Facebook, and Apple."
-    linked: "Linked"
-    not_linked: "Not linked"
-    link: "Link"
-    unlink: "Unlink"
-    unlink_confirm: "Are you sure you want to unlink your %provider% account?"
-    cannot_unlink: "Cannot unlink"
-    disabled: "Disabled"
-    no_password_warning: "Your account only has OAuth sign-in methods. Consider setting a password for additional security."
+    or_sign_in_with: "或使用以下方式登入"
+    sign_in_google: "使用 Google 登入"
+    sign_in_facebook: "使用 Facebook 登入"
+    sign_in_apple: "使用 Apple 登入"
+    or_sign_up_with: "或使用以下方式註冊"
+    sign_up_google: "使用 Google 註冊"
+    sign_up_facebook: "使用 Facebook 註冊"
+    sign_up_apple: "使用 Apple 註冊"
+    complete_profile: "完善您的個人資料"
+    choose_username_help: "選擇使用者名稱以完成您的 %provider% 帳戶"
+    complete_registration: "完成註冊"
+    connected_accounts: "已連結的帳戶"
+    connected_accounts_help: "管理與您帳戶關聯的 OAuth 提供商。您可以使用任何已關聯的提供商登入。"
+    manage_connected_accounts: "關聯或取消關聯 Google、Facebook 和 Apple 等 OAuth 提供商。"
+    linked: "已關聯"
+    not_linked: "未關聯"
+    link: "關聯"
+    unlink: "取消關聯"
+    unlink_confirm: "您確定要取消關聯您的 %provider% 帳戶嗎？"
+    cannot_unlink: "無法取消關聯"
+    disabled: "已停用"
+    no_password_warning: "您的帳戶僅有 OAuth 登入方式。請考慮設定密碼以增強安全性。"
+
 
 # =============================================================================
 # Feed
