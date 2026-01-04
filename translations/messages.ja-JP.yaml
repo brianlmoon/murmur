@@ -225,8 +225,8 @@ settings:
     logout_devices_none: "他にアクティブなセッションはありません。"
     
     # Connected accounts section
-    connected_accounts: "Connected Accounts"
-    manage_connections: "Manage Connections"
+    connected_accounts: "接続されたアカウント"
+    manage_connections: "接続を管理"
 
 # =============================================================================
 # Topics

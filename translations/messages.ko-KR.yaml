@@ -225,8 +225,8 @@ settings:
     logout_devices_none: "다른 활성 세션이 없습니다."
     
     # Connected accounts section
-    connected_accounts: "Connected Accounts"
-    manage_connections: "Manage Connections"
+    connected_accounts: "연결된 계정"
+    manage_connections: "연결 관리"
 
 # =============================================================================
 # Topics

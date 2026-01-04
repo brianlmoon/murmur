@@ -225,8 +225,8 @@ settings:
     logout_devices_none: "未發現其他活躍工作階段。"
     
     # Connected accounts section
-    connected_accounts: "Connected Accounts"
-    manage_connections: "Manage Connections"
+    connected_accounts: "已連結的帳戶"
+    manage_connections: "管理連結"
 
 # =============================================================================
 # Topics

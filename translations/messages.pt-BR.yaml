@@ -225,8 +225,8 @@ settings:
     logout_devices_none: "Nenhuma outra sessão ativa encontrada."
     
     # Connected accounts section
-    connected_accounts: "Connected Accounts"
-    manage_connections: "Manage Connections"
+    connected_accounts: "Contas conectadas"
+    manage_connections: "Gerenciar conexões"
 
 # =============================================================================
 # Topics

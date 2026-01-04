@@ -225,8 +225,8 @@ settings:
     logout_devices_none: "Другие активные сеансы не найдены."
     
     # Connected accounts section
-    connected_accounts: "Connected Accounts"
-    manage_connections: "Manage Connections"
+    connected_accounts: "Связанные аккаунты"
+    manage_connections: "Управление соединениями"
 
 # =============================================================================
 # Topics

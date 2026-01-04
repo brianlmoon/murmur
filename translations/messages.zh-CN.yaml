@@ -225,8 +225,8 @@ settings:
     logout_devices_none: "未发现其他活跃会话。"
     
     # Connected accounts section
-    connected_accounts: "Connected Accounts"
-    manage_connections: "Manage Connections"
+    connected_accounts: "已连接的账户"
+    manage_connections: "管理连接"
 
 # =============================================================================
 # Topics
