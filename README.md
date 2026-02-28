@@ -117,7 +117,7 @@ Contributions are welcome! Please:
 Murmur is released under the [BSD 3-Clause License](LICENSE).
 
 ```
-Copyright (c) 2023, Brian Moon
+Copyright (c) 2026, Brian Moon
 ```
 
 ## Credits
