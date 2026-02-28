@@ -9,7 +9,7 @@ Murmur is a self-hosted, open-source social platform designed for calm, intentio
 Modern social platforms optimize for engagement, not connection. Murmur takes a different approach:
 
 - **No algorithms** — Posts appear in chronological order. You see what you follow.
-- **No metrics** — No public like counts, no follower leaderboards, no viral incentives.
+- **No metrics** — No follower leaderboards, no viral incentives. Like counts are shown, but who liked a post stays private.
 - **No federation** — Your instance, your rules. Simple to run, simple to moderate.
 - **Your data** — Self-hosted means you own everything. Export anytime.
 
