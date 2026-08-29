@@ -79,7 +79,7 @@ class TranslationServiceTest extends TestCase {
 
     public function testFallbackToEnglish(): void {
         // When locale doesn't have a translation file, falls back to en-US
-        $service = new TranslationService('fr-FR', $this->translations_path);
+        $service = new TranslationService('xx-XX', $this->translations_path);
         $translator = $service->getTranslator();
 
         // Should return English string as fallback
