@@ -233,6 +233,7 @@ class MediaServiceTest extends TestCase {
     public function testEnrichPostsWithUrls(): void {
         $attachment1 = new \stdClass();
         $attachment1->file_path = 'posts/image.jpg';
+        $attachment1->media_type = 'image';
 
         $author = new \stdClass();
         $author->avatar_path = 'avatars/avatar.jpg';
@@ -280,9 +281,11 @@ class MediaServiceTest extends TestCase {
     public function testEnrichPostsWithUrlsMultipleAttachments(): void {
         $attachment1 = new \stdClass();
         $attachment1->file_path = 'posts/image1.jpg';
+        $attachment1->media_type = 'image';
 
         $attachment2 = new \stdClass();
         $attachment2->file_path = 'posts/image2.jpg';
+        $attachment2->media_type = 'image';
 
         $author = new \stdClass();
         $author->avatar_path = null;
