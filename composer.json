@@ -18,7 +18,7 @@
         "league/oauth2-facebook": "^2.2",
         "moonspot/value-objects": "^2.3",
         "pagemill/router": "^3.0",
-        "patrickbussmann/oauth2-apple": "^0.3",
+        "patrickbussmann/oauth2-apple": "^0.4",
         "twig/twig": "^3.0",
         "symfony/translation": "^8.0",
         "symfony/yaml": "^8.0",
