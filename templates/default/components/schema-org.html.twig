@@ -1,0 +1,4 @@
+{# Renders a Schema.org JSON-LD block from a `schema_data` array. #}
+{% if schema_data is defined and schema_data is not empty %}
+<script type="application/ld+json">{{ schema_data|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_UNESCAPED_UNICODE'))|replace({'</': '<\\/'})|raw }}</script>
+{% endif %}

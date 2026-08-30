@@ -11,6 +11,7 @@ use Murmur\Service\MessageService;
 use Murmur\Service\OAuthService;
 use Murmur\Service\PostService;
 use Murmur\Service\ProfileService;
+use Murmur\Service\SchemaOrgService;
 use Murmur\Service\SessionService;
 use Murmur\Service\TranslationService;
 use Murmur\Service\UserFollowService;
@@ -64,6 +65,16 @@ class ProfileController extends BaseController {
     protected OAuthService $oauth_service;
 
     /**
+     * Schema.org service for JSON-LD structured data.
+     */
+    protected SchemaOrgService $schema_org_service;
+
+    /**
+     * The site's absolute base URL, used to build structured data URLs.
+     */
+    protected string $site_url;
+
+    /**
      * Creates a new ProfileController instance.
      *
      * @param Environment        $twig                 Twig environment for rendering.
@@ -77,6 +88,8 @@ class ProfileController extends BaseController {
      * @param TranslationService $translation_service  Translation service.
      * @param LinkPreviewService $link_preview_service Link preview service.
      * @param OAuthService       $oauth_service        OAuth service.
+     * @param SchemaOrgService   $schema_org_service   Schema.org service.
+     * @param string             $site_url             The site's absolute base URL.
      */
     public function __construct(
         Environment $twig,
@@ -89,7 +102,9 @@ class ProfileController extends BaseController {
         MessageService $message_service,
         TranslationService $translation_service,
         LinkPreviewService $link_preview_service,
-        OAuthService $oauth_service
+        OAuthService $oauth_service,
+        SchemaOrgService $schema_org_service,
+        string $site_url
     ) {
         parent::__construct($twig, $session, $setting_mapper);
         $this->profile_service      = $profile_service;
@@ -100,6 +115,8 @@ class ProfileController extends BaseController {
         $this->translation_service  = $translation_service;
         $this->link_preview_service = $link_preview_service;
         $this->oauth_service        = $oauth_service;
+        $this->schema_org_service   = $schema_org_service;
+        $this->site_url             = $site_url;
     }
 
     /**
@@ -170,6 +187,8 @@ class ProfileController extends BaseController {
                 ? $this->media_service->getUrl($user->avatar_path)
                 : null;
 
+            $schema_data = $this->schema_org_service->buildProfilePage($user, $this->site_url, $follower_count);
+
             $result = $this->renderThemed('pages/profile.html.twig', [
                 'profile_user'       => $user,
                 'profile_avatar_url' => $profile_avatar_url,
@@ -178,6 +197,7 @@ class ProfileController extends BaseController {
                 'follower_count'     => $follower_count,
                 'following_count'    => $following_count,
                 'can_message'        => $can_message,
+                'schema_data'        => $schema_data,
             ]);
         }
 

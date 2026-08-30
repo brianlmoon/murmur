@@ -942,3 +942,30 @@ Enable/disable per provider in admin settings: `oauth_google_enabled`, `oauth_fa
 - **Admin control**: Per-provider toggles in admin settings (requires credentials in config.ini)
 
 See [docs/oauth.md](docs/oauth.md) for complete OAuth setup guide.
+
+## Schema.org Structured Data
+
+Public-facing pages emit JSON-LD structured data so search engines and social
+tools can understand posts, topics, and profiles.
+
+### SchemaOrgService
+
+`src/Service/SchemaOrgService.php` is a stateless, DB-free service that takes
+entities and already-loaded data and returns plain arrays for `json_encode()`:
+
+- `buildWebSite(string $site_name, string $site_url): array` - Site-wide `WebSite` schema
+- `buildSocialMediaPosting(Post $post, User $author, string $site_url, int $like_count, array $replies = []): array` - Single post page, with the first 10 replies inlined as `comment` entries (full thread still renders in HTML)
+- `buildTopicCollectionPage(Topic $topic, array $posts, string $site_url): array` - Topic listing as a `CollectionPage`/`ItemList` of lightweight post summaries
+- `buildProfilePage(User $user, string $site_url, ?int $follower_count = null): array` - `ProfilePage` wrapping a `Person`, with public follower count as `interactionStatistic`
+
+Key behaviors:
+- `dateModified` is only included when a post's `updated_at` differs from `created_at` (i.e. actually edited)
+- Like counts are aggregate-only (`interactionStatistic`/`LikeAction`) - individual likers are never exposed, matching Murmur's privacy stance
+- `$site_url` is the absolute site URL (protocol + host + base path), built once in `public/index.php` and injected into controllers
+
+### Rendering
+
+- `templates/default/components/schema-org.html.twig` renders a `schema_data` array as a `<script type="application/ld+json">` block
+- Uses `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE` for readable output, then replaces `</` with `<\/` after encoding so user-generated content (post/comment bodies) can never prematurely close the `<script>` tag
+- `base.html.twig` includes it once with the `site_schema` global (the `WebSite` schema) so it's available site-wide without duplication
+- `post.html.twig`, `topic.html.twig`, and `profile.html.twig` each include it again in their `head` block with a page-specific `schema_data` variable built in the controller

@@ -9,6 +9,7 @@ use Murmur\Service\MediaService;
 use Murmur\Service\LikeService;
 use Murmur\Service\LinkPreviewService;
 use Murmur\Service\PostService;
+use Murmur\Service\SchemaOrgService;
 use Murmur\Service\SessionService;
 use Murmur\Service\TopicService;
 use Twig\Environment;
@@ -46,6 +47,16 @@ class PostController extends BaseController {
     protected LinkPreviewService $link_preview_service;
 
     /**
+     * Schema.org service for JSON-LD structured data.
+     */
+    protected SchemaOrgService $schema_org_service;
+
+    /**
+     * The site's absolute base URL, used to build structured data URLs.
+     */
+    protected string $site_url;
+
+    /**
      * Creates a new PostController instance.
      *
      * @param Environment        $twig                 Twig environment for rendering.
@@ -56,6 +67,8 @@ class PostController extends BaseController {
      * @param LikeService        $like_service         Like service.
      * @param TopicService       $topic_service        Topic service.
      * @param LinkPreviewService $link_preview_service Link preview service.
+     * @param SchemaOrgService   $schema_org_service   Schema.org service.
+     * @param string             $site_url             The site's absolute base URL.
      */
     public function __construct(
         Environment $twig,
@@ -65,7 +78,9 @@ class PostController extends BaseController {
         MediaService $media_service,
         LikeService $like_service,
         TopicService $topic_service,
-        LinkPreviewService $link_preview_service
+        LinkPreviewService $link_preview_service,
+        SchemaOrgService $schema_org_service,
+        string $site_url
     ) {
         parent::__construct($twig, $session, $setting_mapper);
         $this->post_service = $post_service;
@@ -73,6 +88,8 @@ class PostController extends BaseController {
         $this->like_service = $like_service;
         $this->topic_service = $topic_service;
         $this->link_preview_service = $link_preview_service;
+        $this->schema_org_service = $schema_org_service;
+        $this->site_url = $site_url;
     }
 
     /**
@@ -247,6 +264,14 @@ class PostController extends BaseController {
                     ? $this->media_service->getUrl($post_data['author']->avatar_path)
                     : null;
 
+                $schema_data = $this->schema_org_service->buildSocialMediaPosting(
+                    $post_data['post'],
+                    $post_data['author'],
+                    $this->site_url,
+                    $post_data['like_count'],
+                    $replies
+                );
+
                 $result = $this->renderThemed('pages/post.html.twig', [
                     'post'           => $post_data['post'],
                     'author'         => $post_data['author'],
@@ -261,6 +286,7 @@ class PostController extends BaseController {
                     'replies'        => $replies,
                     'max_length'     => $this->post_service->getMaxBodyLength(),
                     'sort'           => $sort,
+                    'schema_data'    => $schema_data,
                 ]);
             }
         }
@@ -662,6 +688,8 @@ class PostController extends BaseController {
             $max_length = $this->setting_mapper->getMaxPostLength();
             $require_topic = $this->setting_mapper->isTopicRequired();
 
+            $schema_data = $this->schema_org_service->buildTopicCollectionPage($topic, $posts, $this->site_url);
+
             $result = $this->renderThemed('pages/topic.html.twig', [
                 'topic'          => $topic,
                 'posts'          => $posts,
@@ -671,6 +699,7 @@ class PostController extends BaseController {
                 'topics'         => $all_topics,
                 'max_length'     => $max_length,
                 'require_topic'  => $require_topic,
+                'schema_data'    => $schema_data,
             ]);
         }
 

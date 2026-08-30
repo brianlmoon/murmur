@@ -42,6 +42,7 @@ use Murmur\Service\OAuthConfigService;
 use Murmur\Service\OAuthService;
 use Murmur\Service\PostService;
 use Murmur\Service\ProfileService;
+use Murmur\Service\SchemaOrgService;
 use Murmur\Service\SessionService;
 use Murmur\Service\TopicService;
 use Murmur\Service\TranslationService;
@@ -96,6 +97,15 @@ $twig->addGlobal('has_topics', count($topic_mapper->findAll()) > 0);
 $twig->addGlobal('max_attachments', $setting_mapper->getMaxAttachments());
 $twig->addGlobal('max_video_size_mb', $setting_mapper->getMaxVideoSizeMb());
 
+// Build the site's full absolute URL (protocol + domain + base path)
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$site_url = $protocol . '://' . $host . $base_url;
+
+$schema_org_service = new SchemaOrgService();
+$twig->addGlobal('site_url', $site_url);
+$twig->addGlobal('site_schema', $schema_org_service->buildWebSite($setting_mapper->getSiteName(), $site_url));
+
 // Initialize Translation Service
 $locale = $setting_mapper->getLocale();
 $translation_service = new TranslationService($locale, __DIR__ . '/../translations');
@@ -144,12 +154,7 @@ $auth_service = new AuthService($user_mapper, $setting_mapper);
 $post_service = new PostService($post_mapper, $user_mapper, $like_mapper, $topic_mapper, $setting_mapper, $post_attachment_mapper);
 $profile_service = new ProfileService($user_mapper);
 
-// Build full OAuth callback URL (protocol + domain + base path)
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$oauth_base_url = $protocol . '://' . $host . $base_url;
-
-$oauth_config_service = new OAuthConfigService($config, $oauth_base_url);
+$oauth_config_service = new OAuthConfigService($config, $site_url);
 $admin_service = new AdminService($user_mapper, $post_mapper, $setting_mapper, $oauth_config_service);
 $max_video_size = $setting_mapper->getMaxVideoSizeMb() * 1024 * 1024;
 $media_service = new MediaService($storage, $max_video_size);
@@ -171,8 +176,8 @@ $message_service = new MessageService(
 // Initialize Controllers
 $auth_controller = new AuthController($twig, $session_service, $setting_mapper, $auth_service, $oauth_service);
 $oauth_controller = new OAuthController($twig, $session_service, $setting_mapper, $oauth_service);
-$post_controller = new PostController($twig, $session_service, $setting_mapper, $post_service, $media_service, $like_service, $topic_service, $link_preview_service);
-$profile_controller = new ProfileController($twig, $session_service, $setting_mapper, $profile_service, $post_service, $media_service, $user_follow_service, $message_service, $translation_service, $link_preview_service, $oauth_service);
+$post_controller = new PostController($twig, $session_service, $setting_mapper, $post_service, $media_service, $like_service, $topic_service, $link_preview_service, $schema_org_service, $site_url);
+$profile_controller = new ProfileController($twig, $session_service, $setting_mapper, $profile_service, $post_service, $media_service, $user_follow_service, $message_service, $translation_service, $link_preview_service, $oauth_service, $schema_org_service, $site_url);
 $admin_controller = new AdminController($twig, $session_service, $setting_mapper, $admin_service, $topic_service, $translation_service);
 $setup_controller = new SetupController($twig, $session_service, $setting_mapper, $auth_service);
 $message_controller = new MessageController($twig, $session_service, $setting_mapper, $message_service, $user_block_service, $user_mapper, $media_service);
