@@ -3,6 +3,7 @@
 {% block title %}Post by {{ author.username }} - {{ site_name }}{% endblock %}
 
 {% block head %}
+{% include theme ~ '/components/schema-org.html.twig' %}
 {% include theme ~ '/components/post-styles.html.twig' %}
 <style>
     .compose-form {

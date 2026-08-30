@@ -3,6 +3,7 @@
 {% block title %}{{ topic.name }} - {{ site_name }}{% endblock %}
 
 {% block head %}
+{% include theme ~ '/components/schema-org.html.twig' %}
 {% include theme ~ '/components/post-styles.html.twig' %}
 {% include theme ~ '/components/compose-styles.html.twig' %}
 <style>

@@ -3,6 +3,7 @@
 {% block title %}{{ profile_user.username }} - {{ site_name }}{% endblock %}
 
 {% block head %}
+{% include theme ~ '/components/schema-org.html.twig' %}
 {% include theme ~ '/components/post-styles.html.twig' %}
 <style>
     .profile-header {
