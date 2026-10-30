@@ -14,7 +14,7 @@
         "league/flysystem": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/oauth2-client": "^2.7",
-        "league/oauth2-google": "^4.0",
+        "league/oauth2-google": "^5.0",
         "league/oauth2-facebook": "^2.2",
         "moonspot/value-objects": "^2.3",
         "pagemill/router": "^3.0",
