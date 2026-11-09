@@ -13,16 +13,16 @@
         "dealnews/db": "^4.0",
         "league/flysystem": "^3.0",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "league/oauth2-client": "^2.7",
+        "league/oauth2-client": "^2.9",
         "league/oauth2-google": "^4.0",
         "league/oauth2-facebook": "^2.2",
-        "moonspot/value-objects": "^2.3",
+        "moonspot/value-objects": "^2.4",
         "pagemill/router": "^3.0",
         "patrickbussmann/oauth2-apple": "^0.4",
         "twig/twig": "^3.0",
-        "symfony/translation": "^8.0",
-        "symfony/yaml": "^8.0",
-        "symfony/twig-bridge": "^8.0"
+        "symfony/translation": "^8.1",
+        "symfony/yaml": "^8.1",
+        "symfony/twig-bridge": "^8.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.0"
